@@ -1,0 +1,410 @@
+<!-- Payment Form Modal -->
+<div *ngIf="visible" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+  <div style="background: white; border-radius: 1rem; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+    
+    <!-- Header -->
+    <div style="padding: 2rem 2rem 1rem; border-bottom: 1px solid #e5e7eb;">
+      <div style="display: flex; justify-content: between; align-items: center;">
+        <div>
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: #1f2937; margin: 0;">💳 Secure Payment</h2>
+          <p style="color: #6b7280; margin: 0.5rem 0 0 0;">Complete your purchase securely</p>
+        </div>
+        <button 
+          (click)="close()"
+          style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; padding: 0.5rem;">
+          ✕
+        </button>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div style="margin-top: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span [style.color]="currentStep >= 1 ? '#2563eb' : '#9ca3af'" style="font-size: 0.875rem; font-weight: 600;">
+            1. Payment Details
+          </span>
+          <span [style.color]="currentStep >= 2 ? '#2563eb' : '#9ca3af'" style="font-size: 0.875rem; font-weight: 600;">
+            2. Shipping Address
+          </span>
+          <span [style.color]="currentStep >= 3 ? '#2563eb' : '#9ca3af'" style="font-size: 0.875rem; font-weight: 600;">
+            3. Review & Confirm
+          </span>
+        </div>
+        <div style="background: #e5e7eb; height: 4px; border-radius: 2px; overflow: hidden;">
+          <div [style.width]="getProgressPercentage() + '%'" 
+               style="background: linear-gradient(90deg, #2563eb, #3b82f6); height: 100%; transition: width 0.3s ease;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Summary -->
+    <div *ngIf="product" style="padding: 1.5rem 2rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+          📦
+        </div>
+        <div style="flex: 1;">
+          <h3 style="font-weight: 600; color: #1f2937; margin: 0; font-size: 1.125rem;">{{product.name}}</h3>
+          <p style="color: #6b7280; margin: 0.25rem 0 0 0; font-size: 0.875rem;">
+            Includes {{product.ticket_count}} FREE {{product.ticket_category}} lottery tickets
+          </p>
+        </div>
+        <div style="text-align: right;">
+          <p style="font-size: 1.25rem; font-weight: 700; color: #2563eb; margin: 0;">
+            {{formatPrice(product.price)}} IQD
+          </p>
+          <p style="font-size: 0.875rem; color: #16a34a; margin: 0;">Free Shipping</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Content -->
+    <div style="padding: 2rem;">
+      
+      <!-- Step 1: Payment Details -->
+      <div *ngIf="currentStep === 1">
+        <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem;">💳 Payment Method</h3>
+        
+        <!-- Payment Method Selection -->
+        <div style="margin-bottom: 2rem;">
+          <label style="display: block; font-weight: 500; margin-bottom: 1rem; color: #374151;">Choose Payment Method:</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer;"
+                   [style.border-color]="paymentForm.paymentMethod === 'credit_card' ? '#2563eb' : '#e5e7eb'"
+                   [style.background]="paymentForm.paymentMethod === 'credit_card' ? '#eff6ff' : 'white'">
+              <input type="radio" [(ngModel)]="paymentForm.paymentMethod" value="credit_card" style="margin: 0;">
+              <div>
+                <div style="font-weight: 600; color: #1f2937;">💳 Credit Card</div>
+                <div style="font-size: 0.875rem; color: #6b7280;">Visa, Mastercard, etc.</div>
+              </div>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer;"
+                   [style.border-color]="paymentForm.paymentMethod === 'bank_transfer' ? '#2563eb' : '#e5e7eb'"
+                   [style.background]="paymentForm.paymentMethod === 'bank_transfer' ? '#eff6ff' : 'white'">
+              <input type="radio" [(ngModel)]="paymentForm.paymentMethod" value="bank_transfer" style="margin: 0;">
+              <div>
+                <div style="font-weight: 600; color: #1f2937;">🏦 Bank Transfer</div>
+                <div style="font-size: 0.875rem; color: #6b7280;">Direct bank payment</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Credit Card Details -->
+        <div *ngIf="paymentForm.paymentMethod === 'credit_card'" style="margin-bottom: 2rem;">
+          <h4 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Card Details</h4>
+          
+          <div style="display: grid; gap: 1rem;">
+            <!-- Cardholder Name -->
+            <div>
+              <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Cardholder Name:</label>
+              <input 
+                [(ngModel)]="paymentForm.cardholderName"
+                type="text"
+                placeholder="John Doe"
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem;">
+            </div>
+            
+            <!-- Card Number -->
+            <div>
+              <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Card Number:</label>
+              <div style="position: relative;">
+                <input 
+                  (input)="formatCardNumber($event)"
+                  type="text"
+                  placeholder="1234 5678 9012 3456"
+                  maxlength="19"
+                  style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem; font-family: monospace;">
+                <div *ngIf="getCardBrand()" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); font-weight: 600; color: #6b7280; font-size: 0.875rem;">
+                  {{getCardBrand()}}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Expiry and CVV -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+              <div>
+                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Month:</label>
+                <select 
+                  [(ngModel)]="paymentForm.expiryMonth"
+                  style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+                  <option value="">MM</option>
+                  <option value="01">01</option>
+                  <option value="02">02</option>
+                  <option value="03">03</option>
+                  <option value="04">04</option>
+                  <option value="05">05</option>
+                  <option value="06">06</option>
+                  <option value="07">07</option>
+                  <option value="08">08</option>
+                  <option value="09">09</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
+              </div>
+              <div>
+                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Year:</label>
+                <select 
+                  [(ngModel)]="paymentForm.expiryYear"
+                  style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+                  <option value="">YYYY</option>
+                  <option value="2025">2025</option>
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                  <option value="2028">2028</option>
+                  <option value="2029">2029</option>
+                  <option value="2030">2030</option>
+                  <option value="2031">2031</option>
+                  <option value="2032">2032</option>
+                  <option value="2033">2033</option>
+                  <option value="2034">2034</option>
+                </select>
+              </div>
+              <div>
+                <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">CVV:</label>
+                <input 
+                  [(ngModel)]="paymentForm.cvv"
+                  type="text"
+                  placeholder="123"
+                  maxlength="4"
+                  style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-family: monospace;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bank Transfer Details -->
+        <div *ngIf="paymentForm.paymentMethod === 'bank_transfer'" style="margin-bottom: 2rem; padding: 1rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 0.5rem;">
+          <h4 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">Bank Transfer Instructions</h4>
+          <p style="color: #6b7280; margin-bottom: 1rem; font-size: 0.875rem;">
+            After placing your order, you'll receive bank transfer instructions via email. 
+            Your order will be processed once payment is confirmed.
+          </p>
+          <div style="background: white; padding: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.875rem;">
+            <div><strong>Bank:</strong> Iraq National Bank</div>
+            <div><strong>Account:</strong> 1234567890</div>
+            <div><strong>IBAN:</strong> IQ98INBK12345678901234567</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Shipping Address -->
+      <div *ngIf="currentStep === 2">
+        <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem;">🚚 Shipping Address</h3>
+        
+        <div style="display: grid; gap: 1rem;">
+          <!-- Name Fields -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">First Name *:</label>
+              <input 
+                [(ngModel)]="paymentForm.shippingFirstName"
+                type="text"
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Last Name *:</label>
+              <input 
+                [(ngModel)]="paymentForm.shippingLastName"
+                type="text"
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+            </div>
+          </div>
+          
+          <!-- Phone -->
+          <div>
+            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Phone Number *:</label>
+            <input 
+              [(ngModel)]="paymentForm.shippingPhone"
+              type="tel"
+              placeholder="+964 123 456 789"
+              required
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+          </div>
+          
+          <!-- Address -->
+          <div>
+            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Address Line 1 *:</label>
+            <input 
+              [(ngModel)]="paymentForm.shippingAddressLine1"
+              type="text"
+              placeholder="Street address, house number"
+              required
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+          </div>
+          
+          <div>
+            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Address Line 2:</label>
+            <input 
+              [(ngModel)]="paymentForm.shippingAddressLine2"
+              type="text"
+              placeholder="Apartment, suite, etc. (optional)"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+          </div>
+          
+          <!-- City and State -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">City *:</label>
+              <input 
+                [(ngModel)]="paymentForm.shippingCity"
+                type="text"
+                placeholder="Baghdad, Erbil, etc."
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">State/Province *:</label>
+              <select 
+                [(ngModel)]="paymentForm.shippingState"
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+                <option value="">Select State</option>
+                <option value="Baghdad">Baghdad</option>
+                <option value="Kurdistan">Kurdistan Region</option>
+                <option value="Basra">Basra</option>
+                <option value="Mosul">Mosul</option>
+                <option value="Erbil">Erbil</option>
+                <option value="Sulaymaniyah">Sulaymaniyah</option>
+                <option value="Najaf">Najaf</option>
+                <option value="Karbala">Karbala</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Postal Code and Country -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Postal Code:</label>
+              <input 
+                [(ngModel)]="paymentForm.shippingPostalCode"
+                type="text"
+                placeholder="12345"
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Country:</label>
+              <select 
+                [(ngModel)]="paymentForm.shippingCountry"
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;">
+                <option value="Iraq">Iraq</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Billing Address Toggle -->
+        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="paymentForm.billingSameAsShipping"
+              style="margin: 0;">
+            <span style="font-weight: 500; color: #374151;">Billing address is the same as shipping address</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Step 3: Review and Confirm -->
+      <div *ngIf="currentStep === 3">
+        <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1.5rem;">📋 Review Your Order</h3>
+        
+        <!-- Order Summary -->
+        <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+          <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Order Summary</h4>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>{{product.name}}</span>
+            <span>{{formatPrice(product.price)}} IQD</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Shipping</span>
+            <span style="color: #16a34a;">FREE</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Tax</span>
+            <span>0 IQD</span>
+          </div>
+          <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e5e7eb;">
+          <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 1.125rem;">
+            <span>Total</span>
+            <span style="color: #2563eb;">{{formatPrice(product.price)}} IQD</span>
+          </div>
+        </div>
+        
+        <!-- Payment Method Summary -->
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">Payment Method</h4>
+          <p style="color: #6b7280;">
+            <ng-container *ngIf="paymentForm.paymentMethod === 'credit_card'">
+              💳 Credit Card ending in {{paymentForm.cardNumber.slice(-4)}}
+            </ng-container>
+            <ng-container *ngIf="paymentForm.paymentMethod === 'bank_transfer'">
+              🏦 Bank Transfer
+            </ng-container>
+          </p>
+        </div>
+        
+        <!-- Shipping Address Summary -->
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem;">Shipping Address</h4>
+          <div style="color: #6b7280; line-height: 1.5;">
+            <div>{{paymentForm.shippingFirstName}} {{paymentForm.shippingLastName}}</div>
+            <div>{{paymentForm.shippingAddressLine1}}</div>
+            <div *ngIf="paymentForm.shippingAddressLine2">{{paymentForm.shippingAddressLine2}}</div>
+            <div>{{paymentForm.shippingCity}}, {{paymentForm.shippingState}}</div>
+            <div>{{paymentForm.shippingCountry}} {{paymentForm.shippingPostalCode}}</div>
+            <div>📞 {{paymentForm.shippingPhone}}</div>
+          </div>
+        </div>
+
+        <!-- Order Notes -->
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Order Notes (Optional):</label>
+          <textarea 
+            [(ngModel)]="paymentForm.orderNotes"
+            placeholder="Any special instructions for your order..."
+            rows="3"
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; resize: vertical;">
+          </textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div style="padding: 1.5rem 2rem; border-top: 1px solid #e5e7eb; background: #f9fafb;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button 
+          *ngIf="currentStep > 1"
+          (click)="previousStep()"
+          style="padding: 0.75rem 1.5rem; background: #6b7280; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500;">
+          ← Previous
+        </button>
+        <div *ngIf="currentStep === 1" style="width: 120px;"></div>
+        
+        <div style="display: flex; gap: 1rem;">
+          <button 
+            (click)="close()"
+            style="padding: 0.75rem 1.5rem; background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer; font-weight: 500;">
+            Cancel
+          </button>
+          
+          <button 
+            *ngIf="currentStep < maxSteps"
+            (click)="nextStep()"
+            style="padding: 0.75rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500;">
+            Next →
+          </button>
+          
+          <button 
+            *ngIf="currentStep === maxSteps"
+            (click)="submitPayment()"
+            style="padding: 0.75rem 2rem; background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">
+            🔒 Complete Purchase
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

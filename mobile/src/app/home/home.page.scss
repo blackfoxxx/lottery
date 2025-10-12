@@ -1,0 +1,74 @@
+.welcome-section {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  padding: 2rem 1rem;
+  margin-bottom: 1rem;
+  color: white;
+  text-align: center;
+
+  .hero-content {
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin: 0;
+    }
+  }
+}
+
+.stats-grid {
+  margin-bottom: 1rem;
+
+  .stat-card {
+    text-align: center;
+    margin: 0;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+
+    ion-card-content {
+      padding: 1rem;
+
+      .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #dc2626;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: #666666;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.category-list {
+  margin-bottom: 1rem;
+
+  ion-card {
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.quick-actions {
+  padding: 1rem;
+
+  ion-button {
+    margin-bottom: 0.75rem;
+    --border-radius: 12px;
+    height: 48px;
+    font-weight: 500;
+  }
+}

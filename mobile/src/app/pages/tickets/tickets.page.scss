@@ -1,0 +1,232 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  
+  p {
+    margin-top: 1rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.auth-prompt, .no-tickets {
+  padding: 1rem;
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+  
+  h2 {
+    color: var(--ion-color-medium);
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 1.5rem;
+  }
+}
+
+.stats-section {
+  padding: 0 1rem;
+  
+  .stat-card {
+    margin: 0;
+    text-align: center;
+    
+    &.golden ion-card-content {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: white;
+    }
+    
+    &.silver ion-card-content {
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+      color: white;
+    }
+    
+    &.bronze ion-card-content {
+      background: linear-gradient(135deg, #ea580c, #dc2626);
+      color: white;
+    }
+    
+    &.active ion-card-content {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: white;
+    }
+    
+    ion-card-content {
+      padding: 1rem;
+      border-radius: 12px;
+      
+      .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-number {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+      
+      .stat-label {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.filters-card {
+  margin: 1rem;
+  
+  .results-info {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--ion-color-light);
+    text-align: center;
+    
+    ion-text {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.ticket-item {
+  margin: 0 1rem 1rem;
+  
+  ion-card {
+    margin: 0;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+    
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      
+      .category-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        
+        &.category-golden {
+          background: rgba(251, 191, 36, 0.2);
+          color: #f59e0b;
+        }
+        
+        &.category-silver {
+          background: rgba(156, 163, 175, 0.2);
+          color: #6b7280;
+        }
+        
+        &.category-bronze {
+          background: rgba(234, 88, 12, 0.2);
+          color: #ea580c;
+        }
+      }
+      
+      .ticket-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        
+        &.status-active {
+          background: rgba(22, 163, 74, 0.2);
+          color: #16a34a;
+        }
+        
+        &.status-used {
+          background: rgba(220, 38, 38, 0.2);
+          color: #dc2626;
+        }
+      }
+    }
+    
+    ion-card-subtitle {
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+    
+    .product-info, .ticket-details, .order-info {
+      margin-bottom: 1rem;
+      
+      h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--ion-color-primary);
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.25rem;
+        border-bottom: 1px solid var(--ion-color-light);
+      }
+      
+      ion-item {
+        --padding-start: 0;
+        
+        ion-label {
+          h3 {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+          }
+          
+          p {
+            font-size: 0.75rem;
+            color: var(--ion-color-medium);
+            margin: 0;
+          }
+        }
+      }
+      
+      .verification-code {
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+    }
+  }
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  
+  .page-numbers {
+    display: flex;
+    gap: 0.25rem;
+    
+    ion-button {
+      --border-radius: 50%;
+      --padding-start: 8px;
+      --padding-end: 8px;
+      min-width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// RTL support for Arabic text
+[dir="rtl"] {
+  .ticket-header {
+    text-align: right;
+  }
+  
+  .pagination-controls {
+    direction: ltr; // Keep pagination controls LTR for consistency
+  }
+}

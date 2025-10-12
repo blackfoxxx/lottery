@@ -1,0 +1,417 @@
+<div class="iraqi-ecommerce-app">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-iraqi-green to-iraqi-red text-white py-4">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center">
+        <div class="logo-section">
+          <h1 class="text-2xl font-bold">🛒 Bil Khair</h1>
+          <div class="arabic-text text-sm">
+            <span>بالخير - منصة التجارة الإلكترونية واليانصيب</span>
+          </div>
+        </div>
+        <div class="flex space-x-4">
+          <button 
+            class="btn-secondary" 
+            (click)="showCart()"
+            title="View shopping cart">
+            🛒 Cart ({{ cartItems() }})
+          </button>
+          <button 
+            *ngIf="!isLoggedIn()" 
+            class="btn-primary" 
+            (click)="showAuth()"
+            title="Login or register">
+            👤 Login
+          </button>
+          <div *ngIf="isLoggedIn()" class="flex space-x-2">
+            <span class="text-sm self-center">Welcome, {{ getUserName() }}!</span>
+            <button 
+              class="btn-secondary text-sm" 
+              (click)="logout()"
+              title="Logout">
+              🚪 Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="bg-gray-100 py-2">
+    <div class="container mx-auto px-4">
+      <div class="flex space-x-6">
+        <a 
+          (click)="navigateToSection('home')" 
+          class="text-gray-700 hover:text-iraqi-green cursor-pointer"
+          [class.text-iraqi-green]="currentSection() === 'home'">
+          🏠 Home
+        </a>
+        <a 
+          (click)="navigateToSection('products')" 
+          class="text-gray-700 hover:text-iraqi-green cursor-pointer"
+          [class.text-iraqi-green]="currentSection() === 'products'">
+          📱 Electronics
+        </a>
+        <a 
+          (click)="navigateToSection('lottery')" 
+          class="text-gray-700 hover:text-iraqi-green cursor-pointer"
+          [class.text-iraqi-green]="currentSection() === 'lottery'">
+          🎯 Lottery
+        </a>
+        <a 
+          (click)="navigateToSection('prizes')" 
+          class="text-gray-700 hover:text-iraqi-green cursor-pointer"
+          [class.text-iraqi-green]="currentSection() === 'prizes'">
+          🏆 Prizes
+        </a>
+        <a 
+          (click)="navigateToSection('results')" 
+          class="text-gray-700 hover:text-iraqi-green cursor-pointer"
+          [class.text-iraqi-green]="currentSection() === 'results'">
+          📊 Results
+        </a>
+        <a 
+          (click)="navigateToSection('about')" 
+          class="text-gray-700 hover:text-iraqi-green cursor-pointer"
+          [class.text-iraqi-green]="currentSection() === 'about'">
+          ℹ️ About
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="bg-gray-50 min-h-screen">
+    <!-- Hero Section -->
+    <section id="home" class="bg-white py-12">
+      <div class="container mx-auto px-4">
+        <!-- Platform Introduction -->
+        <div class="text-center mb-12">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">🎉 Welcome to Bil Khair - Iraq's Premier E-commerce & Lottery Platform</h2>
+          <p class="text-xl text-gray-600 mb-6">Shop premium electronics and automatically get FREE lottery tickets with every purchase!</p>
+          
+          <!-- Platform Features -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8">
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg">
+              <div class="text-3xl mb-3">🛒</div>
+              <h3 class="font-bold text-gray-800 mb-2">Premium Electronics</h3>
+              <p class="text-sm text-gray-600">Latest smartphones, laptops, and gadgets with warranty</p>
+            </div>
+            <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg">
+              <div class="text-3xl mb-3">🎟️</div>
+              <h3 class="font-bold text-gray-800 mb-2">FREE Lottery Tickets</h3>
+              <p class="text-sm text-gray-600">Get 100 lottery tickets with every product purchase</p>
+            </div>
+            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-lg">
+              <div class="text-3xl mb-3">🏆</div>
+              <h3 class="font-bold text-gray-800 mb-2">Daily Prizes</h3>
+              <p class="text-sm text-gray-600">Win amazing electronics and cash prizes daily</p>
+            </div>
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg">
+              <div class="text-3xl mb-3">🔒</div>
+              <h3 class="font-bold text-gray-800 mb-2">Secure & Fair</h3>
+              <p class="text-sm text-gray-600">Transparent draws with guaranteed winners</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lottery Category Selection -->
+        <div class="text-center mb-12" *ngIf="currentSection() === 'home'">
+          <h3 class="text-3xl font-bold text-gray-900 mb-6">🎯 Choose Your Lottery Category</h3>
+          <p class="text-lg text-gray-600 mb-8">Select a lottery category to view available products and start your journey!</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <!-- Golden Category -->
+            <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white p-8 rounded-xl shadow-lg cursor-pointer transform transition hover:scale-105"
+                 (click)="selectLotteryCategory('golden')">
+              <div class="text-6xl mb-4">🥇</div>
+              <h4 class="text-2xl font-bold mb-3">Golden Lottery</h4>
+              <p class="text-yellow-100 mb-4">Premium products worth 1,500,000+ IQD</p>
+              <div class="text-sm text-yellow-100 mb-4">
+                <div>• iPhone 15 Pro Max</div>
+                <div>• MacBook Pro 16"</div>
+                <div>• High-end electronics</div>
+              </div>
+              <div class="bg-white/20 rounded-lg p-3">
+                <div class="text-sm">Current Prize Pool</div>
+                <div class="text-xl font-bold">5,500,000 IQD</div>
+              </div>
+            </div>
+
+            <!-- Silver Category -->
+            <div class="bg-gradient-to-br from-gray-400 to-gray-600 text-white p-8 rounded-xl shadow-lg cursor-pointer transform transition hover:scale-105"
+                 (click)="selectLotteryCategory('silver')">
+              <div class="text-6xl mb-4">🥈</div>
+              <h4 class="text-2xl font-bold mb-3">Silver Lottery</h4>
+              <p class="text-gray-100 mb-4">Quality products worth 500,000-1,499,999 IQD</p>
+              <div class="text-sm text-gray-100 mb-4">
+                <div>• PlayStation 5</div>
+                <div>• iPad Pro</div>
+                <div>• Gaming accessories</div>
+              </div>
+              <div class="bg-white/20 rounded-lg p-3">
+                <div class="text-sm">Current Prize Pool</div>
+                <div class="text-xl font-bold">2,800,000 IQD</div>
+              </div>
+            </div>
+
+            <!-- Bronze Category -->
+            <div class="bg-gradient-to-br from-orange-400 to-orange-600 text-white p-8 rounded-xl shadow-lg cursor-pointer transform transition hover:scale-105"
+                 (click)="selectLotteryCategory('bronze')">
+              <div class="text-6xl mb-4">🥉</div>
+              <h4 class="text-2xl font-bold mb-3">Bronze Lottery</h4>
+              <p class="text-orange-100 mb-4">Essential products worth 100,000-499,999 IQD</p>
+              <div class="text-sm text-orange-100 mb-4">
+                <div>• AirPods Pro</div>
+                <div>• Gaming monitors</div>
+                <div>• Accessories</div>
+              </div>
+              <div class="bg-white/20 rounded-lg p-3">
+                <div class="text-sm">Current Prize Pool</div>
+                <div class="text-xl font-bold">1,200,000 IQD</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Getting Started Guide -->
+          <div class="mt-12 bg-blue-50 rounded-xl p-8 max-w-4xl mx-auto">
+            <h4 class="text-2xl font-bold text-gray-900 mb-4">🚀 How It Works</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="text-center">
+                <div class="bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">1</div>
+                <h5 class="font-bold text-gray-800 mb-2">Choose Category</h5>
+                <p class="text-sm text-gray-600">Select Golden, Silver, or Bronze lottery category</p>
+              </div>
+              <div class="text-center">
+                <div class="bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">2</div>
+                <h5 class="font-bold text-gray-800 mb-2">Buy Product</h5>
+                <p class="text-sm text-gray-600">Purchase any product to get 100 FREE lottery tickets</p>
+              </div>
+              <div class="text-center">
+                <div class="bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">3</div>
+                <h5 class="font-bold text-gray-800 mb-2">Win Prizes</h5>
+                <p class="text-sm text-gray-600">Participate in daily draws and win amazing prizes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Draw Countdown -->
+    <section id="lottery" class="bg-iraqi-red text-white py-8">
+      <div class="container mx-auto px-4 text-center">
+        <h3 class="text-2xl font-bold mb-4">🔴 LIVE: Next Draw in 2:45:30</h3>
+        <p class="text-lg">Golden Prize: iPhone 15 Pro Max | Silver Prize: Samsung Galaxy S24 | Bronze Prize: 100,000 IQD</p>
+      </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-12">
+      <div class="container mx-auto px-4">
+        <!-- Admin Dashboard (only shown to admins) -->
+        <div *ngIf="isAdmin()" id="admin">
+          <app-admin></app-admin>
+        </div>
+        
+        <!-- Authentication Section -->
+        <div id="auth">
+          <app-auth></app-auth>
+        </div>
+        
+        <!-- User Tickets Section -->
+        <app-tickets></app-tickets>
+        
+        <!-- Category-based Product Display -->
+        <div *ngIf="selectedCategory()">
+          <!-- Category Header -->
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center bg-white rounded-full px-6 py-3 shadow-lg mb-4">
+              <button 
+                class="text-gray-600 hover:text-gray-800 mr-4" 
+                (click)="clearCategorySelection()"
+                title="Back to categories">
+                ← Back to Categories
+              </button>
+              <span class="text-2xl mr-3">
+                <ng-container [ngSwitch]="selectedCategory()">
+                  <span *ngSwitchCase="'golden'">🥇</span>
+                  <span *ngSwitchCase="'silver'">🥈</span>
+                  <span *ngSwitchCase="'bronze'">🥉</span>
+                </ng-container>
+              </span>
+              <h3 class="text-2xl font-bold capitalize">{{ selectedCategory() }} Lottery Products</h3>
+            </div>
+            <p class="text-gray-600">Purchase any product below to get 100 FREE {{ selectedCategory() }} lottery tickets!</p>
+          </div>
+
+          <!-- Filtered Products -->
+          <app-product-list [filterCategory]="selectedCategory()"></app-product-list>
+        </div>
+
+        <!-- All Products (when no category selected and on products page) -->
+        <div *ngIf="!selectedCategory() && currentSection() === 'products'">
+          <h3 class="text-3xl font-bold text-center mb-8">🛍️ All Electronics</h3>
+          <div class="text-center mb-8">
+            <p class="text-gray-600 mb-4">Browse all products or select a specific lottery category:</p>
+            <div class="space-x-4">
+              <button 
+                class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600"
+                (click)="selectLotteryCategory('golden')">
+                🥇 Golden Products
+              </button>
+              <button 
+                class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+                (click)="selectLotteryCategory('silver')">
+                🥈 Silver Products
+              </button>
+              <button 
+                class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600"
+                (click)="selectLotteryCategory('bronze')">
+                🥉 Bronze Products
+              </button>
+            </div>
+          </div>
+          <app-product-list></app-product-list>
+        </div>
+      </div>
+    </section>
+
+    <!-- Current Lottery Stats -->
+    <section id="prizes" class="bg-white py-12">
+      <div class="container mx-auto px-4">
+        <h3 class="text-3xl font-bold text-center mb-8">🎲 Current Lottery Status</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="text-center bg-yellow-50 p-6 rounded-lg">
+            <div class="text-4xl font-bold text-yellow-600">🥇</div>
+            <h4 class="text-xl font-bold mt-2">Golden Tickets</h4>
+            <p class="text-3xl font-bold text-yellow-600">247</p>
+            <p class="text-gray-600">Sold this round</p>
+          </div>
+          <div class="text-center bg-gray-50 p-6 rounded-lg">
+            <div class="text-4xl font-bold text-gray-600">🥈</div>
+            <h4 class="text-xl font-bold mt-2">Silver Tickets</h4>
+            <p class="text-3xl font-bold text-gray-600">1,532</p>
+            <p class="text-gray-600">Sold this round</p>
+          </div>
+          <div class="text-center bg-orange-50 p-6 rounded-lg">
+            <div class="text-4xl font-bold text-orange-600">🥉</div>
+            <h4 class="text-xl font-bold mt-2">Bronze Tickets</h4>
+            <p class="text-3xl font-bold text-orange-600">8,921</p>
+            <p class="text-gray-600">Sold this round</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="bg-gray-100 py-12">
+      <div class="container mx-auto px-4">
+        <h3 class="text-3xl font-bold text-center mb-8">📊 Recent Lottery Results</h3>
+        <div class="bg-white rounded-lg p-6 shadow-md">
+          <div class="text-center">
+            <h4 class="text-xl font-bold mb-4">Last Draw - October 4, 2024</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-yellow-50 p-4 rounded">
+                <h5 class="font-bold text-yellow-600">🥇 Golden Winner</h5>
+                <p class="text-lg">Ticket: G-XYZ123</p>
+                <p class="text-sm text-gray-600">Prize: iPhone 15 Pro Max</p>
+              </div>
+              <div class="bg-gray-50 p-4 rounded">
+                <h5 class="font-bold text-gray-600">🥈 Silver Winner</h5>
+                <p class="text-lg">Ticket: S-ABC456</p>
+                <p class="text-sm text-gray-600">Prize: Samsung Galaxy S24</p>
+              </div>
+              <div class="bg-orange-50 p-4 rounded">
+                <h5 class="font-bold text-orange-600">🥉 Bronze Winner</h5>
+                <p class="text-lg">Ticket: B-DEF789</p>
+                <p class="text-sm text-gray-600">Prize: 100,000 IQD</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="bg-white py-12">
+      <div class="container mx-auto px-4">
+        <h3 class="text-3xl font-bold text-center mb-8">ℹ️ About Bil Khair</h3>
+        <div class="max-w-4xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-xl font-bold mb-4">🛒 E-commerce Platform</h4>
+              <p class="text-gray-600 mb-4">
+                We offer the latest electronics and gadgets with secure payment options and fast delivery across Iraq.
+                Our platform ensures authentic products with warranties and excellent customer support.
+              </p>
+              <ul class="text-gray-600 space-y-2">
+                <li>✅ Authentic electronics</li>
+                <li>✅ Secure payments</li>
+                <li>✅ Fast delivery</li>
+                <li>✅ 24/7 support</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xl font-bold mb-4">🎲 Lottery System</h4>
+              <p class="text-gray-600 mb-4">
+                Our fair and transparent lottery system gives you chances to win amazing prizes daily.
+                Every purchase automatically enters you into our lottery draws with premium electronics as prizes.
+              </p>
+              <ul class="text-gray-600 space-y-2">
+                <li>🎯 Daily draws</li>
+                <li>🏆 Premium prizes</li>
+                <li>📱 Instant tickets</li>
+                <li>🔒 Secure & fair</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div>
+          <h4 class="text-lg font-bold mb-4">Bil Khair</h4>
+          <p class="text-gray-400">Your trusted platform for electronics and lottery games in Iraq.</p>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a (click)="navigateToSection('products')" class="hover:text-white cursor-pointer">Products</a></li>
+            <li><a (click)="navigateToSection('lottery')" class="hover:text-white cursor-pointer">Lottery</a></li>
+            <li><a (click)="navigateToSection('results')" class="hover:text-white cursor-pointer">Results</a></li>
+            <li><a (click)="navigateToSection('about')" class="hover:text-white cursor-pointer">Support</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-4">Legal</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white" (click)="showTermsOfService()">Terms of Service</a></li>
+            <li><a href="#" class="hover:text-white" (click)="showPrivacyPolicy()">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-white" (click)="showLotteryRules()">Lottery Rules</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-4">Contact</h4>
+          <p class="text-gray-400">📧 support@iraqi-ecommerce.iq</p>
+          <p class="text-gray-400">📞 +964 123 456 789</p>
+          <p class="text-gray-400">🏢 Baghdad, Iraq</p>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2025 Bil Khair Platform. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Professional Notification System -->
+  <app-notifications></app-notifications>
+</div>
+
+<router-outlet></router-outlet>

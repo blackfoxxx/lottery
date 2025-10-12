@@ -1,0 +1,7 @@
+{
+  "name": "iraqi-lottery-mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,1061 @@
+<div class="admin-dashboard" *ngIf="isAdmin()" style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+  <!-- Header -->
+  <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; color: #1f2937; margin: 0;">
+      🛠️ Admin Dashboard
+    </h2>
+  </div>
+
+  <!-- Navigation -->
+  <div style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <button 
+        (click)="navigateToSection('dashboard')"
+        [style.background-color]="currentSection === 'dashboard' ? '#2563eb' : '#f3f4f6'"
+        [style.color]="currentSection === 'dashboard' ? 'white' : '#374151'"
+        style="padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        📊 Dashboard
+      </button>
+      <button 
+        (click)="navigateToSection('products')"
+        [style.background-color]="currentSection === 'products' ? '#2563eb' : '#f3f4f6'"
+        [style.color]="currentSection === 'products' ? 'white' : '#374151'"
+        style="padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        📱 Products
+      </button>
+      <button 
+        (click)="navigateToSection('users')"
+        [style.background-color]="currentSection === 'users' ? '#2563eb' : '#f3f4f6'"
+        [style.color]="currentSection === 'users' ? 'white' : '#374151'"
+        style="padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        👥 Users
+      </button>
+      <button 
+        (click)="navigateToSection('orders')"
+        [style.background-color]="currentSection === 'orders' ? '#2563eb' : '#f3f4f6'"
+        [style.color]="currentSection === 'orders' ? 'white' : '#374151'"
+        style="padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        🛒 Orders
+      </button>
+      <button 
+        (click)="navigateToSection('tickets')"
+        [style.background-color]="currentSection === 'tickets' ? '#2563eb' : '#f3f4f6'"
+        [style.color]="currentSection === 'tickets' ? 'white' : '#374151'"
+        style="padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        🎟️ Tickets
+      </button>
+      <button 
+        (click)="navigateToSection('lottery')"
+        [style.background-color]="currentSection === 'lottery' ? '#2563eb' : '#f3f4f6'"
+        [style.color]="currentSection === 'lottery' ? 'white' : '#374151'"
+        style="padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        🎲 Lottery
+      </button>
+      <button 
+        (click)="navigateToSection('settings')"
+        [style.background-color]="currentSection === 'settings' ? '#2563eb' : '#f3f4f6'"
+        [style.color]="currentSection === 'settings' ? 'white' : '#374151'"
+        style="padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        ⚙️ System Settings
+      </button>
+    </div>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div *ngIf="currentSection === 'dashboard'" style="padding: 1.5rem;">
+    <div *ngIf="loading" style="text-align: center; padding: 2rem;">
+      <p>⏳ Loading dashboard statistics...</p>
+    </div>
+    
+    <div *ngIf="!loading && dashboardStats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+      <!-- Users Stats -->
+      <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+        <h4 style="font-size: 1.125rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">👥 Users</h4>
+        <div style="margin-bottom: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Total:</span>
+            <span style="font-weight: 600;">{{ dashboardStats.users?.total || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>New Today:</span>
+            <span style="font-weight: 600; color: #16a34a;">{{ dashboardStats.users?.new_today || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Admins:</span>
+            <span style="font-weight: 600; color: #dc2626;">{{ dashboardStats.users?.admins || 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Stats -->
+      <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+        <h4 style="font-size: 1.125rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">📱 Products</h4>
+        <div style="space-y: 0.5rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Total:</span>
+            <span style="font-weight: 600;">{{ dashboardStats.products?.total || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>In Stock:</span>
+            <span style="font-weight: 600; color: #16a34a;">{{ dashboardStats.products?.in_stock || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Out of Stock:</span>
+            <span style="font-weight: 600; color: #dc2626;">{{ dashboardStats.products?.out_of_stock || 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Stats -->
+      <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+        <h4 style="font-size: 1.125rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">🛒 Orders</h4>
+        <div style="space-y: 0.5rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Total:</span>
+            <span style="font-weight: 600;">{{ dashboardStats.orders?.total || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Today:</span>
+            <span style="font-weight: 600; color: #16a34a;">{{ dashboardStats.orders?.today || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Revenue:</span>
+            <span style="font-weight: 600; color: #2563eb;">{{ formatPrice(dashboardStats.orders?.total_revenue || 0) }} IQD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tickets Stats -->
+      <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+        <h4 style="font-size: 1.125rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">🎟️ Tickets</h4>
+        <div style="space-y: 0.5rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Total:</span>
+            <span style="font-weight: 600;">{{ dashboardStats.tickets?.total || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>🥇 Golden:</span>
+            <span style="font-weight: 600; color: #fbbf24;">{{ dashboardStats.tickets?.golden || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>🥈 Silver:</span>
+            <span style="font-weight: 600; color: #9ca3af;">{{ dashboardStats.tickets?.silver || 0 }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>🥉 Bronze:</span>
+            <span style="font-weight: 600; color: #ea580c;">{{ dashboardStats.tickets?.bronze || 0 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div *ngIf="!loading && dashboardStats.recent_activity" style="margin-top: 2rem;">
+      <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">📈 Recent Activity</h4>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+        <!-- Recent Orders -->
+        <div style="background: #f8fafc; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+          <h5 style="font-weight: 600; margin-bottom: 0.75rem;">🛒 Recent Orders</h5>
+          <div style="space-y: 0.5rem;">
+            <div *ngFor="let order of dashboardStats.recent_activity.recent_orders" 
+                 style="font-size: 0.875rem; display: flex; justify-content: space-between;">
+              <span>{{ order.user.name }}</span>
+              <span style="color: #16a34a;">{{ formatPrice(order.total_price) }} IQD</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div style="background: #f8fafc; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+          <h5 style="font-weight: 600; margin-bottom: 0.75rem;">👥 Recent Users</h5>
+          <div style="space-y: 0.5rem;">
+            <div *ngFor="let user of dashboardStats.recent_activity.recent_users" 
+                 style="font-size: 0.875rem;">
+              {{ user.name }} ({{ user.email }})
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Section -->
+  <div *ngIf="currentSection === 'products'" style="padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin: 0;">📱 Products Management</h4>
+      <button 
+        (click)="showAddProductForm()"
+        style="padding: 0.5rem 1rem; background: #16a34a; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        ➕ Add Product
+      </button>
+    </div>
+
+    <!-- Product Form Modal -->
+    <div *ngIf="showProductForm" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+      <div style="background: white; padding: 2rem; border-radius: 0.5rem; max-width: 500px; width: 90%; max-height: 90%; overflow-y: auto;">
+        <h5 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">
+          {{ editingProduct ? 'Edit Product' : 'Add New Product' }}
+        </h5>
+        
+        <form (ngSubmit)="saveProduct()">
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Name:</label>
+            <input 
+              [(ngModel)]="productForm.name" 
+              name="name"
+              required
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Description:</label>
+            <textarea 
+              [(ngModel)]="productForm.description" 
+              name="description"
+              rows="3"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"></textarea>
+          </div>
+
+          <!-- Image Upload Section -->
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Product Image:</label>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <input 
+                type="file" 
+                #fileInput
+                (change)="onImageSelected($event)"
+                accept="image/*"
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+              
+              <!-- Alternative: Image URL -->
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="color: #6b7280; font-size: 0.875rem;">OR</span>
+                <input 
+                  [(ngModel)]="productForm.image_url" 
+                  name="image_url"
+                  type="url"
+                  placeholder="Enter image URL"
+                  style="flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+              </div>
+
+              <!-- Image Preview -->
+              <div *ngIf="imagePreview || productForm.image_url" style="margin-top: 0.5rem;">
+                <img 
+                  [src]="imagePreview || getFullImageUrl(productForm.image_url)" 
+                  alt="Product Preview"
+                  style="max-width: 200px; max-height: 200px; object-fit: cover; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Price (IQD):</label>
+              <input 
+                [(ngModel)]="productForm.price" 
+                name="price"
+                type="number"
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Free Tickets:</label>
+              <input 
+                [(ngModel)]="productForm.ticket_count" 
+                name="ticket_count"
+                type="number"
+                min="1"
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Ticket Category:</label>
+              <select 
+                [(ngModel)]="productForm.ticket_category" 
+                name="ticket_category"
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+                <option value="bronze">🥉 Bronze</option>
+                <option value="silver">🥈 Silver</option>
+                <option value="golden">🥇 Golden</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">In Stock:</label>
+              <select 
+                [(ngModel)]="productForm.in_stock" 
+                name="in_stock"
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+                <option [value]="true">✅ Yes</option>
+                <option [value]="false">❌ No</option>
+              </select>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 1rem;">
+            <button 
+              type="submit"
+              style="flex: 1; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+              {{ editingProduct ? 'Update' : 'Create' }} Product
+            </button>
+            <button 
+              type="button"
+              (click)="showProductForm = false"
+              style="flex: 1; padding: 0.75rem; background: #6b7280; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Products List -->
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f8fafc;">
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Image</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Name</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Price</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Tickets</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Category</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Stock</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of products" style="border-bottom: 1px solid #f3f4f6;">
+            <td style="padding: 0.75rem;">
+              <img 
+                *ngIf="product.image_url" 
+                [src]="getFullImageUrl(product.image_url)" 
+                [alt]="product.name"
+                style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.25rem; border: 1px solid #e5e7eb;">
+              <div 
+                *ngIf="!product.image_url" 
+                style="width: 50px; height: 50px; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 0.75rem;">
+                No Image
+              </div>
+            </td>
+            <td style="padding: 0.75rem;">{{ product.name }}</td>
+            <td style="padding: 0.75rem;">{{ formatPrice(product.price) }} IQD</td>
+            <td style="padding: 0.75rem;">{{ product.ticket_count }}</td>
+            <td style="padding: 0.75rem;">
+              <span *ngIf="product.ticket_category === 'golden'" style="color: #fbbf24;">🥇 Golden</span>
+              <span *ngIf="product.ticket_category === 'silver'" style="color: #9ca3af;">🥈 Silver</span>
+              <span *ngIf="product.ticket_category === 'bronze'" style="color: #ea580c;">🥉 Bronze</span>
+            </td>
+            <td style="padding: 0.75rem;">
+              <span [style.color]="product.in_stock ? '#16a34a' : '#dc2626'">
+                {{ product.in_stock ? '✅ In Stock' : '❌ Out' }}
+              </span>
+            </td>
+            <td style="padding: 0.75rem;">
+              <div style="display: flex; gap: 0.5rem;">
+                <button 
+                  (click)="editProduct(product)"
+                  style="padding: 0.25rem 0.5rem; background: #2563eb; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;">
+                  ✏️ Edit
+                </button>
+                <button 
+                  (click)="deleteProduct(product)"
+                  style="padding: 0.25rem 0.5rem; background: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.875rem;">
+                  🗑️ Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Users Section -->
+  <div *ngIf="currentSection === 'users'" style="padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">👥 Users Management</h4>
+      <button 
+        (click)="loadUsers()"
+        style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+        🔄 Refresh
+      </button>
+    </div>
+    
+    <div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: white;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+          <tr>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              User Info
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Role
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              🎟️ Total Tickets
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              📊 Ticket Breakdown
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Joined
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users; let i = index" 
+              [style.background]="i % 2 === 0 ? 'white' : '#fafafa'"
+              style="border-bottom: 1px solid #f3f4f6;">
+            
+            <!-- User Info -->
+            <td style="padding: 1rem;">
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <div style="font-weight: 600; color: #1f2937;">
+                  {{user.name}}
+                </div>
+                <div style="font-size: 0.875rem; color: #6b7280;">
+                  {{user.email}}
+                </div>
+              </div>
+            </td>
+
+            <!-- Role -->
+            <td style="padding: 1rem;">
+              <span [style.background]="user.is_admin ? '#fef2f2' : '#f0fdf4'"
+                    [style.color]="user.is_admin ? '#dc2626' : '#166534'"
+                    style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">
+                {{ user.is_admin ? '👑 Admin' : '👤 User' }}
+              </span>
+            </td>
+
+            <!-- Total Tickets -->
+            <td style="padding: 1rem; text-align: center;">
+              <div style="font-size: 1.25rem; font-weight: 700; color: #2563eb;">
+                {{getUserTicketCount(user.id)}}
+              </div>
+              <div style="font-size: 0.75rem; color: #6b7280;">
+                {{getUserActiveTicketCount(user.id)}} active
+              </div>
+            </td>
+
+            <!-- Ticket Breakdown -->
+            <td style="padding: 1rem; text-align: center;">
+              <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 0.25rem;">
+                  <span style="font-size: 0.875rem;">🥇</span>
+                  <span style="font-size: 0.75rem; font-weight: 600; color: #fbbf24;">{{getUserTicketCountByCategory(user.id, 'golden')}}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.25rem;">
+                  <span style="font-size: 0.875rem;">🥈</span>
+                  <span style="font-size: 0.75rem; font-weight: 600; color: #9ca3af;">{{getUserTicketCountByCategory(user.id, 'silver')}}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.25rem;">
+                  <span style="font-size: 0.875rem;">🥉</span>
+                  <span style="font-size: 0.75rem; font-weight: 600; color: #ea580c;">{{getUserTicketCountByCategory(user.id, 'bronze')}}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Joined Date -->
+            <td style="padding: 1rem;">
+              <div style="font-size: 0.875rem; color: #6b7280;">
+                {{formatDate(user.created_at)}}
+              </div>
+            </td>
+
+            <!-- Actions -->
+            <td style="padding: 1rem; text-align: center;">
+              <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                <button 
+                  (click)="viewUserTickets(user)"
+                  style="padding: 0.25rem 0.5rem; background: #2563eb; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                  View Tickets
+                </button>
+                <button 
+                  (click)="viewUserDetails(user)"
+                  style="padding: 0.25rem 0.5rem; background: #16a34a; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                  Details
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Orders Section -->
+  <div *ngIf="currentSection === 'orders'" style="padding: 1.5rem;">
+    <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">🛒 Orders Management</h4>
+    
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f8fafc;">
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Order ID</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Customer</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Product</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Total</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Status</th>
+            <th style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb;">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders" style="border-bottom: 1px solid #f3f4f6;">
+            <td style="padding: 0.75rem;">#{{ order.id }}</td>
+            <td style="padding: 0.75rem;">{{ order.user.name }}</td>
+            <td style="padding: 0.75rem;">{{ order.product.name }}</td>
+            <td style="padding: 0.75rem;">{{ formatPrice(order.total_price) }} IQD</td>
+            <td style="padding: 0.75rem;">
+              <span [style.color]="order.status === 'completed' ? '#16a34a' : '#fbbf24'">
+                {{ order.status === 'completed' ? '✅ Completed' : '⏳ Pending' }}
+              </span>
+            </td>
+            <td style="padding: 0.75rem;">{{ formatDate(order.created_at) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tickets Section -->
+  <div *ngIf="currentSection === 'tickets'" style="padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">🎟️ Ticket Allocation & Usage Tracking</h4>
+      <button 
+        (click)="loadTickets()"
+        style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+        🔄 Refresh
+      </button>
+    </div>
+
+    <!-- Ticket Statistics Summary -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+      <div style="background: linear-gradient(135deg, #fbbf24, #f59e0b); padding: 1.5rem; border-radius: 0.5rem; text-align: center; color: white;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥇</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{getTicketCountByCategory('golden')}}</div>
+        <div style="font-size: 0.875rem; opacity: 0.9;">Golden Tickets</div>
+        <div style="font-size: 0.75rem; opacity: 0.8;">{{getUsedTicketCountByCategory('golden')}} used</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #9ca3af, #6b7280); padding: 1.5rem; border-radius: 0.5rem; text-align: center; color: white;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥈</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{getTicketCountByCategory('silver')}}</div>
+        <div style="font-size: 0.875rem; opacity: 0.9;">Silver Tickets</div>
+        <div style="font-size: 0.75rem; opacity: 0.8;">{{getUsedTicketCountByCategory('silver')}} used</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #ea580c, #dc2626); padding: 1.5rem; border-radius: 0.5rem; text-align: center; color: white;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥉</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{getTicketCountByCategory('bronze')}}</div>
+        <div style="font-size: 0.875rem; opacity: 0.9;">Bronze Tickets</div>
+        <div style="font-size: 0.75rem; opacity: 0.8;">{{getUsedTicketCountByCategory('bronze')}} used</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #16a34a, #15803d); padding: 1.5rem; border-radius: 0.5rem; text-align: center; color: white;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎫</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{getActiveTicketsCount()}}</div>
+        <div style="font-size: 0.875rem; opacity: 0.9;">Active Tickets</div>
+        <div style="font-size: 0.75rem; opacity: 0.8;">{{getUsedTicketsCount()}} used total</div>
+      </div>
+    </div>
+
+    <!-- Advanced Filters -->
+    <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem; border: 1px solid #e5e7eb;">
+      <h5 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">🔍 Filter Tickets</h5>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div>
+          <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Category:</label>
+          <select 
+            [(ngModel)]="ticketFilters.category"
+            (change)="applyTicketFilters()"
+            style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            <option value="">All Categories</option>
+            <option value="golden">🥇 Golden</option>
+            <option value="silver">🥈 Silver</option>
+            <option value="bronze">🥉 Bronze</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Status:</label>
+          <select 
+            [(ngModel)]="ticketFilters.status"
+            (change)="applyTicketFilters()"
+            style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            <option value="">All Status</option>
+            <option value="active">✅ Active</option>
+            <option value="used">🎯 Used</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">User Search:</label>
+          <input 
+            [(ngModel)]="ticketFilters.userSearch"
+            (input)="applyTicketFilters()"
+            placeholder="Search by user name or email..."
+            style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Ticket Search:</label>
+          <input 
+            [(ngModel)]="ticketFilters.ticketSearch"
+            (input)="applyTicketFilters()"
+            placeholder="Search by ticket number..."
+            style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+      </div>
+      <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <div style="color: #6b7280; font-size: 0.875rem;">
+          Showing <strong>{{filteredTickets.length}}</strong> of <strong>{{tickets.length}}</strong> tickets
+        </div>
+        <button 
+          (click)="clearTicketFilters()"
+          style="padding: 0.25rem 0.75rem; background: #6b7280; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem;">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+    
+    <!-- Enhanced Tickets Table with User Allocation -->
+    <div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: white;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+          <tr>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Category
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Ticket Number
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              🧑‍💼 Allocated User
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              📦 Product Purchased
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Status
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Generated Date
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Verification Code
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of filteredTickets; let i = index" 
+              [style.background]="i % 2 === 0 ? 'white' : '#fafafa'"
+              style="border-bottom: 1px solid #f3f4f6;">
+            
+            <!-- Category -->
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.25rem;">{{getCategoryIcon(ticket.category)}}</span>
+                <span style="font-weight: 500; text-transform: capitalize; color: {{getCategoryColor(ticket.category)}};">
+                  {{ticket.category}}
+                </span>
+              </div>
+            </td>
+
+            <!-- Ticket Number -->
+            <td style="padding: 1rem;">
+              <div style="font-family: monospace; font-weight: 600; color: #1f2937; font-size: 0.875rem;">
+                {{ticket.ticket_number}}
+              </div>
+            </td>
+
+            <!-- Allocated User -->
+            <td style="padding: 1rem;">
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <div style="font-weight: 600; color: #1f2937;">
+                  {{ticket.user.name}}
+                </div>
+                <div style="font-size: 0.875rem; color: #6b7280;">
+                  {{ticket.user.email}}
+                </div>
+                <div style="font-size: 0.75rem; color: #9ca3af;">
+                  Total tickets: {{getUserTicketCount(ticket.user.id)}}
+                </div>
+              </div>
+            </td>
+
+            <!-- Product Purchased -->
+            <td style="padding: 1rem;">
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <div style="font-weight: 500; color: #1f2937;">
+                  {{ticket.product.name}}
+                </div>
+                <div style="font-size: 0.875rem; color: #16a34a; font-weight: 600;">
+                  {{formatPrice(ticket.product.price)}} IQD
+                </div>
+              </div>
+            </td>
+
+            <!-- Status -->
+            <td style="padding: 1rem; text-align: center;">
+              <span *ngIf="!ticket.is_used" 
+                    style="background: #dcfce7; color: #166534; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">
+                ✅ Active
+              </span>
+              <span *ngIf="ticket.is_used" 
+                    style="background: #fef2f2; color: #dc2626; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">
+                🎯 Used
+              </span>
+            </td>
+
+            <!-- Generated Date -->
+            <td style="padding: 1rem;">
+              <div style="font-size: 0.875rem; color: #6b7280;">
+                {{formatDate(ticket.generated_at || ticket.created_at)}}
+              </div>
+            </td>
+
+            <!-- Verification Code -->
+            <td style="padding: 1rem;">
+              <div style="font-family: monospace; font-size: 0.75rem; color: #6b7280;">
+                <span *ngIf="ticket.verification_code">{{ticket.verification_code}}</span>
+                <span *ngIf="!ticket.verification_code" style="color: #9ca3af;">N/A</span>
+              </div>
+            </td>
+
+            <!-- Actions -->
+            <td style="padding: 1rem; text-align: center;">
+              <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                <button 
+                  *ngIf="!ticket.is_used"
+                  (click)="markTicketAsUsed(ticket)"
+                  style="padding: 0.25rem 0.5rem; background: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                  Mark Used
+                </button>
+                <button 
+                  (click)="viewTicketDetails(ticket)"
+                  style="padding: 0.25rem 0.5rem; background: #2563eb; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                  View Details
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Results State -->
+    <div *ngIf="filteredTickets.length === 0" style="text-align: center; padding: 3rem; color: #6b7280;">
+      <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+      <h5 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">No tickets found</h5>
+      <p style="margin-bottom: 1.5rem;">No tickets match your current filter criteria.</p>
+      <button 
+        (click)="clearTicketFilters()"
+        style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+        Clear All Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Lottery Draws Section -->
+  <div *ngIf="currentSection === 'lottery'" style="padding: 1.5rem;">
+    <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">🎲 Lottery Draws Management</h4>
+    
+    <div style="display: grid; gap: 1rem;">
+      <div *ngFor="let draw of lotteryDraws" style="border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+          <div>
+            <h5 style="font-size: 1.125rem; font-weight: 700; margin: 0 0 0.5rem 0;">{{ draw.name }}</h5>
+            <p style="color: #6b7280; margin: 0;">{{ draw.description }}</p>
+          </div>
+          <div style="text-align: right;">
+            <span style="padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;"
+                  [style.background-color]="draw.status === 'active' ? '#dcfce7' : draw.status === 'drawn' ? '#fee2e2' : '#fef3c7'"
+                  [style.color]="draw.status === 'active' ? '#16a34a' : draw.status === 'drawn' ? '#dc2626' : '#d97706'">
+              {{ draw.status | titlecase }}
+            </span>
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <span style="color: #6b7280; font-size: 0.875rem;">Draw Date:</span>
+            <p style="margin: 0; font-weight: 600;">{{ formatDate(draw.draw_date) }}</p>
+          </div>
+          <div>
+            <span style="color: #6b7280; font-size: 0.875rem;">Prize Pool:</span>
+            <p style="margin: 0; font-weight: 600; color: #16a34a;">{{ formatPrice(draw.prize_pool) }} IQD</p>
+          </div>
+          <div>
+            <span style="color: #6b7280; font-size: 0.875rem;">Total Tickets:</span>
+            <p style="margin: 0; font-weight: 600;">{{ draw.total_tickets }}</p>
+          </div>
+        </div>
+        
+        <div *ngIf="draw.status === 'active'" style="text-align: right;">
+          <button 
+            (click)="performDraw(draw)"
+            style="padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+            🎯 Perform Draw
+          </button>
+        </div>
+        
+        <div *ngIf="draw.winner_ticket_id" style="background: #f0fdf4; padding: 1rem; border-radius: 0.375rem; border-left: 4px solid #16a34a;">
+          <p style="margin: 0; font-weight: 600; color: #16a34a;">
+            🏆 Winner: Ticket #{{ draw.winner_ticket_id }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Settings Section -->
+  <div *ngIf="currentSection === 'settings'" style="padding: 1.5rem;">
+    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1.5rem;">⚙️ System Configuration</h3>
+    
+    <!-- Platform Settings -->
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+      <h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">🏷️ Platform Branding</h4>
+      
+      <!-- Platform Name -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Platform Name:</label>
+        <input 
+          [(ngModel)]="systemSettings.platformName" 
+          name="platformName"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+      </div>
+      
+      <!-- Platform Arabic Name -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Arabic Name:</label>
+        <input 
+          [(ngModel)]="systemSettings.platformNameArabic" 
+          name="platformNameArabic"
+          dir="rtl"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+      </div>
+      
+      <!-- Platform Description -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Platform Description:</label>
+        <textarea 
+          [(ngModel)]="systemSettings.platformDescription" 
+          name="platformDescription"
+          rows="3"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"></textarea>
+      </div>
+      
+      <!-- Contact Information -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Contact Email:</label>
+          <input 
+            [(ngModel)]="systemSettings.contactEmail" 
+            name="contactEmail"
+            type="email"
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Contact Phone:</label>
+          <input 
+            [(ngModel)]="systemSettings.contactPhone" 
+            name="contactPhone"
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+      </div>
+      
+      <button 
+        (click)="updateSystemSettings()"
+        style="background: #16a34a; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+        💾 Save Platform Settings
+      </button>
+    </div>
+    
+    <!-- Lottery Configuration -->
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+      <h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">🎯 Lottery Configuration</h4>
+      
+      <!-- Prize Pools -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🥇 Golden Prize Pool (IQD):</label>
+          <input 
+            [(ngModel)]="systemSettings.goldenPrizePool" 
+            name="goldenPrizePool"
+            type="number"
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🥈 Silver Prize Pool (IQD):</label>
+          <input 
+            [(ngModel)]="systemSettings.silverPrizePool" 
+            name="silverPrizePool"
+            type="number"
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🥉 Bronze Prize Pool (IQD):</label>
+          <input 
+            [(ngModel)]="systemSettings.bronzePrizePool" 
+            name="bronzePrizePool"
+            type="number"
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+      </div>
+      
+      <!-- Tickets Per Purchase -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎟️ Tickets Per Purchase:</label>
+        <input 
+          [(ngModel)]="systemSettings.ticketsPerPurchase" 
+          name="ticketsPerPurchase"
+          type="number"
+          min="1"
+          max="1000"
+          style="width: 200px; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+      </div>
+      
+      <!-- Draw Schedule -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📅 Draw Frequency:</label>
+        <select 
+          [(ngModel)]="systemSettings.drawFrequency" 
+          name="drawFrequency"
+          style="width: 200px; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+      
+      <button 
+        (click)="updateLotterySettings()"
+        style="background: #dc2626; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+        🎲 Save Lottery Settings
+      </button>
+    </div>
+    
+    <!-- UI Customization -->
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+      <h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">🎨 UI Customization</h4>
+      
+      <!-- Color Scheme -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Primary Color:</label>
+          <input 
+            [(ngModel)]="systemSettings.primaryColor" 
+            name="primaryColor"
+            type="color"
+            style="width: 100%; height: 3rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Secondary Color:</label>
+          <input 
+            [(ngModel)]="systemSettings.secondaryColor" 
+            name="secondaryColor"
+            type="color"
+            style="width: 100%; height: 3rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+      </div>
+      
+      <!-- Homepage Configuration -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🏠 Homepage Welcome Message:</label>
+        <textarea 
+          [(ngModel)]="systemSettings.welcomeMessage" 
+          name="welcomeMessage"
+          rows="2"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"></textarea>
+      </div>
+      
+      <!-- Footer Configuration -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📄 Footer Text:</label>
+        <input 
+          [(ngModel)]="systemSettings.footerText" 
+          name="footerText"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+      </div>
+      
+      <button 
+        (click)="updateUISettings()"
+        style="background: #7c3aed; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+        🎨 Save UI Settings
+      </button>
+    </div>
+    
+    <!-- System Status -->
+    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+      <h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">📊 System Status</h4>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <!-- System Health -->
+        <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.375rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">💚</div>
+          <div style="font-weight: 600;">System Health</div>
+          <div style="color: #16a34a; font-size: 0.875rem;">Operational</div>
+        </div>
+        
+        <!-- Database -->
+        <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.375rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🗄️</div>
+          <div style="font-weight: 600;">Database</div>
+          <div style="color: #16a34a; font-size: 0.875rem;">Connected</div>
+        </div>
+        
+        <!-- API Status -->
+        <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.375rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔗</div>
+          <div style="font-weight: 600;">API Status</div>
+          <div style="color: #16a34a; font-size: 0.875rem;">Active</div>
+        </div>
+        
+        <!-- Security -->
+        <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.375rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔒</div>
+          <div style="font-weight: 600;">Security</div>
+          <div style="color: #16a34a; font-size: 0.875rem;">Secure</div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 1rem; text-align: center;">
+        <button 
+          (click)="refreshSystemStatus()"
+          style="background: #6b7280; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500; margin-right: 0.5rem;">
+          🔄 Refresh Status
+        </button>
+        <button 
+          (click)="exportSystemData()"
+          style="background: #2563eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500; margin-right: 0.5rem;">
+          📤 Export Data
+        </button>
+        <button 
+          (click)="importSystemSettings()"
+          style="background: #16a34a; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500; margin-right: 0.5rem;">
+          📥 Import Settings
+        </button>
+        <button 
+          (click)="resetSystemSettings()"
+          style="background: #dc2626; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+          🔄 Reset to Defaults
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Access Denied Message -->
+<div *ngIf="!isAdmin()" style="padding: 3rem; text-align: center; background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+  <div style="font-size: 4rem; margin-bottom: 1rem;">🚫</div>
+  <h4 style="font-size: 1.25rem; font-weight: 700; color: #dc2626; margin-bottom: 0.5rem;">
+    Access Denied
+  </h4>
+  <p style="color: #6b7280;">
+    You need admin privileges to access this dashboard.
+  </p>
+</div>

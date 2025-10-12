@@ -1,0 +1,1 @@
+export { TicketsComponent } from './tickets';

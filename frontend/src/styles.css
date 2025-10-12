@@ -1,0 +1,104 @@
+/* Tailwind CSS imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles */
+html[dir="rtl"] {
+  direction: rtl;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Cairo', 'Tajawal', sans-serif;
+  background-color: #f9fafb;
+}
+
+/* Custom Iraqi theme colors */
+.bg-iraqi-flag {
+  background: linear-gradient(to bottom, #ce1126 33.33%, #ffffff 33.33%, #ffffff 66.66%, #007a3d 66.66%);
+}
+
+/* Arabic text support */
+.arabic-text {
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  direction: rtl;
+}
+
+/* Custom components */
+.product-card {
+  @apply bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300;
+}
+
+.product-image {
+  @apply w-full h-48 object-cover;
+}
+
+.product-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.product-price {
+  @apply text-2xl font-bold text-green-600 mb-4;
+}
+
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.lottery-ticket {
+  @apply bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold py-1 px-3 rounded-full text-sm;
+}
+
+/* Iraqi flag colors */
+.text-iraqi-red { color: #ce1126; }
+.text-iraqi-green { color: #007a3d; }
+.bg-iraqi-red { background-color: #ce1126; }
+.bg-iraqi-green { background-color: #007a3d; }
+
+/* Header styles */
+.header-gradient {
+  background: linear-gradient(135deg, #007a3d 0%, #ce1126 100%);
+}
+
+/* Loading spinner */
+.spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600;
+}
+
+.text-white { color: #ffffff; }
+.text-gray-800 { color: #1f2937; }
+.text-gray-600 { color: #4b5563; }
+
+.rounded-lg { border-radius: 0.5rem; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+
+.mb-4 { margin-bottom: 1rem; }
+.mb-8 { margin-bottom: 2rem; }
+
+.text-center { text-align: center; }
+.font-bold { font-weight: 700; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.space-x-4 > * + * { margin-left: 1rem; }
+
+@media (min-width: 768px) {
+  .md\\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .md\\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .md\\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+}

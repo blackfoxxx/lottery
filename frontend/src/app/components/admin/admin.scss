@@ -1,0 +1,36 @@
+/* Admin Dashboard Styles */
+.admin-dashboard {
+  /* Additional styles can be added here */
+}
+
+.admin-dashboard table {
+  font-size: 0.875rem;
+}
+
+.admin-dashboard table th {
+  font-weight: 600;
+  color: #374151;
+}
+
+.admin-dashboard table td {
+  color: #1f2937;
+}
+
+.admin-dashboard button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.admin-dashboard input, 
+.admin-dashboard select, 
+.admin-dashboard textarea {
+  transition: border-color 0.2s ease;
+}
+
+.admin-dashboard input:focus, 
+.admin-dashboard select:focus, 
+.admin-dashboard textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}

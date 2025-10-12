@@ -1,0 +1,135 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-back-button slot="start" defaultHref="/home"></ion-back-button>
+    <ion-title>🔐 تسجيل الدخول</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="login-container">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <div class="logo">🎯</div>
+      <h1>بيل خير</h1>
+      <p>منصة اليانصيب والتجارة الإلكترونية العراقية</p>
+    </div>
+
+    <!-- Login Form -->
+    <ion-card class="login-card">
+      <ion-card-header>
+        <ion-card-title>تسجيل الدخول</ion-card-title>
+        <ion-card-subtitle>أدخل بياناتك للوصول إلى حسابك</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form (ngSubmit)="login()" #loginForm="ngForm">
+          <!-- Email Input -->
+          <ion-item class="input-item">
+            <ion-label position="floating">البريد الإلكتروني</ion-label>
+            <ion-input 
+              type="email" 
+              [(ngModel)]="loginData.email" 
+              name="email"
+              required
+              placeholder="example@email.com">
+            </ion-input>
+          </ion-item>
+
+          <!-- Password Input -->
+          <ion-item class="input-item">
+            <ion-label position="floating">كلمة المرور</ion-label>
+            <ion-input 
+              [type]="showPassword ? 'text' : 'password'" 
+              [(ngModel)]="loginData.password" 
+              name="password"
+              required
+              placeholder="••••••••">
+            </ion-input>
+            <ion-button 
+              fill="clear" 
+              slot="end" 
+              (click)="togglePasswordVisibility()">
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- Remember Me -->
+          <ion-item lines="none" class="remember-item">
+            <ion-checkbox [(ngModel)]="rememberMe" name="rememberMe"></ion-checkbox>
+            <ion-label class="ion-margin-start">تذكرني</ion-label>
+          </ion-item>
+
+          <!-- Login Button -->
+          <ion-button 
+            expand="block" 
+            type="submit" 
+            [disabled]="!loginForm.form.valid || loading"
+            class="login-button">
+            
+            <ion-spinner name="crescent" *ngIf="loading"></ion-spinner>
+            <span *ngIf="!loading">
+              <ion-icon name="log-in-outline" slot="start"></ion-icon>
+              تسجيل الدخول
+            </span>
+          </ion-button>
+        </form>
+
+        <!-- Quick Login (for testing) -->
+        <div class="quick-login" *ngIf="!isProduction">
+          <ion-text color="medium">
+            <h4>تسجيل دخول سريع (للاختبار)</h4>
+          </ion-text>
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            (click)="quickLogin()"
+            [disabled]="loading">
+            <ion-icon name="flash-outline" slot="start"></ion-icon>
+            دخول سريع
+          </ion-button>
+        </div>
+
+        <!-- Register Link -->
+        <div class="register-link">
+          <ion-text color="medium">
+            <p>ليس لديك حساب؟</p>
+          </ion-text>
+          <ion-button fill="clear" [routerLink]="['/register']">
+            إنشاء حساب جديد
+            <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Features Section -->
+    <div class="features-section">
+      <h3>مميزات المنصة</h3>
+      <div class="features-grid">
+        <div class="feature-item">
+          <ion-icon name="gift-outline" color="primary"></ion-icon>
+          <div>
+            <h4>تذاكر مجانية</h4>
+            <p>احصل على تذاكر يانصيب مجانية مع كل شراء</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <ion-icon name="shield-checkmark-outline" color="success"></ion-icon>
+          <div>
+            <h4>آمان وموثوقية</h4>
+            <p>نظام أمان متقدم لحماية بياناتك</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <ion-icon name="trophy-outline" color="warning"></ion-icon>
+          <div>
+            <h4>جوائز كبرى</h4>
+            <p>فرصة الفوز بجوائز قيمة في السحوبات</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

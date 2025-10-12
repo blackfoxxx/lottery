@@ -1,0 +1,300 @@
+<div class="tickets-component" style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+  <!-- Header -->
+  <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">
+        🎟️ My Lottery Tickets
+      </h3>
+      <button 
+        *ngIf="authService.isAuthenticated()"
+        (click)="refreshTickets()"
+        [disabled]="loading"
+        style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+        <span *ngIf="!loading">🔄 Refresh</span>
+        <span *ngIf="loading">⏳ Loading...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Not Authenticated State -->
+  <div *ngIf="!authService.isAuthenticated()" style="padding: 3rem; text-align: center;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+    <h4 style="font-size: 1.25rem; font-weight: 700; color: #6b7280; margin-bottom: 0.5rem;">
+      Login Required
+    </h4>
+    <p style="color: #9ca3af;">
+      Please login to view your lottery tickets.
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="authService.isAuthenticated() && loading" style="padding: 3rem; text-align: center;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+    <p style="color: #6b7280; font-size: 1.125rem;">Loading your tickets...</p>
+  </div>
+
+  <!-- No Tickets State -->
+  <div *ngIf="authService.isAuthenticated() && !loading && tickets.length === 0" style="padding: 3rem; text-align: center;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">🎫</div>
+    <h4 style="font-size: 1.25rem; font-weight: 700; color: #6b7280; margin-bottom: 0.5rem;">
+      No Tickets Yet
+    </h4>
+    <p style="color: #9ca3af; margin-bottom: 1.5rem;">
+      You haven't earned any lottery tickets yet. Purchase products below to get FREE lottery tickets automatically!
+    </p>
+  </div>
+
+  <!-- Tickets Statistics and Filters -->
+  <div *ngIf="authService.isAuthenticated() && !loading && tickets.length > 0" style="padding: 1.5rem;">
+    
+    <!-- Statistics Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+      <div style="background: linear-gradient(135deg, #fbbf24, #f59e0b); padding: 1.5rem; border-radius: 0.5rem; text-align: center; color: white;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥇</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{getGoldenTicketsCount()}}</div>
+        <div style="font-size: 0.875rem; opacity: 0.9;">Golden Tickets</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #9ca3af, #6b7280); padding: 1.5rem; border-radius: 0.5rem; text-align: center; color: white;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥈</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{getSilverTicketsCount()}}</div>
+        <div style="font-size: 0.875rem; opacity: 0.9;">Silver Tickets</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #ea580c, #dc2626); padding: 1.5rem; border-radius: 0.5rem; text-align: center; color: white;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥉</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{getBronzeTicketsCount()}}</div>
+        <div style="font-size: 0.875rem; opacity: 0.9;">Bronze Tickets</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #16a34a, #15803d); padding: 1.5rem; border-radius: 0.5rem; text-align: center; color: white;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎫</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{getActiveTicketsCount()}}</div>
+        <div style="font-size: 0.875rem; opacity: 0.9;">Active Tickets</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem; border: 1px solid #e5e7eb;">
+      <h4 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">🔍 Filter Tickets</h4>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+        <!-- Category Filter -->
+        <div>
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+            Category
+          </label>
+          <select 
+            [(ngModel)]="selectedCategory" 
+            (change)="onCategoryChange()"
+            style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background: white;">
+            <option value="all">All Categories</option>
+            <option value="golden">🥇 Golden</option>
+            <option value="silver">🥈 Silver</option>
+            <option value="bronze">🥉 Bronze</option>
+          </select>
+        </div>
+
+        <!-- Search Filter -->
+        <div>
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+            Search Ticket Number
+          </label>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            (input)="onSearchChange()"
+            placeholder="Enter ticket number..."
+            style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+
+        <!-- Used Tickets Toggle -->
+        <div>
+          <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 500; color: #374151; cursor: pointer;">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="showUsedTickets" 
+              (change)="onUsedTicketsToggle()"
+              style="margin-right: 0.5rem;">
+            Show Used Tickets
+          </label>
+        </div>
+
+        <!-- Results Count with Pagination Info -->
+        <div style="text-align: right;">
+          <div style="font-size: 0.875rem; color: #6b7280;">
+            Showing <strong>{{(currentPage - 1) * ticketsPerPage + 1}}</strong> to 
+            <strong>{{getMinValue(currentPage * ticketsPerPage, filteredTickets.length)}}</strong> of 
+            <strong>{{filteredTickets.length}}</strong> tickets 
+            (Page {{currentPage}} of {{totalPages}})
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tickets Table -->
+    <div *ngIf="paginatedTickets.length > 0" style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem;">>
+      <table style="width: 100%; border-collapse: collapse; background: white;">
+        <thead style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+          <tr>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Category
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Ticket Number
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              📦 Related Product
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Generated Date
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Expiry Date
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Status
+            </th>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Verification Code
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of paginatedTickets; let i = index" 
+              [style.background]="i % 2 === 0 ? 'white' : '#fafafa'"
+              style="border-bottom: 1px solid #f3f4f6;">
+            
+            <!-- Category -->
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.25rem;">{{getCategoryIcon(ticket.category)}}</span>
+                <span style="font-weight: 500; text-transform: capitalize; color: {{getCategoryColor(ticket.category)}};">
+                  {{ticket.category}}
+                </span>
+              </div>
+            </td>
+
+            <!-- Ticket Number -->
+            <td style="padding: 1rem;">
+              <div style="font-family: monospace; font-weight: 600; color: #1f2937; font-size: 0.875rem;">
+                {{ticket.ticket_number}}
+              </div>
+            </td>
+
+            <!-- Related Product -->
+            <td style="padding: 1rem;">
+              <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <div style="font-weight: 600; color: #1f2937; font-size: 0.875rem;">
+                  {{ticket.product?.name || 'Unknown Product'}}
+                </div>
+                <div style="font-size: 0.75rem; color: #16a34a; font-weight: 600;">
+                  {{formatPrice(ticket.product?.price || 0)}} IQD
+                </div>
+                <div [style.background]="getProductCategoryBadge(ticket).background" 
+                     [style.color]="getProductCategoryBadge(ticket).color"
+                     style="padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.625rem; font-weight: 500; width: fit-content;">
+                  {{getProductCategoryBadge(ticket).text}}
+                </div>
+              </div>
+            </td>
+
+            <!-- Generated Date -->
+            <td style="padding: 1rem;">
+              <div style="font-size: 0.875rem; color: #6b7280;">
+                {{formatDate(ticket.generated_at || ticket.created_at)}}
+              </div>
+            </td>
+
+            <!-- Expiry Date -->
+            <td style="padding: 1rem;">
+              <div style="font-size: 0.875rem; color: #6b7280;">
+                <span *ngIf="ticket.expires_at">{{formatDate(ticket.expires_at)}}</span>
+                <span *ngIf="!ticket.expires_at" style="color: #9ca3af;">No expiry</span>
+              </div>
+            </td>
+
+            <!-- Status -->
+            <td style="padding: 1rem; text-align: center;">
+              <span *ngIf="!ticket.is_used" 
+                    style="background: #dcfce7; color: #166534; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">
+                ✅ Active
+              </span>
+              <span *ngIf="ticket.is_used" 
+                    style="background: #fef2f2; color: #dc2626; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">
+                🎯 Used
+              </span>
+            </td>
+
+            <!-- Verification Code -->
+            <td style="padding: 1rem;">
+              <div style="font-family: monospace; font-size: 0.75rem; color: #6b7280;">
+                <span *ngIf="ticket.verification_code">{{ticket.verification_code}}</span>
+                <span *ngIf="!ticket.verification_code" style="color: #9ca3af;">N/A</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div *ngIf="paginatedTickets.length > 0 && totalPages > 1" 
+         style="background: white; padding: 1.5rem; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 0.5rem 0.5rem;">
+      <div style="display: flex; align-items: center; justify-content: between; gap: 1rem;">
+        
+        <!-- Previous Button -->
+        <button 
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          style="padding: 0.5rem 1rem; border: 1px solid #d1d5db; background: white; color: #374151; 
+                 border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem; font-weight: 500;
+                 transition: all 0.2s ease;"
+          [style.opacity]="currentPage === 1 ? '0.5' : '1'"
+          [style.cursor]="currentPage === 1 ? 'not-allowed' : 'pointer'">
+          ← Previous
+        </button>
+
+        <!-- Page Numbers -->
+        <div style="display: flex; gap: 0.25rem; flex: 1; justify-content: center;">
+          <button 
+            *ngFor="let page of getPageNumbers()"
+            (click)="goToPage(page)"
+            [style.background]="page === currentPage ? '#2563eb' : 'white'"
+            [style.color]="page === currentPage ? 'white' : '#374151'"
+            style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; 
+                   cursor: pointer; font-size: 0.875rem; font-weight: 500; min-width: 2.5rem;
+                   transition: all 0.2s ease;">
+            {{page}}
+          </button>
+        </div>
+
+        <!-- Next Button -->
+        <button 
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          style="padding: 0.5rem 1rem; border: 1px solid #d1d5db; background: white; color: #374151; 
+                 border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem; font-weight: 500;
+                 transition: all 0.2s ease;"
+          [style.opacity]="currentPage === totalPages ? '0.5' : '1'"
+          [style.cursor]="currentPage === totalPages ? 'not-allowed' : 'pointer'">
+          Next →
+        </button>
+      </div>
+
+      <!-- Pagination Info -->
+      <div style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: #6b7280;">
+        Showing {{ticketsPerPage}} tickets per page | 
+        Total: {{filteredTickets.length}} tickets in {{totalPages}} pages
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="filteredTickets.length === 0" style="padding: 3rem; text-align: center; background: #f9fafb; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+      <h4 style="font-size: 1.125rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem;">
+        No Tickets Found
+      </h4>
+      <p style="color: #9ca3af;">
+        No tickets match your current filters. Try adjusting your search criteria.
+      </p>
+    </div>
+  </div>
+</div>

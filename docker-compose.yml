@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Database
+  mysql:
+    image: mysql:8.0
+    container_name: iraqi_ecommerce_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: iraqi_ecommerce
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravelpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - iraqi_network
+
+  # Backend (Laravel API)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: iraqi_ecommerce_backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env.production
+    environment:
+      APP_ENV: production
+      APP_DEBUG: false
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: iraqi_ecommerce
+      DB_USERNAME: laravel
+      DB_PASSWORD: laravelpassword
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+    volumes:
+      - ./backend/storage:/var/www/html/storage
+    networks:
+      - iraqi_network
+
+  # Frontend (Angular)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: iraqi_ecommerce_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - iraqi_network
+
+  # Redis (for caching and sessions)
+  redis:
+    image: redis:7-alpine
+    container_name: iraqi_ecommerce_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - iraqi_network
+
+volumes:
+  mysql_data:
+
+networks:
+  iraqi_network:
+    driver: bridge

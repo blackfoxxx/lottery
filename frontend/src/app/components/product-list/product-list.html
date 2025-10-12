@@ -1,0 +1,138 @@
+<div class="product-list">
+  <!-- Debug info -->
+  <div style="background: #f3f4f6; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.875rem;">
+    <p>Loading: {{ loading }}</p>
+    <p>Total products: {{ products.length }}</p>
+    <p>Displayed products: {{ getDisplayProducts().length }}</p>
+    <p>Filter category: {{ filterCategory || 'None' }}</p>
+    <p>API Base URL: {{ getApiUrl() }}</p>
+    <p>Authenticated: {{ isAuthenticated() }}</p>
+    <p *ngIf="isAuthenticated()">Current User: {{ getCurrentUser()?.name }}</p>
+    <p *ngIf="error" style="color: #dc2626;">Error: {{ error }}</p>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div *ngFor="let product of getDisplayProducts()" class="product-card bg-white rounded-lg shadow-lg" 
+         style="overflow: hidden; transition: all 0.3s ease; border: 1px solid #e5e7eb;">
+      
+      <!-- Product Image Placeholder -->
+      <div style="height: 12rem; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 4rem;">
+          <ng-container [ngSwitch]="getProductIcon(product.name)">
+            <span *ngSwitchCase="'phone'">📱</span>
+            <span *ngSwitchCase="'laptop'">💻</span>
+            <span *ngSwitchCase="'console'">🎮</span>
+            <span *ngSwitchCase="'watch'">⌚</span>
+            <span *ngSwitchCase="'earbuds'">🎧</span>
+            <span *ngSwitchCase="'tablet'">📱</span>
+            <span *ngSwitchCase="'monitor'">🖥️</span>
+            <span *ngSwitchDefault>📦</span>
+          </ng-container>
+        </span>
+      </div>
+      
+      <!-- Product Info -->
+      <div class="p-6">
+        <!-- Category Badge -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+          <span style="padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;"
+                [ngStyle]="{
+                  'background-color': product.ticket_category === 'golden' ? '#fef3c7' : 
+                                     product.ticket_category === 'silver' ? '#f3f4f6' : '#fed7aa',
+                  'color': product.ticket_category === 'golden' ? '#92400e' : 
+                          product.ticket_category === 'silver' ? '#374151' : '#9a3412'
+                }">
+            <ng-container [ngSwitch]="product.ticket_category">
+              <span *ngSwitchCase="'golden'">🥇 Golden</span>
+              <span *ngSwitchCase="'silver'">🥈 Silver</span>
+              <span *ngSwitchCase="'bronze'">🥉 Bronze</span>
+            </ng-container>
+          </span>
+          <span style="color: #16a34a; font-size: 0.875rem; font-weight: 600;" *ngIf="product.in_stock">✅ In Stock</span>
+        </div>
+        
+        <!-- Product Name -->
+        <h3 style="font-size: 1.125rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem; 
+                   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+          {{ product.name }}
+        </h3>
+        
+        <!-- Description -->
+        <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem; 
+                  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+          {{ product.description }}
+        </p>
+        
+        <!-- Price and Lottery Info -->
+        <div style="margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="font-size: 1.5rem; font-weight: 700; color: #16a34a;">{{ formatPrice(product.price) }}</span>
+            <span style="font-size: 0.875rem; color: #6b7280;">IQD</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem;">
+            <span style="color: #6b7280;">🎟️ Lottery Tickets:</span>
+            <span style="font-weight: 600; color: #2563eb;">{{ product.ticket_count }}</span>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <button 
+            (click)="buyProduct(product)"
+            [disabled]="!product.in_stock"
+            style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; 
+                   border: none; cursor: pointer; transition: all 0.2s ease;"
+            [ngStyle]="{
+              'background-color': product.in_stock ? '#2563eb' : '#9ca3af',
+              'color': '#ffffff'
+            }">
+            <span *ngIf="product.in_stock">🛒 Buy Now</span>
+            <span *ngIf="!product.in_stock">Out of Stock</span>
+          </button>
+          
+
+        </div>
+        
+        <!-- Quick Info -->
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: #6b7280;">
+            <span>📦 Free Shipping</span>
+            <span>🔒 Secure Payment</span>
+            <span>🛡️ Warranty</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="loading" style="text-align: center; padding: 3rem 0;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+    <p style="color: #6b7280; font-size: 1.125rem;">Loading products...</p>
+  </div>
+  
+  <!-- No Products State -->
+  <div *ngIf="!loading && getDisplayProducts().length === 0" style="text-align: center; padding: 3rem 0;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+    <p style="color: #6b7280; font-size: 1.125rem;">
+      <ng-container *ngIf="filterCategory; else noProductsGeneral">
+        No {{ filterCategory }} category products available
+      </ng-container>
+      <ng-template #noProductsGeneral>No products available</ng-template>
+    </p>
+    <button 
+      *ngIf="filterCategory"
+      style="margin-top: 1rem; padding: 0.5rem 1rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.5rem; cursor: pointer;"
+      onclick="window.location.reload()">
+      View All Products
+    </button>
+  </div>
+</div>
+
+<!-- Payment Form Modal -->
+<app-payment-form 
+  [product]="selectedProduct"
+  [visible]="showPaymentForm"
+  (visibleChange)="showPaymentForm = $event"
+  (paymentSubmitted)="onPaymentSubmitted($event)">
+</app-payment-form>

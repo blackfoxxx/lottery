@@ -1,0 +1,153 @@
+<div class="auth-component" style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+  <!-- Header -->
+  <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">
+        👤 User Authentication
+      </h3>
+      <div *ngIf="authService.isAuthenticated()" style="display: flex; align-items: center; gap: 1rem;">
+        <span style="color: #16a34a; font-weight: 600;">
+          ✅ {{ authService.getCurrentUser()?.name }}
+        </span>
+        <button 
+          (click)="logout()"
+          style="padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not Authenticated State -->
+  <div *ngIf="!authService.isAuthenticated()" style="padding: 1.5rem;">
+    <!-- Quick Login Buttons -->
+    <div style="margin-bottom: 1.5rem; text-align: center;">
+      <button 
+        (click)="quickLogin()"
+        [disabled]="loading"
+        style="padding: 0.75rem 1.5rem; background: #16a34a; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; margin-right: 1rem;">
+        🚀 Quick Login (Test User)
+      </button>
+      <button 
+        (click)="quickAdminLogin()"
+        [disabled]="loading"
+        style="padding: 0.75rem 1.5rem; background: #dc2626; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+        👨‍💼 Admin Login
+      </button>
+      <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+        Test User: test@example.com / password | Admin: admin@example.com / password
+      </p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+      <span style="color: #6b7280;">or</span>
+    </div>
+
+    <!-- Form Toggle -->
+    <div style="display: flex; margin-bottom: 1.5rem; background: #f3f4f6; border-radius: 0.5rem; padding: 0.25rem;">
+      <button 
+        (click)="showLogin = true"
+        [style]="'flex: 1; padding: 0.5rem; text-align: center; border: none; border-radius: 0.375rem; cursor: pointer; ' + 
+                 (showLogin ? 'background: white; color: #1f2937; box-shadow: 0 1px 2px rgba(0,0,0,0.1);' : 'background: transparent; color: #6b7280;')">
+        Login
+      </button>
+      <button 
+        (click)="showLogin = false"
+        [style]="'flex: 1; padding: 0.5rem; text-align: center; border: none; border-radius: 0.375rem; cursor: pointer; ' + 
+                 (!showLogin ? 'background: white; color: #1f2937; box-shadow: 0 1px 2px rgba(0,0,0,0.1);' : 'background: transparent; color: #6b7280;')">
+        Register
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <form *ngIf="showLogin" (ngSubmit)="login()" style="display: flex; flex-direction: column; gap: 1rem;">
+      <div>
+        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Email</label>
+        <input 
+          type="email" 
+          [(ngModel)]="loginData.email"
+          name="email"
+          placeholder="Enter your email"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Password</label>
+        <input 
+          type="password" 
+          [(ngModel)]="loginData.password"
+          name="password"
+          placeholder="Enter your password"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;">
+      </div>
+      <button 
+        type="submit"
+        [disabled]="loading"
+        style="padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+        <span *ngIf="!loading">🔑 Login</span>
+        <span *ngIf="loading">⏳ Logging in...</span>
+      </button>
+    </form>
+
+    <!-- Register Form -->
+    <form *ngIf="!showLogin" (ngSubmit)="register()" style="display: flex; flex-direction: column; gap: 1rem;">
+      <div>
+        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Name</label>
+        <input 
+          type="text" 
+          [(ngModel)]="registerData.name"
+          name="name"
+          placeholder="Enter your full name"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Email</label>
+        <input 
+          type="email" 
+          [(ngModel)]="registerData.email"
+          name="email"
+          placeholder="Enter your email"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Password</label>
+        <input 
+          type="password" 
+          [(ngModel)]="registerData.password"
+          name="password"
+          placeholder="Enter your password"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Confirm Password</label>
+        <input 
+          type="password" 
+          [(ngModel)]="registerData.password_confirmation"
+          name="password_confirmation"
+          placeholder="Confirm your password"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem;">
+      </div>
+      <button 
+        type="submit"
+        [disabled]="loading"
+        style="padding: 0.75rem; background: #16a34a; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+        <span *ngIf="!loading">✅ Register</span>
+        <span *ngIf="loading">⏳ Creating account...</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Authenticated State -->
+  <div *ngIf="authService.isAuthenticated()" style="padding: 1.5rem; text-align: center;">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+    <h4 style="font-size: 1.25rem; font-weight: 700; color: #16a34a; margin-bottom: 0.5rem;">
+      Welcome, {{ authService.getCurrentUser()?.name }}!
+    </h4>
+    <p style="color: #6b7280; margin-bottom: 1.5rem;">
+      You can now purchase lottery tickets and participate in draws.      </p>
+    <div style="background: #f0fdf4; border: 1px solid #16a34a; border-radius: 0.5rem; padding: 1rem;">
+      <p style="color: #16a34a; font-weight: 600;">
+        🛒 You're ready to start shopping! Browse products below and get FREE lottery tickets with every purchase.
+      </p>
+    </div>
+  </div>
+</div>
