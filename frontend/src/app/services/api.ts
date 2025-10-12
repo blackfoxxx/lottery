@@ -6,9 +6,18 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class Api {
-  private baseUrl = 'http://localhost:8001/api';
-
-  constructor(private http: HttpClient) { }
+  private baseUrl: string;
+  
+  constructor(private http: HttpClient) {
+    const loc = window?.location;
+    // Use local backend when running Angular dev server, otherwise use Nginx proxy path
+    if (loc && (loc.port === '4200' || loc.port === '4201')) {
+      this.baseUrl = 'http://localhost:8001/api';
+    } else {
+      // In Docker/production, Nginx proxies /api to backend
+      this.baseUrl = '/api';
+    }
+  }
 
   getBaseUrl(): string {
     return this.baseUrl;

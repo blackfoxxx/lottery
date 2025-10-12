@@ -1,6 +1,6 @@
 <div class="product-list">
-  <!-- Debug info -->
-  <div style="background: #f3f4f6; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.875rem;">
+  <!-- Debug info (hidden by default, enable with [showDebug]="true") -->
+  <div *ngIf="showDebug" style="background: #f3f4f6; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.875rem;">
     <p>Loading: {{ loading }}</p>
     <p>Total products: {{ products.length }}</p>
     <p>Displayed products: {{ getDisplayProducts().length }}</p>
@@ -78,14 +78,10 @@
         <!-- Action Buttons -->
         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
           <button 
+            class="btn-primary w-full"
             (click)="buyProduct(product)"
             [disabled]="!product.in_stock"
-            style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; 
-                   border: none; cursor: pointer; transition: all 0.2s ease;"
-            [ngStyle]="{
-              'background-color': product.in_stock ? '#2563eb' : '#9ca3af',
-              'color': '#ffffff'
-            }">
+            aria-label="Buy {{ product.name }} for {{ formatPrice(product.price) }} IQD">
             <span *ngIf="product.in_stock">🛒 Buy Now</span>
             <span *ngIf="!product.in_stock">Out of Stock</span>
           </button>

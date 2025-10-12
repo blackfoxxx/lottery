@@ -12,6 +12,9 @@ body {
   margin: 0;
   font-family: 'Inter', 'Cairo', 'Tajawal', sans-serif;
   background-color: #f9fafb;
+  color: #111827;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom Iraqi theme colors */
@@ -27,7 +30,11 @@ body {
 
 /* Custom components */
 .product-card {
-  @apply bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300;
+  @apply bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300;
+}
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 18px -6px rgba(0,0,0,0.12), 0 6px 10px -4px rgba(0,0,0,0.08);
 }
 
 .product-image {
@@ -44,10 +51,22 @@ body {
 
 .btn-primary {
   @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
+  outline: none;
+}
+.btn-primary:focus-visible {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+}
+.btn-primary:disabled,
+.btn-primary[disabled] {
+  @apply cursor-not-allowed opacity-60;
 }
 
 .btn-secondary {
   @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
+  outline: none;
+}
+.btn-secondary:focus-visible {
+  box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.35);
 }
 
 .lottery-ticket {

@@ -1,8 +1,8 @@
-# 🛒🎰 Iraqi E-commerce and Lottery Platform 
+# 🛒🎰 Iraqi E-commerce and Lottery Platform (Enhanced v3.3)
 
-A comprehensive full-stack e-commerce platform  specifically designed for the Iraqi market. Built with modern web technologies, global lottery standards, and professional notification system.
+A comprehensive full-stack e-commerce platform with **automatic FREE lottery system**, specifically designed for the Iraqi market. Built with modern web technologies, global lottery standards, and professional notification system.
 
-## 🎯 Latest Updates (v3.2)
+## 🎯 Latest Updates (v3.3)
 
 ### ✅ Recent Fixes (January 2025)
 - **Lottery Draw System**: Fixed API endpoint consistency, added prize categorization, resolved database schema issues
@@ -10,6 +10,13 @@ A comprehensive full-stack e-commerce platform  specifically designed for the Ir
 - **Notification System**: Implemented proper plain-text notifications with improved UX
 - **Database Schema**: Added `prize_id` to lottery_draws and `category` field to prizes tables
 - **Status Management**: Corrected lottery draw status flow (active → completed)
+
+### 🎨 UI/UX Enhancements
+- Consistent header gradient and improved contrast for better readability
+- Accessible buttons with focus-visible outlines and disabled states
+- Product cards now have subtle hover elevation and improved spacing
+- Cleaned product list by hiding developer debug panel (enable via [showDebug]="true")
+- Standardized Buy button styling using shared .btn-primary class
 
 ## ✨ Features
 
@@ -246,6 +253,8 @@ ionic capacitor build ios
 This project is proprietary software developed for the Iraqi market.
 
 ---
+
+## 🆘 Support
 
 For deployment support or technical issues:
 - 📖 Check the [Deployment Guide](DEPLOYMENT_GUIDE.md)

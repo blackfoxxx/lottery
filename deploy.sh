@@ -13,14 +13,24 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null; then
-    echo "❌ Docker Compose is not installed. Please install Docker Compose first."
-    exit 1
+# Detect Docker Compose v2 or v1
+if command -v docker compose &> /dev/null; then
+  COMPOSE_CMD="docker compose"
+elif command -v docker-compose &> /dev/null; then
+  COMPOSE_CMD="docker-compose"
+else
+  echo "❌ Docker Compose is not installed. Please install Docker Compose (v2 preferred)."
+  exit 1
 fi
 
 # Create production environment file for backend
-echo "📝 Creating production environment configuration..."
-cp backend/.env.example backend/.env.production
+ENV_FILE=backend/.env.production
+if [ ! -f "$ENV_FILE" ]; then
+  echo "📝 Creating production environment configuration..."
+  cp backend/.env.example "$ENV_FILE"
+else
+  echo "ℹ️  Using existing $ENV_FILE"
+fi
 
 # Update environment variables for production
 sed -i.bak 's/APP_ENV=local/APP_ENV=production/' backend/.env.production
@@ -33,19 +43,19 @@ sed -i.bak 's/# DB_USERNAME=root/DB_USERNAME=laravel/' backend/.env.production
 sed -i.bak 's/# DB_PASSWORD=/DB_PASSWORD=laravelpassword/' backend/.env.production
 
 echo "🏗️  Building Docker images..."
-docker-compose build --no-cache
+$COMPOSE_CMD build --no-cache
 
 echo "🗑️  Cleaning up old containers..."
-docker-compose down
+$COMPOSE_CMD down
 
 echo "🚀 Starting services..."
-docker-compose up -d
+$COMPOSE_CMD up -d
 
 echo "⏳ Waiting for services to start..."
 sleep 30
 
 echo "🔧 Setting up database..."
-docker-compose exec -T backend php artisan migrate --force --seed
+$COMPOSE_CMD exec -T backend php artisan migrate --force --seed
 
 echo "✅ Deployment completed successfully!"
 echo ""

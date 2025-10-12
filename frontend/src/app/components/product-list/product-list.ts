@@ -13,6 +13,7 @@ import { PaymentFormComponent } from '../payment-form';
 })
 export class ProductList implements OnInit {
   @Input() filterCategory?: string;
+  @Input() showDebug: boolean = false;
   
   products: any[] = [];
   filteredProducts: any[] = [];
