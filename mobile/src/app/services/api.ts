@@ -6,9 +6,13 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class Api {
-  private baseUrl = 'http://localhost:8001/api';
-
-  constructor(private http: HttpClient) { }
+  private baseUrl: string;
+  
+  constructor(private http: HttpClient) {
+    // For mobile app, always use the local backend during development
+    // In production, this should be configured to point to your production API
+    this.baseUrl = 'http://localhost:8000/api';
+  }
 
   getBaseUrl(): string {
     return this.baseUrl;
@@ -88,6 +92,11 @@ export class Api {
     return this.http.get(`${this.baseUrl}/lottery-draws/${id}/countdown`);
   }
 
+  // Category methods
+  getCategories(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/categories`);
+  }
+
   // Admin methods
   getAdminDashboard(): Observable<any> {
     const headers = this.getAuthHeaders();
@@ -115,10 +124,23 @@ export class Api {
     return this.http.delete(`${this.baseUrl}/admin/products/${id}`, { headers });
   }
 
-  // Admin Tickets
-  getAdminTickets(): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get(`${this.baseUrl}/admin/tickets`, { headers });
+  // Admin Products with Image Upload
+  createAdminProductWithImage(formData: FormData): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+      // Don't set Content-Type for FormData, let the browser set it
+    });
+    return this.http.post(`${this.baseUrl}/admin/products`, formData, { headers });
+  }
+
+  updateAdminProductWithImage(id: number, formData: FormData): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+      // Don't set Content-Type for FormData, let the browser set it
+    });
+    return this.http.post(`${this.baseUrl}/admin/products/${id}?_method=PUT`, formData, { headers });
   }
 
   // Admin Users
@@ -142,76 +164,127 @@ export class Api {
     return this.http.delete(`${this.baseUrl}/admin/users/${id}`, { headers });
   }
 
+  // Admin Orders
+  getAdminOrders(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/admin/orders`, { headers });
+  }
+
+  updateAdminOrder(id: number, data: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.put(`${this.baseUrl}/admin/orders/${id}`, data, { headers });
+  }
+
+  // Admin Tickets
+  getAdminTickets(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/admin/tickets`, { headers });
+  }
+
+  markTicketAsUsed(id: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.put(`${this.baseUrl}/admin/tickets/${id}/mark-used`, {}, { headers });
+  }
+
+  getTicketDetails(id: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/admin/tickets/${id}`, { headers });
+  }
+
   // Admin Lottery Draws
   getAdminLotteryDraws(): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.get(`${this.baseUrl}/admin/lottery-draws`, { headers });
   }
 
-  createLotteryDraw(data: any): Observable<any> {
+  createAdminLotteryDraw(data: any): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.post(`${this.baseUrl}/admin/lottery-draws`, data, { headers });
   }
 
-  updateLotteryDraw(id: number, data: any): Observable<any> {
+  updateAdminLotteryDraw(id: number, data: any): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.put(`${this.baseUrl}/admin/lottery-draws/${id}`, data, { headers });
   }
 
-  deleteLotteryDraw(id: number): Observable<any> {
+  deleteAdminLotteryDraw(id: number): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.delete(`${this.baseUrl}/admin/lottery-draws/${id}`, { headers });
   }
 
-  performDraw(drawId: number): Observable<any> {
+  performDraw(id: number): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.post(`${this.baseUrl}/admin/lottery-draws/${drawId}/draw`, {}, { headers });
+    return this.http.post(`${this.baseUrl}/admin/lottery-draws/${id}/draw`, {}, { headers });
   }
 
-  // Admin Prizes
-  getAdminPrizes(): Observable<any> {
+  // Admin Categories
+  getAdminCategories(): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get(`${this.baseUrl}/admin/prizes`, { headers });
+    return this.http.get(`${this.baseUrl}/admin/categories`, { headers });
   }
 
-  createAdminPrize(data: any): Observable<any> {
+  createAdminCategory(data: any): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.post(`${this.baseUrl}/admin/prizes`, data, { headers });
+    return this.http.post(`${this.baseUrl}/admin/categories`, data, { headers });
   }
 
-  updateAdminPrize(id: number, data: any): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.put(`${this.baseUrl}/admin/prizes/${id}`, data, { headers });
-  }
-
-  deleteAdminPrize(id: number): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.delete(`${this.baseUrl}/admin/prizes/${id}`, { headers });
-  }
-
-  // System status
-  getSystemStatus(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/system/status`);
-  }
-
-  // Utility method to get auth headers
-  private getAuthHeaders(): HttpHeaders {
+  createAdminCategoryWithLogo(formData: FormData): Observable<any> {
     const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      'Authorization': token ? `Bearer ${token}` : '',
-      'Content-Type': 'application/json'
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+      // Don't set Content-Type for FormData, let the browser set it
     });
+    return this.http.post(`${this.baseUrl}/admin/categories`, formData, { headers });
   }
 
-  // Settings methods
-  getSettings(): Observable<any> {
+  updateAdminCategory(id: number, data: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.put(`${this.baseUrl}/admin/categories/${id}`, data, { headers });
+  }
+
+  updateAdminCategoryWithLogo(id: number, formData: FormData): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+      // Don't set Content-Type for FormData, let the browser set it
+    });
+    return this.http.post(`${this.baseUrl}/admin/categories/${id}?_method=PUT`, formData, { headers });
+  }
+
+  deleteAdminCategory(id: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete(`${this.baseUrl}/admin/categories/${id}`, { headers });
+  }
+
+  // System Settings
+  getSystemSettings(): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.get(`${this.baseUrl}/admin/settings`, { headers });
   }
 
-  updateSettings(data: any): Observable<any> {
+  updateSystemSettings(settings: any): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.put(`${this.baseUrl}/admin/settings`, data, { headers });
+    return this.http.post(`${this.baseUrl}/admin/settings`, settings, { headers });
+  }
+
+  updateLotteryConfiguration(config: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.baseUrl}/admin/lottery-config`, config, { headers });
+  }
+
+  resetSystemSettings(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.baseUrl}/admin/settings/reset`, {}, { headers });
+  }
+
+  exportSystemSettings(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/admin/settings/export`, { headers });
+  }
+
+  importSystemSettings(settings: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.baseUrl}/admin/settings/import`, { settings }, { headers });
   }
 
   // Export methods
@@ -228,5 +301,14 @@ export class Api {
   exportProducts(): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.get(`${this.baseUrl}/admin/export/products`, { headers });
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
   }
 }

@@ -53,46 +53,102 @@ export class HomePage implements OnInit {
 
   async loadDashboardData() {
     try {
-      // Load lottery categories
-      this.lotteryCategories = [
-        {
-          id: '1',
-          name: 'يانصيب كرة القدم',
-          description: 'جوائز رياضية وتذاكر مباريات',
-          productCount: 12,
-          hasActiveDrawing: true
+      // Load lottery categories from API
+      this.api.getCategories().subscribe({
+        next: (categories) => {
+          if (categories && categories.length > 0) {
+            this.lotteryCategories = categories.map((cat: any) => ({
+              id: cat.id.toString(),
+              name: cat.name,
+              description: cat.description || 'وصف الفئة',
+              productCount: cat.products_count || 0,
+              hasActiveDrawing: cat.has_active_drawing || false
+            }));
+          } else {
+            // Fallback to hardcoded categories if API fails
+            this.lotteryCategories = [
+              {
+                id: '1',
+                name: 'يانصيب كرة القدم',
+                description: 'جوائز رياضية وتذاكر مباريات',
+                productCount: 12,
+                hasActiveDrawing: true
+              },
+              {
+                id: '2',
+                name: 'يانصيب التكنولوجيا',
+                description: 'أجهزة إلكترونية وهواتف ذكية',
+                productCount: 8,
+                hasActiveDrawing: false
+              },
+              {
+                id: '3',
+                name: 'يانصيب السيارات',
+                description: 'سيارات وإكسسوارات',
+                productCount: 5,
+                hasActiveDrawing: true
+              },
+              {
+                id: '4',
+                name: 'يانصيب الذهب',
+                description: 'مجوهرات ذهبية وفضية',
+                productCount: 15,
+                hasActiveDrawing: false
+              }
+            ];
+          }
+          // Calculate total products
+          this.totalProducts = this.lotteryCategories.reduce((sum, cat) => sum + cat.productCount, 0);
         },
-        {
-          id: '2',
-          name: 'يانصيب التكنولوجيا',
-          description: 'أجهزة إلكترونية وهواتف ذكية',
-          productCount: 8,
-          hasActiveDrawing: false
-        },
-        {
-          id: '3',
-          name: 'يانصيب السيارات',
-          description: 'سيارات وإكسسوارات',
-          productCount: 5,
-          hasActiveDrawing: true
-        },
-        {
-          id: '4',
-          name: 'يانصيب الذهب',
-          description: 'مجوهرات ذهبية وفضية',
-          productCount: 15,
-          hasActiveDrawing: false
+        error: (error) => {
+          console.error('Error loading categories:', error);
+          // Fallback to hardcoded categories on error
+          this.lotteryCategories = [
+            {
+              id: '1',
+              name: 'يانصيب كرة القدم',
+              description: 'جوائز رياضية وتذاكر مباريات',
+              productCount: 12,
+              hasActiveDrawing: true
+            },
+            {
+              id: '2',
+              name: 'يانصيب التكنولوجيا',
+              description: 'أجهزة إلكترونية وهواتف ذكية',
+              productCount: 8,
+              hasActiveDrawing: false
+            },
+            {
+              id: '3',
+              name: 'يانصيب السيارات',
+              description: 'سيارات وإكسسوارات',
+              productCount: 5,
+              hasActiveDrawing: true
+            },
+            {
+              id: '4',
+              name: 'يانصيب الذهب',
+              description: 'مجوهرات ذهبية وفضية',
+              productCount: 15,
+              hasActiveDrawing: false
+            }
+          ];
+          // Calculate total products
+          this.totalProducts = this.lotteryCategories.reduce((sum, cat) => sum + cat.productCount, 0);
         }
-      ];
+      });
 
-      // Calculate total products
-      this.totalProducts = this.lotteryCategories.reduce((sum, cat) => sum + cat.productCount, 0);
-
-      // Load products from API if available
-      const products = await this.api.getProducts().toPromise();
-      if (products && products.length > 0) {
-        this.totalProducts = products.length;
-      }
+      // Load products from API
+      this.api.getProducts().subscribe({
+        next: (products) => {
+          if (products && products.length > 0) {
+            this.totalProducts = products.length;
+          }
+        },
+        error: (error) => {
+          console.error('Error loading products:', error);
+        }
+      });
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     }
