@@ -1,4 +1,64 @@
 <div class="product-list">
+  <!-- Category Filter Section -->
+  <div *ngIf="!filterCategory" style="background: white; padding: 1.5rem; margin-bottom: 2rem; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+    <h3 style="font-size: 1.125rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+      🎯 Browse all products or select a specific lottery category:
+    </h3>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+      <!-- All Products Button -->
+      <button 
+        (click)="clearCategoryFilter()"
+        [ngStyle]="{
+          'padding': '0.5rem 1rem',
+          'border-radius': '0.5rem',
+          'border': selectedCategoryFilter === 'all' ? '2px solid #3b82f6' : '1px solid #d1d5db',
+          'background-color': selectedCategoryFilter === 'all' ? '#eff6ff' : '#f9fafb',
+          'color': selectedCategoryFilter === 'all' ? '#1d4ed8' : '#6b7280',
+          'font-weight': selectedCategoryFilter === 'all' ? '600' : '500',
+          'cursor': 'pointer',
+          'transition': 'all 0.2s ease',
+          'font-size': '0.875rem'
+        }"
+        [attr.aria-pressed]="selectedCategoryFilter === 'all'">
+        🛍️ All Products
+      </button>
+
+      <!-- Dynamic Category Buttons -->
+      <button 
+        *ngFor="let category of categories"
+        (click)="setCategoryFilter(category.name)"
+        [ngStyle]="{
+          'padding': '0.5rem 1rem',
+          'border-radius': '0.5rem',
+          'border': selectedCategoryFilter === category.name ? '2px solid ' + category.color : '1px solid #d1d5db',
+          'background-color': selectedCategoryFilter === category.name ? category.color + '20' : '#f9fafb',
+          'color': selectedCategoryFilter === category.name ? category.color : '#6b7280',
+          'font-weight': selectedCategoryFilter === category.name ? '600' : '500',
+          'cursor': 'pointer',
+          'transition': 'all 0.2s ease',
+          'font-size': '0.875rem'
+        }"
+        [attr.aria-pressed]="selectedCategoryFilter === category.name">
+        {{ category.icon }} {{ category.display_name }}
+      </button>
+    </div>
+
+    <!-- Active Filter Display -->
+    <div *ngIf="selectedCategoryFilter !== 'all'" style="margin-top: 1rem; padding: 0.75rem; background-color: #f0f9ff; border-radius: 0.5rem; border-left: 4px solid #0ea5e9;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 0.875rem; color: #0c4a6e;">
+          📂 Showing {{ getCategoryDisplayName(selectedCategoryFilter) }} products
+        </span>
+        <button 
+          (click)="clearCategoryFilter()"
+          style="padding: 0.25rem 0.5rem; background-color: #0ea5e9; color: white; border: none; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer;">
+          Clear Filter
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Debug info (hidden by default, enable with [showDebug]="true") -->
   <div *ngIf="showDebug" style="background: #f3f4f6; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.875rem;">
     <p>Loading: {{ loading }}</p>
@@ -33,20 +93,15 @@
       
       <!-- Product Info -->
       <div class="p-6">
-        <!-- Category Badge -->
+        <!-- Dynamic Category Badge -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
           <span style="padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;"
                 [ngStyle]="{
-                  'background-color': product.ticket_category === 'golden' ? '#fef3c7' : 
-                                     product.ticket_category === 'silver' ? '#f3f4f6' : '#fed7aa',
-                  'color': product.ticket_category === 'golden' ? '#92400e' : 
-                          product.ticket_category === 'silver' ? '#374151' : '#9a3412'
+                  'background-color': getCategoryColor(product.ticket_category) + '20',
+                  'color': getCategoryColor(product.ticket_category),
+                  'border': '1px solid ' + getCategoryColor(product.ticket_category) + '40'
                 }">
-            <ng-container [ngSwitch]="product.ticket_category">
-              <span *ngSwitchCase="'golden'">🥇 Golden</span>
-              <span *ngSwitchCase="'silver'">🥈 Silver</span>
-              <span *ngSwitchCase="'bronze'">🥉 Bronze</span>
-            </ng-container>
+            {{ getCategoryIcon(product.ticket_category) }} {{ getCategoryDisplayName(product.ticket_category) }}
           </span>
           <span style="color: #16a34a; font-size: 0.875rem; font-weight: 600;" *ngIf="product.in_stock">✅ In Stock</span>
         </div>

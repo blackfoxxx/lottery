@@ -14,6 +14,7 @@ export class TicketsComponent implements OnInit {
   tickets: any[] = [];
   filteredTickets: any[] = [];
   paginatedTickets: any[] = [];
+  categories: any[] = [];
   loading = false;
   
   // Pagination properties
@@ -32,9 +33,25 @@ export class TicketsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadCategories();
     if (this.authService.isAuthenticated()) {
       this.loadTickets();
     }
+  }
+
+  // Load categories from API
+  loadCategories(): void {
+    this.api.getCategories().subscribe({
+      next: (categories) => {
+        // Filter only active categories and sort by sort_order
+        this.categories = categories
+          .filter((cat: any) => cat.is_active)
+          .sort((a: any, b: any) => a.sort_order - b.sort_order);
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+      }
+    });
   }
 
   // Filter methods
@@ -118,24 +135,43 @@ export class TicketsComponent implements OnInit {
   }
 
   // Helper methods for template calculations
+  getCategoryTicketsCount(categoryName: string): number {
+    return this.tickets.filter(ticket => ticket.category === categoryName).length;
+  }
+
   getActiveTicketsCount(): number {
-    return this.tickets.filter(t => !t.is_used).length;
+    return this.tickets.filter(ticket => !ticket.is_used).length;
   }
 
-  getMinValue(a: number, b: number): number {
-    return Math.min(a, b);
+  getTotalTicketsCount(): number {
+    return this.tickets.length;
   }
 
+  getUsedTicketsCount(): number {
+    return this.tickets.filter(ticket => ticket.is_used).length;
+  }
+
+  // Legacy methods for backward compatibility
   getGoldenTicketsCount(): number {
-    return this.tickets.filter(t => t.category === 'golden').length;
+    return this.getCategoryTicketsCount('golden');
   }
 
   getSilverTicketsCount(): number {
-    return this.tickets.filter(t => t.category === 'silver').length;
+    return this.getCategoryTicketsCount('silver');
   }
 
   getBronzeTicketsCount(): number {
-    return this.tickets.filter(t => t.category === 'bronze').length;
+    return this.getCategoryTicketsCount('bronze');
+  }
+
+  getCategoryIcon(categoryName: string): string {
+    const categoryObj = this.categories.find(cat => cat.name === categoryName);
+    return categoryObj ? categoryObj.icon : '🎫';
+  }
+
+  getCategoryDisplayName(categoryName: string): string {
+    const categoryObj = this.categories.find(cat => cat.name === categoryName);
+    return categoryObj ? categoryObj.display_name : categoryName;
   }
 
   loadTickets(): void {
@@ -166,16 +202,17 @@ export class TicketsComponent implements OnInit {
 
   getProductCategoryBadge(ticket: any): { text: string, color: string, background: string } {
     const category = ticket.category;
-    switch (category) {
-      case 'golden':
-        return { text: '🥇 Golden Product', color: '#92400e', background: '#fef3c7' };
-      case 'silver':
-        return { text: '🥈 Silver Product', color: '#374151', background: '#f3f4f6' };
-      case 'bronze':
-        return { text: '🥉 Bronze Product', color: '#9a3412', background: '#fed7aa' };
-      default:
-        return { text: '🎟️ Product', color: '#1f2937', background: '#f9fafb' };
+    const categoryObj = this.categories.find(cat => cat.name === category);
+    
+    if (categoryObj) {
+      return { 
+        text: `${categoryObj.icon} ${categoryObj.display_name} Product`, 
+        color: categoryObj.color, 
+        background: categoryObj.color + '20' // Add transparency
+      };
     }
+    
+    return { text: '🎟️ Product', color: '#1f2937', background: '#f9fafb' };
   }
 
   formatPrice(price: number): string {
@@ -192,22 +229,13 @@ export class TicketsComponent implements OnInit {
     });
   }
 
-  getCategoryIcon(category: string): string {
-    switch (category) {
-      case 'golden': return '🥇';
-      case 'silver': return '🥈';
-      case 'bronze': return '🥉';
-      default: return '🎟️';
-    }
+  getCategoryColor(category: string): string {
+    const categoryObj = this.categories.find(cat => cat.name === category);
+    return categoryObj ? categoryObj.color : '#3b82f6';
   }
 
-  getCategoryColor(category: string): string {
-    switch (category) {
-      case 'golden': return '#fbbf24';
-      case 'silver': return '#9ca3af';
-      case 'bronze': return '#ea580c';
-      default: return '#3b82f6';
-    }
+  getMinValue(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   refreshTickets(): void {

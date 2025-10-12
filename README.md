@@ -206,6 +206,11 @@ ionic capacitor build android
 ionic capacitor build ios
 ```
 
+### Mobile: About (Version Info)
+- The mobile app includes an About page to view the current app version and build.
+- Access it from the Home footer link “حول التطبيق” or navigate to /about within the Ionic app.
+- The page supports RTL Arabic and provides a one-tap copy of the version for support.
+
 ## 🔑 Admin Access
 
 **Default Admin Credentials**:

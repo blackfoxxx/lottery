@@ -208,6 +208,48 @@ database/database.sqlite
 # Project-specific excludes
 # ============================================
 
+# Development and documentation files to exclude
+*.md
+!README.md
+!DEPLOYMENT_GUIDE.md
+!LICENSE.md
+!CONTRIBUTING.md
+!CHANGELOG.md
+
+# Shell scripts and helper files
+*.sh
+!deploy.sh
+*.html
+test-*
+comprehensive-*
+getMessage
+is_admin
+save
+email
+
+# AI and development helpers
+.aiignore
+
+# Status and resolution files
+*_COMPLETE.md
+*_RESOLUTION*.md
+*_REPORT.md
+*_STATUS.md
+*_SUCCESS.md
+*_GUIDE.md
+ADMIN_*.md
+API_*.md
+CATEGORY_*.md
+COMPLETE_*.md
+DYNAMIC_*.md
+FINAL_*.md
+FIXES_*.md
+LOTTERY_*.md
+NOTIFICATION_*.md
+PRODUCT_*.md
+SETUP_*.md
+SYSTEM_*.md
+
 # Test scripts outputs
 test-output/
 test-results/

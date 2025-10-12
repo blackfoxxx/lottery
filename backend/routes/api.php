@@ -3,14 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\TicketController;
-use App\Http\Controllers\PrizeController;
-use App\Http\Controllers\LotteryDrawController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\SystemController;
-use App\Http\Controllers\SettingsController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -35,34 +28,38 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-// Product routes
-Route::apiResource('products', ProductController::class);
-
-// Order routes (orders automatically generate FREE lottery tickets)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('orders', OrderController::class);
-    Route::post('/orders/with-payment', [OrderController::class, 'storeWithPayment']);
+// Categories endpoint - real database version
+Route::get('/categories', function () {
+    try {
+        $categories = \App\Models\Category::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+        return response()->json($categories);
+    } catch (\Exception $e) {
+        \Log::error('Categories endpoint error: ' . $e->getMessage());
+        return response()->json(['error' => 'Failed to fetch categories'], 500);
+    }
 });
 
-// Ticket routes (view only - tickets are generated with purchases)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/tickets', [TicketController::class, 'index']);
-    Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
+// Admin routes (simplified for now)
+Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
+    // Dashboard stats
+    Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    
+    // Categories management
+    Route::get('/categories', [AdminController::class, 'indexCategories']);
+    Route::post('/categories', [AdminController::class, 'storeCategory']);
 });
-
-// Prize routes
-Route::get('/prizes', [PrizeController::class, 'index']);
-Route::get('/prizes/{prize}', [PrizeController::class, 'show']);
-
-// Lottery draw routes
-Route::get('/lottery-draws', [LotteryDrawController::class, 'index']);
-Route::get('/lottery-draws/{draw}', [LotteryDrawController::class, 'show']);
-Route::get('/lottery-draws/{draw}/countdown', [LotteryDrawController::class, 'countdown']);
 
 // Admin routes
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     // Dashboard stats
     Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    
+    // Test route
+    Route::get('/test', function () {
+        return response()->json(['message' => 'Admin test route works']);
+    });
     
     // Products management
     Route::get('/products', [AdminController::class, 'indexProducts']);
@@ -73,9 +70,17 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     
     // Users management
     Route::get('/users', [AdminController::class, 'indexUsers']);
+    Route::post('/users', [AdminController::class, 'storeUser']);
     Route::get('/users/{user}', [AdminController::class, 'showUser']);
     Route::put('/users/{user}', [AdminController::class, 'updateUser']);
     Route::delete('/users/{user}', [AdminController::class, 'destroyUser']);
+    
+    // Categories management
+    Route::get('/categories', [AdminController::class, 'indexCategories']);
+    Route::post('/categories', [AdminController::class, 'storeCategory']);
+    Route::get('/categories/{category}', [AdminController::class, 'showCategory']);
+    Route::put('/categories/{category}', [AdminController::class, 'updateCategory']);
+    Route::delete('/categories/{category}', [AdminController::class, 'destroyCategory']);
     
     // Orders management
     Route::get('/orders', [AdminController::class, 'indexOrders']);
@@ -103,6 +108,9 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::put('/lottery-draws/{lotteryDraw}', [AdminController::class, 'updateLotteryDraw']);
     Route::delete('/lottery-draws/{lotteryDraw}', [AdminController::class, 'destroyLotteryDraw']);
     Route::post('/lottery-draws/{lotteryDraw}/draw', [AdminController::class, 'performDraw']);
+    
+    // Lottery configuration
+    Route::post('/lottery-config', [AdminController::class, 'updateLotteryConfiguration']);
     
     // System settings management
     Route::get('/settings', [SettingsController::class, 'index']);

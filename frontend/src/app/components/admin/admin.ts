@@ -23,6 +23,7 @@ export class AdminComponent implements OnInit {
   tickets: any[] = [];
   filteredTickets: any[] = [];
   lotteryDraws: any[] = [];
+  categories: any[] = [];
   
   // Form data
   productForm = {
@@ -34,11 +35,64 @@ export class AdminComponent implements OnInit {
     in_stock: true,
     image_url: ''
   };
-  
+
+  // Product management
   editingProduct: any = null;
   showProductForm = false;
   selectedImageFile: File | null = null;
   imagePreview: string | null = null;
+
+  // User management
+  userForm = {
+    name: '',
+    email: '',
+    password: '',
+    is_admin: false
+  };
+  
+  editingUser: any = null;
+  showUserForm = false;
+  userModalTitle = 'Create New User';
+  
+  // Category management
+  categoryForm = {
+    name: '',
+    display_name: '',
+    description: '',
+    ticket_amount: 1,
+    color: '#2563eb',
+    icon: '🎟️',
+    prize_pool: 0,
+    is_active: true
+  };
+  
+  editingCategory: any = null;
+  showCategoryForm = false;
+  categoryModalTitle = 'Create New Category';
+  selectedLogoFile: File | null = null;
+  logoPreview: string | null = null;
+  
+  // Lottery Draw management
+  lotteryDrawForm = {
+    category_id: '',
+    name: '',
+    description: '',
+    draw_date: '',
+    total_tickets: 1000,
+    prize_pool: 1000000,
+    status: 'upcoming'
+  };
+  
+  editingLotteryDraw: any = null;
+  showLotteryDrawForm = false;
+  
+  // Lottery configuration
+  lotteryConfig = {
+    maxTicketsPerUser: 100,
+    defaultDrawFrequency: 'weekly',
+    defaultDrawTime: '20:00',
+    autoCreateDraws: true
+  };
   
   // Ticket filtering
   ticketFilters = {
@@ -63,8 +117,13 @@ export class AdminComponent implements OnInit {
     primaryColor: '#2563eb',
     secondaryColor: '#dc2626',
     welcomeMessage: 'Welcome to Bil Khair - Iraq\'s Premier E-commerce & Lottery Platform',
-    footerText: '© 2025 Bil Khair Platform. All rights reserved.'
+    footerText: '© 2025 Bil Khair Platform. All rights reserved.',
+    logoUrl: ''
   };
+
+  // UI Settings
+  selectedPlatformLogoFile: File | null = null;
+  platformLogoPreview: string | null = null;
 
   constructor(
     private api: Api,
@@ -75,6 +134,7 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
     if (this.authService.isAuthenticated() && this.authService.getCurrentUser()?.is_admin) {
       this.loadDashboard();
+      this.loadSystemSettings();
     }
   }
 
@@ -88,6 +148,19 @@ export class AdminComponent implements OnInit {
       error: (error) => {
         console.error('Error loading dashboard:', error);
         this.loading = false;
+      }
+    });
+  }
+
+  loadSystemSettings(): void {
+    this.api.getSystemSettings().subscribe({
+      next: (settings) => {
+        this.systemSettings = { ...this.systemSettings, ...settings };
+        this.applyUISettings();
+        this.applyPlatformSettings();
+      },
+      error: (error) => {
+        console.error('Error loading system settings:', error);
       }
     });
   }
@@ -108,6 +181,9 @@ export class AdminComponent implements OnInit {
         );
       }
     });
+    
+    // Also load categories for the ticket category dropdown
+    this.loadCategories();
   }
 
   showAddProductForm(): void {
@@ -265,6 +341,163 @@ export class AdminComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading users:', error);
+        this.notificationService.error(
+          'Failed to Load Users',
+          'Unable to fetch users from the server. Please refresh the page.'
+        );
+      }
+    });
+  }
+
+  showCreateUserForm(): void {
+    this.editingUser = null;
+    this.userForm = {
+      name: '',
+      email: '',
+      password: '',
+      is_admin: false
+    };
+    this.userModalTitle = 'Create New User';
+    this.showUserForm = true;
+  }
+
+  editUser(user: any): void {
+    this.editingUser = user;
+    this.userForm = {
+      name: user.name,
+      email: user.email,
+      password: '',
+      is_admin: user.is_admin || false
+    };
+    this.userModalTitle = 'Edit User';
+    this.showUserForm = true;
+  }
+
+  saveUser(): void {
+    if (this.editingUser) {
+      // Update existing user
+      const updateData: any = {
+        name: this.userForm.name,
+        email: this.userForm.email,
+        is_admin: this.userForm.is_admin
+      };
+      
+      // Only include password if it's provided
+      if (this.userForm.password.trim()) {
+        updateData.password = this.userForm.password;
+      }
+
+      this.api.updateAdminUser(this.editingUser.id, updateData).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.showUserForm = false;
+          this.notificationService.success(
+            'User Updated',
+            `${this.userForm.name} has been updated successfully!`
+          );
+        },
+        error: (error) => {
+          console.error('Error updating user:', error);
+          this.notificationService.error(
+            'Update Failed',
+            'Failed to update user. Please check your data and try again.'
+          );
+        }
+      });
+    } else {
+      // Create new user
+      this.api.createAdminUser(this.userForm).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.showUserForm = false;
+          this.notificationService.success(
+            'User Created',
+            `${this.userForm.name} has been created successfully!`
+          );
+        },
+        error: (error) => {
+          console.error('Error creating user:', error);
+          this.notificationService.error(
+            'Creation Failed',
+            'Failed to create user. Please check your data and try again.'
+          );
+        }
+      });
+    }
+  }
+
+  deleteUser(user: any): void {
+    // Prevent admin from deleting themselves
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && currentUser.id === user.id) {
+      this.notificationService.error(
+        'Cannot Delete Self',
+        'You cannot delete your own account while logged in.'
+      );
+      return;
+    }
+
+    this.notificationService.warning(
+      'Confirm User Deletion',
+      `Are you sure you want to delete "${user.name}"? This action cannot be undone.`,
+      {
+        persistent: true,
+        actions: [
+          {
+            label: 'Delete User',
+            action: () => this.confirmDeleteUser(user),
+            primary: true
+          },
+          {
+            label: 'Cancel',
+            action: () => {}
+          }
+        ]
+      }
+    );
+  }
+
+  private confirmDeleteUser(user: any): void {
+    this.api.deleteAdminUser(user.id).subscribe({
+      next: () => {
+        this.loadUsers();
+        this.notificationService.success(
+          'User Deleted',
+          `${user.name} has been deleted successfully.`
+        );
+      },
+      error: (error) => {
+        console.error('Error deleting user:', error);
+        this.notificationService.error(
+          'Deletion Failed',
+          'Failed to delete user. Please try again.'
+        );
+      }
+    });
+  }
+
+  toggleUserAdminStatus(user: any): void {
+    const newStatus = !user.is_admin;
+    const updateData = {
+      name: user.name,
+      email: user.email,
+      is_admin: newStatus
+    };
+
+    this.api.updateAdminUser(user.id, updateData).subscribe({
+      next: () => {
+        user.is_admin = newStatus;
+        this.notificationService.success(
+          'User Updated',
+          `${user.name} is now ${newStatus ? 'an admin' : 'a regular user'}.`
+        );
+      },
+      error: (error) => {
+        console.error('Error updating user admin status:', error);
+        this.notificationService.error(
+          'Update Failed',
+          'Failed to update user admin status. Please try again.'
+        );
       }
     });
   }
@@ -512,13 +745,19 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  getCategoryColor(category: string): string {
-    switch (category) {
-      case 'golden': return '#fbbf24';
-      case 'silver': return '#9ca3af';
-      case 'bronze': return '#ea580c';
-      default: return '#3b82f6';
-    }
+  // Helper methods for category management
+  getCategoryByName(categoryName: string): any {
+    return this.categories.find(cat => cat.name === categoryName);
+  }
+
+  getCategoryDisplay(categoryName: string): string {
+    const category = this.getCategoryByName(categoryName);
+    return category ? `${category.icon} ${category.display_name}` : `🎟️ ${categoryName}`;
+  }
+
+  getCategoryColor(categoryName: string): string {
+    const category = this.getCategoryByName(categoryName);
+    return category ? category.color : '#6b7280';
   }
 
   // Lottery Draws Management
@@ -614,32 +853,133 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  updateLotterySettings(): void {
-    this.api.updateSystemSettings(this.systemSettings).subscribe({
+  updateLotteryConfiguration(): void {
+    // Update category prize pools
+    const categoryUpdates = this.categories.map(category => ({
+      id: category.id,
+      prize_pool: category.prize_pool
+    }));
+
+    // Save lottery configuration
+    const configData = {
+      categories: categoryUpdates,
+      globalSettings: this.lotteryConfig
+    };
+
+    this.api.updateLotteryConfiguration(configData).subscribe({
       next: (response) => {
         this.notificationService.success(
-          'Lottery Settings Updated',
-          'Prize pools and lottery configuration has been saved successfully.'
+          'Lottery Configuration Updated',
+          'Prize pools and lottery settings have been saved successfully.'
         );
       },
       error: (error) => {
-        console.error('Error updating lottery settings:', error);
+        console.error('Error updating lottery configuration:', error);
         this.notificationService.error(
           'Update Failed',
-          'Failed to save lottery settings. Please try again.'
+          'Failed to save lottery configuration. Please try again.'
         );
       }
     });
   }
 
+  syncCategoryPrizePools(): void {
+    this.categories.forEach(category => {
+      this.api.updateAdminCategory(category.id, { prize_pool: category.prize_pool }).subscribe({
+        next: () => {
+          console.log(`Updated ${category.name} prize pool to ${category.prize_pool}`);
+        },
+        error: (error) => {
+          console.error(`Error updating ${category.name} prize pool:`, error);
+        }
+      });
+    });
+    
+    this.notificationService.success(
+      'Prize Pools Synced',
+      'All category prize pools have been synchronized successfully.'
+    );
+  }
+
+  createWeeklyDrawsForAllCategories(): void {
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    nextWeek.setHours(20, 0, 0, 0); // Set to 8 PM
+    
+    const drawPromises = this.categories.map(category => {
+      const drawData = {
+        category_id: category.id,
+        name: `${category.display_name} Weekly Draw`,
+        description: `Weekly lottery draw for ${category.display_name} members`,
+        draw_date: nextWeek.toISOString().slice(0, 16),
+        total_tickets: Math.floor(category.prize_pool / 10000), // Tickets based on prize pool
+        prize_pool: category.prize_pool,
+        status: 'upcoming'
+      };
+      
+      return this.api.createAdminLotteryDraw(drawData).toPromise();
+    });
+
+    Promise.all(drawPromises).then(() => {
+      this.loadLotteryDraws();
+      this.notificationService.success(
+        'Weekly Draws Created',
+        `Created weekly draws for all ${this.categories.length} categories.`
+      );
+    }).catch((error) => {
+      console.error('Error creating weekly draws:', error);
+      this.notificationService.error(
+        'Creation Failed',
+        'Failed to create weekly draws. Some may have been created successfully.'
+      );
+    });
+  }
+
+  viewLotteryStatistics(): void {
+    this.notificationService.info(
+      'Lottery Statistics',
+      `📊 System Overview:
+      
+      🏷️ Active Categories: ${this.categories.filter(c => c.is_active).length}
+      🎲 Total Lottery Draws: ${this.lotteryDraws.length}
+      🎯 Active Draws: ${this.lotteryDraws.filter(d => d.status === 'active').length}
+      💰 Total Prize Pool: ${this.categories.reduce((sum, c) => sum + parseFloat(c.prize_pool || 0), 0).toLocaleString()} IQD
+      
+      Use the quick actions above to manage your lottery system efficiently.`,
+      { persistent: true }
+    );
+  }
+
+  updateLotterySettings(): void {
+    this.updateLotteryConfiguration();
+  }
+
   updateUISettings(): void {
-    this.api.updateSystemSettings(this.systemSettings).subscribe({
+    const formData = new FormData();
+    
+    // Add all settings as form data
+    Object.keys(this.systemSettings).forEach(key => {
+      formData.append(key, this.systemSettings[key as keyof typeof this.systemSettings].toString());
+    });
+    
+    // Add logo file if selected
+    if (this.selectedPlatformLogoFile) {
+      formData.append('logo', this.selectedPlatformLogoFile);
+    }
+
+    this.api.updateSystemSettings(formData).subscribe({
       next: (response) => {
+        // Update systemSettings with response
+        this.systemSettings = { ...this.systemSettings, ...response };
+        
         this.notificationService.success(
           'UI Settings Updated',
-          'Theme colors and interface settings has been saved successfully.'
+          'Theme colors, logo, and interface settings have been saved successfully.'
         );
+        
+        // Force apply the new settings immediately
         this.applyUISettings();
+        this.applyPlatformSettings();
       },
       error: (error) => {
         console.error('Error updating UI settings:', error);
@@ -669,20 +1009,73 @@ export class AdminComponent implements OnInit {
   }
 
   applyUISettings(): void {
-    // Apply color scheme
+    // Remove previous dynamic styles
+    const existingStyle = document.getElementById('dynamic-ui-styles');
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+
+    // Apply color scheme through CSS custom properties
     const root = document.documentElement;
     root.style.setProperty('--primary-color', this.systemSettings.primaryColor);
     root.style.setProperty('--secondary-color', this.systemSettings.secondaryColor);
     
-    // Update CSS custom properties for buttons and elements
+    // Create comprehensive dynamic styles
     const style = document.createElement('style');
+    style.id = 'dynamic-ui-styles';
     style.textContent = `
-      .btn-primary { background-color: ${this.systemSettings.primaryColor} !important; }
+      :root {
+        --primary-color: ${this.systemSettings.primaryColor};
+        --secondary-color: ${this.systemSettings.secondaryColor};
+      }
+      
+      /* Button styles */
+      .btn-primary, 
+      button[style*="background: #2563eb"],
+      button[style*="background:#2563eb"] { 
+        background-color: ${this.systemSettings.primaryColor} !important; 
+      }
+      
+      /* Navigation active states */
+      button[style*="background-color"][style*="#2563eb"] {
+        background-color: ${this.systemSettings.primaryColor} !important;
+      }
+      
+      /* Category-specific colors */
       .bg-iraqi-green { background-color: ${this.systemSettings.primaryColor} !important; }
       .bg-iraqi-red { background-color: ${this.systemSettings.secondaryColor} !important; }
       .text-iraqi-green { color: ${this.systemSettings.primaryColor} !important; }
+      .text-iraqi-red { color: ${this.systemSettings.secondaryColor} !important; }
+      
+      /* Admin panel navigation */
+      .admin-dashboard button[style*="background-color: #2563eb"] {
+        background-color: ${this.systemSettings.primaryColor} !important;
+      }
+      
+      /* Links and interactive elements */
+      a, .link { color: ${this.systemSettings.primaryColor} !important; }
+      
+      /* Form focus states */
+      input:focus, select:focus, textarea:focus {
+        border-color: ${this.systemSettings.primaryColor} !important;
+        outline-color: ${this.systemSettings.primaryColor} !important;
+      }
     `;
+    
     document.head.appendChild(style);
+    
+    // Update logo if available
+    if (this.systemSettings.logoUrl) {
+      const logoElements = document.querySelectorAll('.platform-logo img');
+      logoElements.forEach(img => {
+        (img as HTMLImageElement).src = this.getPlatformLogoUrl(this.systemSettings.logoUrl);
+      });
+    }
+    
+    console.log('UI Settings Applied:', {
+      primaryColor: this.systemSettings.primaryColor,
+      secondaryColor: this.systemSettings.secondaryColor
+    });
   }
 
   refreshSystemStatus(): void {
@@ -738,6 +1131,9 @@ export class AdminComponent implements OnInit {
       case 'users':
         this.loadUsers();
         break;
+      case 'categories':
+        this.loadCategories();
+        break;
       case 'orders':
         this.loadOrders();
         break;
@@ -755,25 +1151,6 @@ export class AdminComponent implements OnInit {
         this.loadDashboard();
         break;
     }
-  }
-
-  loadSystemSettings(): void {
-    this.api.getSystemSettings().subscribe({
-      next: (settings) => {
-        this.systemSettings = { ...this.systemSettings, ...settings };
-        this.notificationService.info(
-          'System Settings Loaded',
-          'Current system configuration has been loaded for editing.'
-        );
-      },
-      error: (error) => {
-        console.error('Error loading system settings:', error);
-        this.notificationService.warning(
-          'Settings Load Warning',
-          'Using default settings. Unable to load saved configuration.'
-        );
-      }
-    });
   }
 
   resetSystemSettings(): void {
@@ -865,5 +1242,430 @@ export class AdminComponent implements OnInit {
       }
     };
     input.click();
+  }
+
+  // Categories Management
+  loadCategories(): void {
+    this.api.getAdminCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+        this.notificationService.error(
+          'Failed to Load Categories',
+          'Unable to fetch categories from the server. Please refresh the page.'
+        );
+      }
+    });
+  }
+
+  showCreateCategoryForm(): void {
+    this.editingCategory = null;
+    this.categoryForm = {
+      name: '',
+      display_name: '',
+      description: '',
+      ticket_amount: 1,
+      color: '#2563eb',
+      icon: '🎟️',
+      prize_pool: 0,
+      is_active: true
+    };
+    this.selectedLogoFile = null;
+    this.logoPreview = null;
+    this.categoryModalTitle = 'Create New Category';
+    this.showCategoryForm = true;
+  }
+
+  editCategory(category: any): void {
+    this.editingCategory = category;
+    this.categoryForm = {
+      name: category.name,
+      display_name: category.display_name,
+      description: category.description || '',
+      ticket_amount: category.ticket_amount,
+      color: category.color,
+      icon: category.icon,
+      prize_pool: category.prize_pool,
+      is_active: category.is_active
+    };
+    this.selectedLogoFile = null;
+    this.logoPreview = null;
+    this.categoryModalTitle = 'Edit Category';
+    this.showCategoryForm = true;
+  }
+
+  saveCategory(): void {
+    // Frontend validation
+    if (!this.categoryForm.name || !this.categoryForm.display_name || !this.categoryForm.ticket_amount) {
+      this.notificationService.error(
+        'Missing Required Fields',
+        'Please fill in all required fields (Name, Display Name, Ticket Amount).'
+      );
+      return;
+    }
+
+    if (this.categoryForm.ticket_amount < 1) {
+      this.notificationService.error(
+        'Invalid Ticket Amount',
+        'Ticket amount must be at least 1.'
+      );
+      return;
+    }
+
+    if (!this.categoryForm.color.match(/^#[0-9A-Fa-f]{6}$/)) {
+      this.notificationService.error(
+        'Invalid Color Format',
+        'Color must be in hex format (e.g., #ff5722).'
+      );
+      return;
+    }
+
+    const formData = new FormData();
+    
+    // Add form fields
+    formData.append('name', this.categoryForm.name.trim());
+    formData.append('display_name', this.categoryForm.display_name.trim());
+    formData.append('description', this.categoryForm.description || '');
+    formData.append('ticket_amount', this.categoryForm.ticket_amount.toString());
+    formData.append('color', this.categoryForm.color);
+    formData.append('icon', this.categoryForm.icon);
+    formData.append('prize_pool', this.categoryForm.prize_pool.toString());
+    formData.append('is_active', this.categoryForm.is_active.toString());
+    
+    // Add logo file if selected
+    if (this.selectedLogoFile) {
+      formData.append('logo', this.selectedLogoFile);
+    }
+
+    console.log('Sending category creation request with data:', {
+      name: this.categoryForm.name,
+      display_name: this.categoryForm.display_name,
+      ticket_amount: this.categoryForm.ticket_amount,
+      color: this.categoryForm.color,
+      icon: this.categoryForm.icon,
+      prize_pool: this.categoryForm.prize_pool,
+      is_active: this.categoryForm.is_active,
+      has_logo: !!this.selectedLogoFile
+    });
+    formData.append('color', this.categoryForm.color);
+    formData.append('icon', this.categoryForm.icon);
+    formData.append('prize_pool', this.categoryForm.prize_pool.toString());
+    formData.append('is_active', this.categoryForm.is_active.toString());
+    
+    // Add logo file if selected
+    if (this.selectedLogoFile) {
+      formData.append('logo', this.selectedLogoFile);
+    }
+
+    if (this.editingCategory) {
+      // Update existing category
+      this.api.updateAdminCategoryWithLogo(this.editingCategory.id, formData).subscribe({
+        next: () => {
+          this.loadCategories();
+          this.showCategoryForm = false;
+          this.notificationService.success(
+            'Category Updated',
+            `${this.categoryForm.display_name} has been updated successfully!`
+          );
+        },
+        error: (error) => {
+          console.error('Error updating category:', error);
+          this.notificationService.error(
+            'Update Failed',
+            `Failed to update category. ${error.error?.message || 'Please check your data and try again.'}`
+          );
+        }
+      });
+    } else {
+      // Create new category
+      this.api.createAdminCategoryWithLogo(formData).subscribe({
+        next: (response) => {
+          console.log('Category created successfully:', response);
+          this.loadCategories();
+          this.showCategoryForm = false;
+          this.notificationService.success(
+            'Category Created',
+            `${this.categoryForm.display_name} has been created successfully!`
+          );
+        },
+        error: (error) => {
+          console.error('Error creating category:', error);
+          const errorMessage = error.error?.message || 'Failed to create category. Please check your data and try again.';
+          const validationErrors = error.error?.errors;
+          
+          if (validationErrors) {
+            const errorList = Object.values(validationErrors).flat().join(', ');
+            this.notificationService.error(
+              'Validation Failed',
+              `Please fix the following errors: ${errorList}`
+            );
+          } else {
+            this.notificationService.error(
+              'Creation Failed',
+              errorMessage
+            );
+          }
+        }
+      });
+    }
+  }
+
+  deleteCategory(category: any): void {
+    this.notificationService.warning(
+      'Confirm Category Deletion',
+      `Are you sure you want to delete "${category.display_name}"? This action cannot be undone and may affect existing products and tickets.`,
+      {
+        persistent: true,
+        actions: [
+          {
+            label: 'Delete Category',
+            action: () => this.confirmDeleteCategory(category),
+            primary: true
+          },
+          {
+            label: 'Cancel',
+            action: () => {}
+          }
+        ]
+      }
+    );
+  }
+
+  private confirmDeleteCategory(category: any): void {
+    this.api.deleteAdminCategory(category.id).subscribe({
+      next: () => {
+        this.loadCategories();
+        this.notificationService.success(
+          'Category Deleted',
+          `${category.display_name} has been deleted successfully.`
+        );
+      },
+      error: (error) => {
+        console.error('Error deleting category:', error);
+        const message = error.error?.message || 'Failed to delete category. Please try again.';
+        this.notificationService.error('Deletion Failed', message);
+      }
+    });
+  }
+
+  // Logo upload handling methods
+  onLogoSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedLogoFile = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.logoPreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  getCategoryLogoUrl(logoUrl: string): string {
+    if (!logoUrl) return '';
+    if (logoUrl.startsWith('http')) return logoUrl;
+    return this.api.getBaseUrl().replace('/api', '') + '/' + logoUrl;
+  }
+
+  getPlatformLogoUrl(logoUrl: string): string {
+    if (!logoUrl) return '';
+    if (logoUrl.startsWith('http')) return logoUrl;
+    return this.api.getBaseUrl().replace('/api', '') + '/' + logoUrl;
+  }
+
+  // Platform logo upload handling
+  onPlatformLogoSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedPlatformLogoFile = file;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.platformLogoPreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Lottery Draw Management
+  showCreateLotteryDrawForm(): void {
+    this.editingLotteryDraw = null;
+    this.lotteryDrawForm = {
+      category_id: '',
+      name: '',
+      description: '',
+      draw_date: '',
+      total_tickets: 1000,
+      prize_pool: 1000000,
+      status: 'upcoming'
+    };
+    this.showLotteryDrawForm = true;
+  }
+
+  editLotteryDraw(draw: any): void {
+    this.editingLotteryDraw = draw;
+    this.lotteryDrawForm = {
+      category_id: draw.category_id,
+      name: draw.name,
+      description: draw.description,
+      draw_date: draw.draw_date.slice(0, 16), // Format for datetime-local input
+      total_tickets: draw.total_tickets,
+      prize_pool: draw.prize_pool,
+      status: draw.status
+    };
+    this.showLotteryDrawForm = true;
+  }
+
+  saveLotteryDraw(): void {
+    if (!this.lotteryDrawForm.category_id || !this.lotteryDrawForm.name || !this.lotteryDrawForm.draw_date) {
+      this.notificationService.error(
+        'Missing Information',
+        'Please fill in all required fields (Category, Name, Draw Date).'
+      );
+      return;
+    }
+
+    const drawData = { ...this.lotteryDrawForm };
+    
+    if (this.editingLotteryDraw) {
+      // Update existing lottery draw
+      this.api.updateAdminLotteryDraw(this.editingLotteryDraw.id, drawData).subscribe({
+        next: () => {
+          this.showLotteryDrawForm = false;
+          this.loadLotteryDraws();
+          this.notificationService.success(
+            'Lottery Draw Updated',
+            `${drawData.name} has been updated successfully.`
+          );
+        },
+        error: (error) => {
+          console.error('Error updating lottery draw:', error);
+          this.notificationService.error(
+            'Update Failed',
+            'Failed to update lottery draw. Please try again.'
+          );
+        }
+      });
+    } else {
+      // Create new lottery draw
+      this.api.createAdminLotteryDraw(drawData).subscribe({
+        next: () => {
+          this.showLotteryDrawForm = false;
+          this.loadLotteryDraws();
+          this.notificationService.success(
+            'Lottery Draw Created',
+            `${drawData.name} has been created successfully!`
+          );
+        },
+        error: (error) => {
+          console.error('Error creating lottery draw:', error);
+          this.notificationService.error(
+            'Creation Failed',
+            'Failed to create lottery draw. Please try again.'
+          );
+        }
+      });
+    }
+  }
+
+  cancelLotteryDrawForm(): void {
+    this.showLotteryDrawForm = false;
+    this.editingLotteryDraw = null;
+  }
+
+  deleteLotteryDraw(draw: any): void {
+    this.notificationService.warning(
+      'Confirm Delete',
+      `Are you sure you want to delete "${draw.name}"? This action cannot be undone.`,
+      {
+        persistent: true,
+        actions: [
+          {
+            label: '🗑️ Delete',
+            action: () => this.confirmDeleteLotteryDraw(draw),
+            primary: true
+          },
+          {
+            label: 'Cancel',
+            action: () => {}
+          }
+        ]
+      }
+    );
+  }
+
+  private confirmDeleteLotteryDraw(draw: any): void {
+    this.api.deleteAdminLotteryDraw(draw.id).subscribe({
+      next: () => {
+        this.loadLotteryDraws();
+        this.notificationService.success(
+          'Lottery Draw Deleted',
+          `${draw.name} has been deleted successfully.`
+        );
+      },
+      error: (error) => {
+        console.error('Error deleting lottery draw:', error);
+        this.notificationService.error(
+          'Delete Failed',
+          'Failed to delete lottery draw. Please try again.'
+        );
+      }
+    });
+  }
+
+  // Test methods for debugging
+  testBackendConnection(): void {
+    console.log('Testing backend connection...');
+    this.api.getAdminCategories().subscribe({
+      next: (categories) => {
+        console.log('Backend connection successful. Categories:', categories);
+        this.notificationService.success(
+          'Backend Connection Test',
+          `Successfully connected! Found ${categories.length} categories.`
+        );
+      },
+      error: (error) => {
+        console.error('Backend connection failed:', error);
+        this.notificationService.error(
+          'Backend Connection Failed',
+          `Error: ${error.status} - ${error.message}`
+        );
+      }
+    });
+  }
+
+  testCategoryCreation(): void {
+    console.log('Testing category creation with minimal data...');
+    const testData = new FormData();
+    testData.append('name', 'test_frontend_' + Date.now());
+    testData.append('display_name', 'Frontend Test Category');
+    testData.append('ticket_amount', '1');
+    testData.append('color', '#ff5722');
+    testData.append('icon', '🧪');
+    testData.append('prize_pool', '1000000');
+    testData.append('is_active', 'true');
+
+    this.api.createAdminCategoryWithLogo(testData).subscribe({
+      next: (response) => {
+        console.log('Category creation test successful:', response);
+        this.notificationService.success(
+          'Category Creation Test',
+          'Successfully created test category!'
+        );
+        this.loadCategories();
+      },
+      error: (error) => {
+        console.error('Category creation test failed:', error);
+        this.notificationService.error(
+          'Category Creation Test Failed',
+          `Error: ${error.status} - ${error.error?.message || error.message}`
+        );
+      }
+    });
   }
 }

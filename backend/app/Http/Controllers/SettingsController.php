@@ -52,6 +52,7 @@ class SettingsController extends Controller
             'secondaryColor' => 'sometimes|string|regex:/^#[a-fA-F0-9]{6}$/',
             'welcomeMessage' => 'sometimes|string|max:500',
             'footerText' => 'sometimes|string|max:255',
+            'logo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $settings = $request->only([
@@ -71,16 +72,18 @@ class SettingsController extends Controller
             'footerText'
         ]);
 
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $settings['logoUrl'] = $this->handleLogoUpload($request->file('logo'));
+        }
+
         // Save to cache for quick access
         Cache::put('system_settings', $settings, now()->addDays(30));
         
         // Save to persistent storage
         Storage::put('system_settings.json', json_encode($settings, JSON_PRETTY_PRINT));
 
-        return response()->json([
-            'message' => 'System settings updated successfully',
-            'settings' => $settings
-        ]);
+        return response()->json($settings);
     }
 
     /**
@@ -172,5 +175,23 @@ class SettingsController extends Controller
             'welcomeMessage' => 'Welcome to Bil Khair - Iraq\'s Premier E-commerce & Lottery Platform',
             'footerText' => '© 2025 Bil Khair Platform. All rights reserved.'
         ];
+    }
+
+    /**
+     * Handle logo file upload
+     */
+    private function handleLogoUpload($logoFile)
+    {
+        $fileName = time() . '_logo.' . $logoFile->getClientOriginalExtension();
+        $uploadPath = public_path('uploads/logos');
+        
+        // Create directory if it doesn't exist
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+        
+        $logoFile->move($uploadPath, $fileName);
+        
+        return 'uploads/logos/' . $fileName;
     }
 }

@@ -122,54 +122,22 @@
           <p class="text-lg text-gray-600 mb-8">Select a lottery category to view available products and start your journey!</p>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <!-- Golden Category -->
-            <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white p-8 rounded-xl shadow-lg cursor-pointer transform transition hover:scale-105"
-                 (click)="selectLotteryCategory('golden')">
-              <div class="text-6xl mb-4">🥇</div>
-              <h4 class="text-2xl font-bold mb-3">Golden Lottery</h4>
-              <p class="text-yellow-100 mb-4">Premium products worth 1,500,000+ IQD</p>
-              <div class="text-sm text-yellow-100 mb-4">
-                <div>• iPhone 15 Pro Max</div>
-                <div>• MacBook Pro 16"</div>
-                <div>• High-end electronics</div>
+            <!-- Dynamic Categories -->
+            <div *ngFor="let category of categories()" 
+                 class="text-white p-8 rounded-xl shadow-lg cursor-pointer transform transition hover:scale-105"
+                 [style.background]="'linear-gradient(135deg, ' + category.color + ', ' + category.color + '88)'"
+                 (click)="selectLotteryCategory(category)">
+              <div class="text-6xl mb-4">{{ category.icon }}</div>
+              <h4 class="text-2xl font-bold mb-3">{{ category.display_name }}</h4>
+              <p class="text-white/90 mb-4">{{ category.description }}</p>
+              <div class="text-sm text-white/80 mb-4">
+                <div>• {{ category.ticket_amount }} FREE tickets per purchase</div>
+                <div>• Premium lottery prizes</div>
+                <div>• Iraqi quality products</div>
               </div>
               <div class="bg-white/20 rounded-lg p-3">
                 <div class="text-sm">Current Prize Pool</div>
-                <div class="text-xl font-bold">5,500,000 IQD</div>
-              </div>
-            </div>
-
-            <!-- Silver Category -->
-            <div class="bg-gradient-to-br from-gray-400 to-gray-600 text-white p-8 rounded-xl shadow-lg cursor-pointer transform transition hover:scale-105"
-                 (click)="selectLotteryCategory('silver')">
-              <div class="text-6xl mb-4">🥈</div>
-              <h4 class="text-2xl font-bold mb-3">Silver Lottery</h4>
-              <p class="text-gray-100 mb-4">Quality products worth 500,000-1,499,999 IQD</p>
-              <div class="text-sm text-gray-100 mb-4">
-                <div>• PlayStation 5</div>
-                <div>• iPad Pro</div>
-                <div>• Gaming accessories</div>
-              </div>
-              <div class="bg-white/20 rounded-lg p-3">
-                <div class="text-sm">Current Prize Pool</div>
-                <div class="text-xl font-bold">2,800,000 IQD</div>
-              </div>
-            </div>
-
-            <!-- Bronze Category -->
-            <div class="bg-gradient-to-br from-orange-400 to-orange-600 text-white p-8 rounded-xl shadow-lg cursor-pointer transform transition hover:scale-105"
-                 (click)="selectLotteryCategory('bronze')">
-              <div class="text-6xl mb-4">🥉</div>
-              <h4 class="text-2xl font-bold mb-3">Bronze Lottery</h4>
-              <p class="text-orange-100 mb-4">Essential products worth 100,000-499,999 IQD</p>
-              <div class="text-sm text-orange-100 mb-4">
-                <div>• AirPods Pro</div>
-                <div>• Gaming monitors</div>
-                <div>• Accessories</div>
-              </div>
-              <div class="bg-white/20 rounded-lg p-3">
-                <div class="text-sm">Current Prize Pool</div>
-                <div class="text-xl font-bold">1,200,000 IQD</div>
+                <div class="text-xl font-bold">{{ parseFloat(category.prize_pool).toLocaleString() }} IQD</div>
               </div>
             </div>
           </div>

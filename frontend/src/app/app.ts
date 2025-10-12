@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProductList } from './components/product-list/product-list';
@@ -8,6 +8,7 @@ import { AdminComponent } from './components/admin/admin';
 import { NotificationsComponent } from './components/notifications/notifications';
 import { AuthService } from './services/auth';
 import { NotificationService } from './services/notification';
+import { Api } from './services/api';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ import { NotificationService } from './services/notification';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('bil-khair-platform');
   
   // UI state management
@@ -23,11 +24,37 @@ export class App {
   showAuthModal = signal(false);
   cartItems = signal(0);
   selectedCategory = signal<string | undefined>(undefined);
+  categories = signal<any[]>([]);
 
   constructor(
     public authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private api: Api
   ) {}
+
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  // Load categories from API
+  loadCategories(): void {
+    this.api.getCategories().subscribe({
+      next: (categories) => {
+        // Filter only active categories and sort by sort_order
+        const activeCategories = categories
+          .filter((cat: any) => cat.is_active)
+          .sort((a: any, b: any) => a.sort_order - b.sort_order);
+        this.categories.set(activeCategories);
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+        this.notificationService.error(
+          'Failed to load lottery categories',
+          'Please refresh the page to try again'
+        );
+      }
+    });
+  }
 
   // Navigation methods
   navigateToSection(section: string): void {
@@ -75,21 +102,14 @@ export class App {
   }
 
   // Lottery category selection
-  selectLotteryCategory(category: string): void {
-    this.selectedCategory.set(category);
+  selectLotteryCategory(category: any): void {
+    this.selectedCategory.set(category.name);
     this.navigateToSection('products');
     
     // Show notification about the selected category
-    const categoryInfo = {
-      golden: { emoji: '🥇', name: 'Golden', prizes: 'Premium electronics worth 1,500,000+ IQD' },
-      silver: { emoji: '🥈', name: 'Silver', prizes: 'Quality products worth 500,000-1,499,999 IQD' },
-      bronze: { emoji: '🥉', name: 'Bronze', prizes: 'Essential electronics worth 100,000-499,999 IQD' }
-    };
-    
-    const info = categoryInfo[category as keyof typeof categoryInfo];
     this.notificationService.success(
-      `${info.emoji} ${info.name} Lottery Selected!`,
-      `Browse ${info.name.toLowerCase()} products and get 100 FREE lottery tickets with each purchase. ${info.prizes}`
+      `${category.icon} ${category.display_name} Selected!`,
+      `Browse ${category.display_name.toLowerCase()} products and get ${category.ticket_amount} FREE lottery tickets with each purchase. Prize pool: ${parseFloat(category.prize_pool).toLocaleString()} IQD`
     );
   }
 
@@ -127,6 +147,11 @@ export class App {
   isAdmin(): boolean {
     const user = this.authService.getCurrentUser();
     return !!(user && user.is_admin);
+  }
+
+  // Utility method for template
+  parseFloat(value: string): number {
+    return parseFloat(value);
   }
 
   // Footer link handlers

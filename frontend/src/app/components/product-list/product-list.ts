@@ -17,8 +17,10 @@ export class ProductList implements OnInit {
   
   products: any[] = [];
   filteredProducts: any[] = [];
+  categories: any[] = [];
   loading = true;
   error: string | null = null;
+  selectedCategoryFilter: string = 'all';
   
   // Payment form properties
   showPaymentForm = false;
@@ -46,7 +48,24 @@ export class ProductList implements OnInit {
     console.log('ProductList component initialized');
     console.log('Is authenticated:', this.isAuthenticated());
     console.log('Filter category:', this.filterCategory);
+    this.loadCategories();
     this.loadProducts();
+  }
+
+  // Load categories from API
+  loadCategories(): void {
+    this.api.getCategories().subscribe({
+      next: (categories) => {
+        // Filter only active categories and sort by sort_order
+        this.categories = categories
+          .filter((cat: any) => cat.is_active)
+          .sort((a: any, b: any) => a.sort_order - b.sort_order);
+        console.log('Categories loaded:', this.categories);
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+      }
+    });
   }
 
   loadProducts(): void {
@@ -70,14 +89,8 @@ export class ProductList implements OnInit {
   }
 
   applyFilter(): void {
-    if (this.filterCategory) {
-      this.filteredProducts = this.products.filter(product => 
-        product.ticket_category === this.filterCategory
-      );
-      console.log(`Filtered products for ${this.filterCategory}:`, this.filteredProducts);
-    } else {
-      this.filteredProducts = this.products;
-    }
+    // Use the advanced filter method for consistency
+    this.applyAdvancedFilter();
   }
 
   getDisplayProducts(): any[] {
@@ -263,5 +276,56 @@ export class ProductList implements OnInit {
     } else {
       return 'phone';
     }
+  }
+
+  // Category filtering methods
+  setCategoryFilter(categoryName: string): void {
+    this.selectedCategoryFilter = categoryName;
+    this.applyAdvancedFilter();
+  }
+
+  clearCategoryFilter(): void {
+    this.selectedCategoryFilter = 'all';
+    this.applyAdvancedFilter();
+  }
+
+  applyAdvancedFilter(): void {
+    let filtered = this.products;
+
+    // Apply category filter from input property (from main app)
+    if (this.filterCategory) {
+      filtered = filtered.filter(product => 
+        product.ticket_category === this.filterCategory
+      );
+    }
+
+    // Apply UI category filter
+    if (this.selectedCategoryFilter !== 'all') {
+      filtered = filtered.filter(product => 
+        product.ticket_category === this.selectedCategoryFilter
+      );
+    }
+
+    this.filteredProducts = filtered;
+    console.log(`Filtered products (${this.selectedCategoryFilter}):`, this.filteredProducts);
+  }
+
+  getCategoryByName(categoryName: string): any {
+    return this.categories.find(cat => cat.name === categoryName);
+  }
+
+  getCategoryIcon(categoryName: string): string {
+    const category = this.getCategoryByName(categoryName);
+    return category ? category.icon : '🎟️';
+  }
+
+  getCategoryDisplayName(categoryName: string): string {
+    const category = this.getCategoryByName(categoryName);
+    return category ? category.display_name : categoryName;
+  }
+
+  getCategoryColor(categoryName: string): string {
+    const category = this.getCategoryByName(categoryName);
+    return category ? category.color : '#6b7280';
   }
 }

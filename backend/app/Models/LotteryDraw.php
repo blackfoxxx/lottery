@@ -10,6 +10,7 @@ class LotteryDraw extends Model
     use HasFactory;
 
     protected $fillable = [
+        'category_id',
         'name',
         'description',
         'draw_date',
@@ -20,6 +21,11 @@ class LotteryDraw extends Model
         'winner_ticket_id',
         'prize_id',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     public function prize()
     {

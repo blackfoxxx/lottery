@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'ticket.rate.limit' => \App\Http\Middleware\TicketPurchaseRateLimit::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
+        
+        // Configure API authentication to return JSON instead of redirecting
+        $middleware->redirectGuestsTo(fn () => response()->json(['message' => 'Unauthenticated.'], 401));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

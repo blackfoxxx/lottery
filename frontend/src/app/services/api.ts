@@ -10,9 +10,10 @@ export class Api {
   
   constructor(private http: HttpClient) {
     const loc = window?.location;
-    // Use local backend when running Angular dev server, otherwise use Nginx proxy path
-    if (loc && (loc.port === '4200' || loc.port === '4201')) {
-      this.baseUrl = 'http://localhost:8001/api';
+    // Use local backend when running Angular dev server (any port), otherwise use Nginx proxy path
+    if (loc && (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1') && loc.port) {
+      // Development mode - point to local backend
+      this.baseUrl = 'http://localhost:8000/api';
     } else {
       // In Docker/production, Nginx proxies /api to backend
       this.baseUrl = '/api';
@@ -97,6 +98,11 @@ export class Api {
     return this.http.get(`${this.baseUrl}/lottery-draws/${id}/countdown`);
   }
 
+  // Category methods
+  getCategories(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/categories`);
+  }
+
   // Admin methods
   getAdminDashboard(): Observable<any> {
     const headers = this.getAuthHeaders();
@@ -149,6 +155,11 @@ export class Api {
     return this.http.get(`${this.baseUrl}/admin/users`, { headers });
   }
 
+  createAdminUser(data: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.baseUrl}/admin/users`, data, { headers });
+  }
+
   updateAdminUser(id: number, data: any): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.put(`${this.baseUrl}/admin/users/${id}`, data, { headers });
@@ -192,9 +203,63 @@ export class Api {
     return this.http.get(`${this.baseUrl}/admin/lottery-draws`, { headers });
   }
 
+  createAdminLotteryDraw(data: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.baseUrl}/admin/lottery-draws`, data, { headers });
+  }
+
+  updateAdminLotteryDraw(id: number, data: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.put(`${this.baseUrl}/admin/lottery-draws/${id}`, data, { headers });
+  }
+
+  deleteAdminLotteryDraw(id: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete(`${this.baseUrl}/admin/lottery-draws/${id}`, { headers });
+  }
+
   performDraw(id: number): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.post(`${this.baseUrl}/admin/lottery-draws/${id}/draw`, {}, { headers });
+  }
+
+  // Admin Categories
+  getAdminCategories(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/admin/categories`, { headers });
+  }
+
+  createAdminCategory(data: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.baseUrl}/admin/categories`, data, { headers });
+  }
+
+  createAdminCategoryWithLogo(formData: FormData): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+      // Don't set Content-Type for FormData, let the browser set it
+    });
+    return this.http.post(`${this.baseUrl}/admin/categories`, formData, { headers });
+  }
+
+  updateAdminCategory(id: number, data: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.put(`${this.baseUrl}/admin/categories/${id}`, data, { headers });
+  }
+
+  updateAdminCategoryWithLogo(id: number, formData: FormData): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+      // Don't set Content-Type for FormData, let the browser set it
+    });
+    return this.http.post(`${this.baseUrl}/admin/categories/${id}?_method=PUT`, formData, { headers });
+  }
+
+  deleteAdminCategory(id: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete(`${this.baseUrl}/admin/categories/${id}`, { headers });
   }
 
   // System Settings
@@ -206,6 +271,11 @@ export class Api {
   updateSystemSettings(settings: any): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.post(`${this.baseUrl}/admin/settings`, settings, { headers });
+  }
+
+  updateLotteryConfiguration(config: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.baseUrl}/admin/lottery-config`, config, { headers });
   }
 
   resetSystemSettings(): Observable<any> {

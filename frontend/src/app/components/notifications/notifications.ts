@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { NotificationService, Notification } from '../../services/notification';
 
 @Component({
@@ -288,7 +289,17 @@ import { NotificationService, Notification } from '../../services/notification';
       animation: slideInLeft 0.3s ease-out;
     }
   `],
-  animations: []
+  animations: [
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)', opacity: 0 }),
+        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ transform: 'translateX(100%)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
   notifications: Notification[] = [];

@@ -31,6 +31,13 @@
         👥 Users
       </button>
       <button 
+        (click)="navigateToSection('categories')"
+        [style.background-color]="currentSection === 'categories' ? '#2563eb' : '#f3f4f6'"
+        [style.color]="currentSection === 'categories' ? 'white' : '#374151'"
+        style="padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500;">
+        🏷️ Categories
+      </button>
+      <button 
         (click)="navigateToSection('orders')"
         [style.background-color]="currentSection === 'orders' ? '#2563eb' : '#f3f4f6'"
         [style.color]="currentSection === 'orders' ? 'white' : '#374151'"
@@ -278,9 +285,10 @@
                 [(ngModel)]="productForm.ticket_category" 
                 name="ticket_category"
                 style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
-                <option value="bronze">🥉 Bronze</option>
-                <option value="silver">🥈 Silver</option>
-                <option value="golden">🥇 Golden</option>
+                <option value="">Select a category...</option>
+                <option *ngFor="let category of categories" [value]="category.name">
+                  {{ category.icon }} {{ category.display_name }} ({{ category.ticket_amount }} tickets)
+                </option>
               </select>
             </div>
             <div>
@@ -344,9 +352,16 @@
             <td style="padding: 0.75rem;">{{ formatPrice(product.price) }} IQD</td>
             <td style="padding: 0.75rem;">{{ product.ticket_count }}</td>
             <td style="padding: 0.75rem;">
-              <span *ngIf="product.ticket_category === 'golden'" style="color: #fbbf24;">🥇 Golden</span>
-              <span *ngIf="product.ticket_category === 'silver'" style="color: #9ca3af;">🥈 Silver</span>
-              <span *ngIf="product.ticket_category === 'bronze'" style="color: #ea580c;">🥉 Bronze</span>
+              <ng-container *ngFor="let category of categories">
+                <span *ngIf="product.ticket_category === category.name" 
+                      [style.color]="category.color">
+                  {{ category.icon }} {{ category.display_name }}
+                </span>
+              </ng-container>
+              <!-- Fallback for unknown categories -->
+              <span *ngIf="!getCategoryByName(product.ticket_category)" style="color: #6b7280;">
+                🎟️ {{ product.ticket_category }}
+              </span>
             </td>
             <td style="padding: 0.75rem;">
               <span [style.color]="product.in_stock ? '#16a34a' : '#dc2626'">
@@ -373,15 +388,282 @@
     </div>
   </div>
 
+  <!-- Categories Section -->
+  <div *ngIf="currentSection === 'categories'" style="padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">🏷️ Lottery Categories Management</h4>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button 
+          (click)="showCreateCategoryForm()"
+          style="padding: 0.5rem 1rem; background: #16a34a; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+          ➕ Create Category
+        </button>
+        <button 
+          (click)="loadCategories()"
+          style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+          🔄 Refresh
+        </button>
+        <!-- Debug Buttons -->
+        <button 
+          (click)="testBackendConnection()"
+          style="padding: 0.5rem 1rem; background: #7c3aed; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+          🔧 Test Connection
+        </button>
+        <button 
+          (click)="testCategoryCreation()"
+          style="padding: 0.5rem 1rem; background: #f59e0b; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+          🧪 Test Creation
+        </button>
+      </div>
+    </div>
+    
+    <div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: white;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+          <tr>
+            <th style="padding: 1rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Category Info
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Logo
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Tickets
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Prize Pool
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Status
+            </th>
+            <th style="padding: 1rem; text-align: center; font-weight: 600; color: #374151; font-size: 0.875rem;">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let category of categories; let i = index" 
+              [style.background]="i % 2 === 0 ? 'white' : '#fafafa'"
+              style="border-bottom: 1px solid #f3f4f6;">
+            
+            <!-- Category Info -->
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="font-size: 1.5rem;">{{category.icon}}</div>
+                <div>
+                  <div style="font-weight: 600; color: #1f2937;">
+                    {{category.display_name}}
+                  </div>
+                  <div style="font-size: 0.875rem; color: #6b7280;">
+                    {{category.name}}
+                  </div>
+                  <div style="font-size: 0.75rem; color: #9ca3af;" *ngIf="category.description">
+                    {{category.description}}
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Logo -->
+            <td style="padding: 1rem; text-align: center;">
+              <img 
+                *ngIf="category.logo_url" 
+                [src]="getCategoryLogoUrl(category.logo_url)" 
+                [alt]="category.display_name"
+                style="width: 40px; height: 40px; object-fit: cover; border-radius: 0.375rem; border: 1px solid #e5e7eb;">
+              <div 
+                *ngIf="!category.logo_url" 
+                style="width: 40px; height: 40px; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 0.75rem; margin: 0 auto;">
+                {{category.icon}}
+              </div>
+            </td>
+
+            <!-- Tickets -->
+            <td style="padding: 1rem; text-align: center;">
+              <div style="font-size: 1.125rem; font-weight: 700;" [style.color]="category.color">
+                {{category.ticket_amount}}
+              </div>
+              <div style="font-size: 0.75rem; color: #6b7280;">
+                tickets
+              </div>
+            </td>
+
+            <!-- Prize Pool -->
+            <td style="padding: 1rem; text-align: center;">
+              <div style="font-size: 1rem; font-weight: 600; color: #1f2937;">
+                {{formatPrice(category.prize_pool)}} IQD
+              </div>
+            </td>
+
+            <!-- Status -->
+            <td style="padding: 1rem; text-align: center;">
+              <span [style.background]="category.is_active ? '#f0fdf4' : '#fef2f2'"
+                    [style.color]="category.is_active ? '#166534' : '#dc2626'"
+                    style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">
+                {{ category.is_active ? '✅ Active' : '❌ Inactive' }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td style="padding: 1rem; text-align: center;">
+              <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                <button 
+                  (click)="editCategory(category)"
+                  style="padding: 0.25rem 0.5rem; background: #ea580c; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                  ✏️ Edit
+                </button>
+                <button 
+                  *ngIf="!['bronze', 'silver', 'golden'].includes(category.name)"
+                  (click)="deleteCategory(category)"
+                  style="padding: 0.25rem 0.5rem; background: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                  🗑️ Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Category Form Modal -->
+    <div *ngIf="showCategoryForm" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+      <div style="background: white; padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1.5rem;">{{ categoryModalTitle }}</h3>
+        
+        <form (ngSubmit)="saveCategory()" #categoryFormElement="ngForm">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Category Name (Internal):</label>
+              <input 
+                [(ngModel)]="categoryForm.name" 
+                name="name"
+                type="text"
+                required
+                [readonly]="editingCategory && ['bronze', 'silver', 'golden'].includes(editingCategory.name)"
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Display Name:</label>
+              <input 
+                [(ngModel)]="categoryForm.display_name" 
+                name="display_name"
+                type="text"
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Description:</label>
+            <textarea 
+              [(ngModel)]="categoryForm.description" 
+              name="description"
+              rows="2"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;"></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Ticket Amount:</label>
+              <input 
+                [(ngModel)]="categoryForm.ticket_amount" 
+                name="ticket_amount"
+                type="number"
+                min="1"
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Color:</label>
+              <input 
+                [(ngModel)]="categoryForm.color" 
+                name="color"
+                type="color"
+                required
+                style="width: 100%; height: 3rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Icon:</label>
+              <input 
+                [(ngModel)]="categoryForm.icon" 
+                name="icon"
+                type="text"
+                required
+                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Prize Pool (IQD):</label>
+            <input 
+              [(ngModel)]="categoryForm.prize_pool" 
+              name="prize_pool"
+              type="number"
+              min="0"
+              step="0.01"
+              required
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Category Logo:</label>
+            <input 
+              type="file"
+              accept="image/*"
+              (change)="onLogoSelected($event)"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            <div *ngIf="logoPreview" style="margin-top: 0.5rem;">
+              <img [src]="logoPreview" alt="Logo Preview" style="width: 80px; height: 80px; object-fit: cover; border-radius: 0.375rem; border: 1px solid #e5e7eb;">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input 
+                [(ngModel)]="categoryForm.is_active" 
+                name="is_active"
+                type="checkbox"
+                style="width: 1rem; height: 1rem;">
+              <span style="font-weight: 600;">✅ Active Category</span>
+            </label>
+          </div>
+          
+          <div style="display: flex; gap: 1rem;">
+            <button 
+              type="submit"
+              [disabled]="!categoryFormElement.form.valid"
+              style="flex: 1; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;"
+              [style.opacity]="categoryFormElement.form.valid ? '1' : '0.5'">
+              {{ editingCategory ? '💾 Update' : '➕ Create' }} Category
+            </button>
+            <button 
+              type="button"
+              (click)="showCategoryForm = false"
+              style="flex: 1; padding: 0.75rem; background: #6b7280; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+              ❌ Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Users Section -->
   <div *ngIf="currentSection === 'users'" style="padding: 1.5rem;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
       <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937;">👥 Users Management</h4>
-      <button 
-        (click)="loadUsers()"
-        style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
-        🔄 Refresh
-      </button>
+      <div style="display: flex; gap: 0.5rem;">
+        <button 
+          (click)="showCreateUserForm()"
+          style="padding: 0.5rem 1rem; background: #16a34a; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+          ➕ Create User
+        </button>
+        <button 
+          (click)="loadUsers()"
+          style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+          🔄 Refresh
+        </button>
+      </div>
     </div>
     
     <div style="overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: white;">
@@ -471,7 +753,7 @@
 
             <!-- Actions -->
             <td style="padding: 1rem; text-align: center;">
-              <div style="display: flex; gap: 0.5rem; justify-content: center;">
+              <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
                 <button 
                   (click)="viewUserTickets(user)"
                   style="padding: 0.25rem 0.5rem; background: #2563eb; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
@@ -482,11 +764,93 @@
                   style="padding: 0.25rem 0.5rem; background: #16a34a; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
                   Details
                 </button>
+                <button 
+                  (click)="editUser(user)"
+                  style="padding: 0.25rem 0.5rem; background: #ea580c; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                  ✏️ Edit
+                </button>
+                <button 
+                  *ngIf="authService.getCurrentUser()?.id !== user.id"
+                  (click)="deleteUser(user)"
+                  style="padding: 0.25rem 0.5rem; background: #dc2626; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
+                  🗑️ Delete
+                </button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- User Form Modal -->
+    <div *ngIf="showUserForm" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+      <div style="background: white; padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1.5rem;">{{ userModalTitle }}</h3>
+        
+        <form (ngSubmit)="saveUser()" #userFormElement="ngForm">
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Full Name:</label>
+            <input 
+              [(ngModel)]="userForm.name" 
+              name="name"
+              type="text"
+              required
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Email Address:</label>
+            <input 
+              [(ngModel)]="userForm.email" 
+              name="email"
+              type="email"
+              required
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+              Password {{ editingUser ? '(leave blank to keep current)' : '' }}:
+            </label>
+            <input 
+              [(ngModel)]="userForm.password" 
+              name="password"
+              type="password"
+              [required]="!editingUser"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input 
+                [(ngModel)]="userForm.is_admin" 
+                name="is_admin"
+                type="checkbox"
+                style="width: 1rem; height: 1rem;">
+              <span style="font-weight: 600;">👑 Admin User</span>
+            </label>
+            <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">
+              Admin users can access the admin dashboard and manage the platform.
+            </p>
+          </div>
+          
+          <div style="display: flex; gap: 1rem;">
+            <button 
+              type="submit"
+              [disabled]="!userFormElement.form.valid"
+              style="flex: 1; padding: 0.75rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;"
+              [style.opacity]="userFormElement.form.valid ? '1' : '0.5'">
+              {{ editingUser ? '💾 Update' : '➕ Create' }} User
+            </button>
+            <button 
+              type="button"
+              (click)="showUserForm = false"
+              style="flex: 1; padding: 0.75rem; background: #6b7280; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+              ❌ Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -574,9 +938,9 @@
             (change)="applyTicketFilters()"
             style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
             <option value="">All Categories</option>
-            <option value="golden">🥇 Golden</option>
-            <option value="silver">🥈 Silver</option>
-            <option value="bronze">🥉 Bronze</option>
+            <option *ngFor="let category of categories" [value]="category.name">
+              {{ category.icon }} {{ category.display_name }}
+            </option>
           </select>
         </div>
         <div>
@@ -659,8 +1023,8 @@
             <td style="padding: 1rem;">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span style="font-size: 1.25rem;">{{getCategoryIcon(ticket.category)}}</span>
-                <span style="font-weight: 500; text-transform: capitalize; color: {{getCategoryColor(ticket.category)}};">
-                  {{ticket.category}}
+                <span style="font-weight: 500; text-transform: capitalize;" [style.color]="getCategoryColor(ticket.category)">
+                  {{getCategoryDisplay(ticket.category)}}
                 </span>
               </div>
             </td>
@@ -762,14 +1126,147 @@
 
   <!-- Lottery Draws Section -->
   <div *ngIf="currentSection === 'lottery'" style="padding: 1.5rem;">
-    <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem;">🎲 Lottery Draws Management</h4>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h4 style="font-size: 1.25rem; font-weight: 700; color: #1f2937; margin: 0;">🎲 Lottery Draws Management</h4>
+      <button 
+        (click)="showCreateLotteryDrawForm()"
+        style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+        ➕ Create New Lottery Draw
+      </button>
+    </div>
+
+    <!-- Create/Edit Lottery Draw Form -->
+    <div *ngIf="showLotteryDrawForm" style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+      <h5 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">
+        {{ editingLotteryDraw ? '✏️ Edit Lottery Draw' : '➕ Create New Lottery Draw' }}
+      </h5>
+      
+      <div style="display: grid; gap: 1rem;">
+        <!-- Category Selection -->
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Category:</label>
+          <select 
+            [(ngModel)]="lotteryDrawForm.category_id" 
+            name="lotteryDrawCategoryId"
+            required
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            <option value="">Select a category</option>
+            <option *ngFor="let category of categories" [value]="category.id">
+              {{ category.icon }} {{ category.display_name }} ({{ category.ticket_amount }} tickets required)
+            </option>
+          </select>
+        </div>
+        
+        <!-- Lottery Draw Name -->
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Name:</label>
+          <input 
+            [(ngModel)]="lotteryDrawForm.name" 
+            name="lotteryDrawName"
+            required
+            placeholder="e.g., Bronze Weekly Draw"
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+        </div>
+        
+        <!-- Description -->
+        <div>
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Description:</label>
+          <textarea 
+            [(ngModel)]="lotteryDrawForm.description"
+            name="lotteryDrawDescription"
+            placeholder="Describe this lottery draw..."
+            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; height: 80px; resize: vertical;">
+          </textarea>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <!-- Draw Date -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Draw Date:</label>
+            <input 
+              [(ngModel)]="lotteryDrawForm.draw_date" 
+              name="lotteryDrawDate"
+              type="datetime-local"
+              required
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+          
+          <!-- Total Tickets -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Total Tickets:</label>
+            <input 
+              [(ngModel)]="lotteryDrawForm.total_tickets" 
+              name="lotteryDrawTotalTickets"
+              type="number"
+              min="1"
+              required
+              placeholder="1000"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <!-- Prize Pool -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Prize Pool (IQD):</label>
+            <input 
+              [(ngModel)]="lotteryDrawForm.prize_pool" 
+              name="lotteryDrawPrizePool"
+              type="number"
+              min="0"
+              required
+              placeholder="1000000"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+          
+          <!-- Status -->
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Status:</label>
+            <select 
+              [(ngModel)]="lotteryDrawForm.status" 
+              name="lotteryDrawStatus"
+              required
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+              <option value="upcoming">Upcoming</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Form Actions -->
+        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+          <button 
+            (click)="cancelLotteryDrawForm()"
+            style="padding: 0.5rem 1rem; background: #6b7280; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">
+            Cancel
+          </button>
+          <button 
+            (click)="saveLotteryDraw()"
+            style="padding: 0.5rem 1rem; background: #16a34a; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+            {{ editingLotteryDraw ? '💾 Update Draw' : '✨ Create Draw' }}
+          </button>
+        </div>
+      </div>
+    </div>
     
     <div style="display: grid; gap: 1rem;">
       <div *ngFor="let draw of lotteryDraws" style="border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
           <div>
             <h5 style="font-size: 1.125rem; font-weight: 700; margin: 0 0 0.5rem 0;">{{ draw.name }}</h5>
-            <p style="color: #6b7280; margin: 0;">{{ draw.description }}</p>
+            <p style="color: #6b7280; margin: 0 0 0.5rem 0;">{{ draw.description }}</p>
+            <!-- Category Badge -->
+            <div *ngIf="draw.category" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+              <span style="padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; color: white;"
+                    [style.background-color]="draw.category.color">
+                {{ draw.category.icon }} {{ draw.category.display_name }}
+              </span>
+              <span style="color: #6b7280; font-size: 0.75rem;">
+                {{ draw.category.ticket_amount }} ticket{{ draw.category.ticket_amount > 1 ? 's' : '' }} required
+              </span>
+            </div>
           </div>
           <div style="text-align: right;">
             <span style="padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;"
@@ -795,10 +1292,21 @@
           </div>
         </div>
         
-        <div *ngIf="draw.status === 'active'" style="text-align: right;">
+        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
           <button 
-            (click)="performDraw(draw)"
+            (click)="editLotteryDraw(draw)"
+            style="padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+            ✏️ Edit
+          </button>
+          <button 
+            (click)="deleteLotteryDraw(draw)"
             style="padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+            🗑️ Delete
+          </button>
+          <button 
+            *ngIf="draw.status === 'active'"
+            (click)="performDraw(draw)"
+            style="padding: 0.5rem 1rem; background: #16a34a; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
             🎯 Perform Draw
           </button>
         </div>
@@ -879,63 +1387,99 @@
     <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
       <h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">🎯 Lottery Configuration</h4>
       
-      <!-- Prize Pools -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-        <div>
-          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🥇 Golden Prize Pool (IQD):</label>
-          <input 
-            [(ngModel)]="systemSettings.goldenPrizePool" 
-            name="goldenPrizePool"
-            type="number"
-            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
-        </div>
-        <div>
-          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🥈 Silver Prize Pool (IQD):</label>
-          <input 
-            [(ngModel)]="systemSettings.silverPrizePool" 
-            name="silverPrizePool"
-            type="number"
-            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
-        </div>
-        <div>
-          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🥉 Bronze Prize Pool (IQD):</label>
-          <input 
-            [(ngModel)]="systemSettings.bronzePrizePool" 
-            name="bronzePrizePool"
-            type="number"
-            style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+      <!-- Category-Based Prize Pools -->
+      <div style="margin-bottom: 1.5rem;">
+        <h5 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">💰 Category Prize Pools</h5>
+        <div style="display: grid; gap: 1rem;">
+          <div *ngFor="let category of categories" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 200px;">
+              <span style="font-size: 1.25rem;">{{ category.icon }}</span>
+              <span style="font-weight: 600; color: white; padding: 0.25rem 0.75rem; border-radius: 9999px;" [style.background-color]="category.color">
+                {{ category.display_name }}
+              </span>
+            </div>
+            <div style="flex: 1;">
+              <label style="display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem;">Prize Pool (IQD):</label>
+              <input 
+                [(ngModel)]="category.prize_pool" 
+                [name]="'prizePool_' + category.id"
+                type="number"
+                min="0"
+                style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            </div>
+            <div style="min-width: 150px;">
+              <label style="display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem;">Ticket Requirement:</label>
+              <div style="padding: 0.5rem; background: #f9fafb; border-radius: 0.375rem; text-align: center; font-weight: 600;">
+                {{ category.ticket_amount }} ticket{{ category.ticket_amount > 1 ? 's' : '' }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
-      <!-- Tickets Per Purchase -->
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎟️ Tickets Per Purchase:</label>
-        <input 
-          [(ngModel)]="systemSettings.ticketsPerPurchase" 
-          name="ticketsPerPurchase"
-          type="number"
-          min="1"
-          max="1000"
-          style="width: 200px; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+      <!-- Global Lottery Settings -->
+      <div style="margin-bottom: 1.5rem;">
+        <h5 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">⚙️ Global Settings</h5>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎟️ Max Tickets Per User:</label>
+            <input 
+              [(ngModel)]="lotteryConfig.maxTicketsPerUser" 
+              name="maxTicketsPerUser"
+              type="number"
+              min="1"
+              max="1000"
+              placeholder="100"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📅 Default Draw Frequency:</label>
+            <select 
+              [(ngModel)]="lotteryConfig.defaultDrawFrequency" 
+              name="defaultDrawFrequency"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">⏰ Draw Time (24h format):</label>
+            <input 
+              [(ngModel)]="lotteryConfig.defaultDrawTime" 
+              name="defaultDrawTime"
+              type="time"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+        </div>
       </div>
       
-      <!-- Draw Schedule -->
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📅 Draw Frequency:</label>
-        <select 
-          [(ngModel)]="systemSettings.drawFrequency" 
-          name="drawFrequency"
-          style="width: 200px; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-        </select>
+      <!-- Quick Actions -->
+      <div style="margin-bottom: 1.5rem;">
+        <h5 style="font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">🚀 Quick Actions</h5>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button 
+            (click)="createWeeklyDrawsForAllCategories()"
+            style="background: #2563eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+            📅 Create Weekly Draws for All Categories
+          </button>
+          <button 
+            (click)="syncCategoryPrizePools()"
+            style="background: #16a34a; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+            🔄 Sync Prize Pools
+          </button>
+          <button 
+            (click)="viewLotteryStatistics()"
+            style="background: #7c3aed; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+            📊 View Statistics
+          </button>
+        </div>
       </div>
       
       <button 
-        (click)="updateLotterySettings()"
+        (click)="updateLotteryConfiguration()"
         style="background: #dc2626; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
-        🎲 Save Lottery Settings
+        🎲 Save Lottery Configuration
       </button>
     </div>
     
@@ -943,23 +1487,70 @@
     <div style="background: #f8fafc; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
       <h4 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">🎨 UI Customization</h4>
       
+      <!-- Platform Logo -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Platform Logo:</label>
+        <input 
+          type="file"
+          accept="image/*"
+          (change)="onPlatformLogoSelected($event)"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; margin-bottom: 0.5rem;">
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <div *ngIf="platformLogoPreview" style="text-align: center;">
+            <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">New Logo Preview:</p>
+            <img [src]="platformLogoPreview" alt="New Logo Preview" style="height: 60px; object-fit: contain; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
+          </div>
+          <div *ngIf="systemSettings.logoUrl && !platformLogoPreview" style="text-align: center;">
+            <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Current Logo:</p>
+            <img [src]="getPlatformLogoUrl(systemSettings.logoUrl)" alt="Current Logo" style="height: 60px; object-fit: contain; border: 1px solid #e5e7eb; border-radius: 0.375rem;">
+          </div>
+        </div>
+      </div>
+      
       <!-- Color Scheme -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
         <div>
           <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Primary Color:</label>
-          <input 
-            [(ngModel)]="systemSettings.primaryColor" 
-            name="primaryColor"
-            type="color"
-            style="width: 100%; height: 3rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <input 
+              [(ngModel)]="systemSettings.primaryColor" 
+              name="primaryColor"
+              type="color"
+              style="width: 4rem; height: 3rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            <input 
+              [(ngModel)]="systemSettings.primaryColor" 
+              name="primaryColorText"
+              type="text"
+              style="flex: 1; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
         </div>
         <div>
           <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Secondary Color:</label>
-          <input 
-            [(ngModel)]="systemSettings.secondaryColor" 
-            name="secondaryColor"
-            type="color"
-            style="width: 100%; height: 3rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <input 
+              [(ngModel)]="systemSettings.secondaryColor" 
+              name="secondaryColor"
+              type="color"
+              style="width: 4rem; height: 3rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+            <input 
+              [(ngModel)]="systemSettings.secondaryColor" 
+              name="secondaryColorText"
+              type="text"
+              style="flex: 1; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Color Preview -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Color Preview:</label>
+        <div style="display: flex; gap: 1rem;">
+          <div style="padding: 1rem; border-radius: 0.375rem; color: white; text-align: center; flex: 1;" [style.background-color]="systemSettings.primaryColor">
+            Primary Color
+          </div>
+          <div style="padding: 1rem; border-radius: 0.375rem; color: white; text-align: center; flex: 1;" [style.background-color]="systemSettings.secondaryColor">
+            Secondary Color
+          </div>
         </div>
       </div>
       

@@ -50,4 +50,4 @@ This document lists prioritized, low-risk UX improvements tailored for the Iraqi
 - RTL/LTR snapshot comparison.
 
 ---
-Status: Phase 1 items partially implemented in v3.3 (buttons, header, cards, debug toggle).
+Status: Phase 1 items partially implemented in v3.3 (buttons, header, cards, debug toggle). Mobile app version UI added (About page) in v3.4.
