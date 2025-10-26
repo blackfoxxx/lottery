@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ticket, Category } from '../../types';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useTickets } from '../../contexts/TicketContext';
 import { SIZES } from '../../constants';
 import { formatDateTime, getCategoryColor, getCategoryEmoji, getErrorMessage } from '../../utils/helpers';
 import { apiManager } from '../../services/ApiManager';
@@ -20,11 +21,20 @@ import CustomButton from '../../components/CustomButton';
 const TicketsScreen: React.FC = () => {
   const { colors, isDarkMode } = useTheme();
   const { t, isRTL } = useLanguage();
+  const { tickets: contextTickets, loading: contextLoading, refreshTickets } = useTickets();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Update local tickets when context changes
+  useEffect(() => {
+    if (contextTickets.length > 0) {
+      setTickets(contextTickets);
+      setLoading(false);
+    }
+  }, [contextTickets]);
 
   // Dynamic styles based on theme
   const dynamicStyles = StyleSheet.create({
@@ -84,11 +94,11 @@ const TicketsScreen: React.FC = () => {
       setError(null);
 
       const [ticketsData, categoriesData] = await Promise.all([
-        apiManager.getTickets().catch(() => []), // Handle 404 gracefully
+        refreshTickets().then(() => contextTickets), // Use context refresh
         apiManager.getCategories().catch(() => []), // Handle 404 gracefully
       ]);
 
-      setTickets(ticketsData);
+      setTickets(ticketsData.length > 0 ? ticketsData : contextTickets);
       setCategories(categoriesData);
     } catch (err) {
       const errorMessage = getErrorMessage(err);
@@ -100,7 +110,8 @@ const TicketsScreen: React.FC = () => {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadData();
+    await refreshTickets(); // Use context refresh
+    await apiManager.getCategories().then(setCategories).catch(() => {});
     setRefreshing(false);
   };
 

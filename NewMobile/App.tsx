@@ -9,6 +9,7 @@ import { AuthProvider } from './src/services/AuthContext';
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import { LanguageProvider } from './src/contexts/LanguageContext';
 import { AppProvider } from './src/contexts/AppContext';
+import { TicketProvider } from './src/contexts/TicketContext';
 import AppNavigator from './src/navigation/AppNavigator';
 import CustomSplashScreen from './src/components/SplashScreen';
 import DevBanner from './src/components/DevBanner';
@@ -123,15 +124,17 @@ export default function App() {
           <LanguageProvider>
             <ThemeProvider>
               <AppProvider>
-                <View style={{ flex: 1 }}>
-                  <DevBanner />
-                  <ConnectionStatus />
-                  <PerformanceMonitor />
-                  <AuthProvider>
-                    <AppNavigator />
-                    <StatusBar style="auto" />
-                  </AuthProvider>
-                </View>
+                <TicketProvider>
+                  <View style={{ flex: 1 }}>
+                    <DevBanner />
+                    <ConnectionStatus />
+                    <PerformanceMonitor />
+                    <AuthProvider>
+                      <AppNavigator />
+                      <StatusBar style="auto" />
+                    </AuthProvider>
+                  </View>
+                </TicketProvider>
               </AppProvider>
             </ThemeProvider>
           </LanguageProvider>

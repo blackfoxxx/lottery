@@ -14,6 +14,7 @@ import { ProductStackParamList, Product } from '../../types';
 import { COLORS, SIZES } from '../../constants';
 import { formatCurrency, getCategoryColor, getCategoryEmoji, formatDateTime, getErrorMessage } from '../../utils/helpers';
 import { apiManager } from '../../services/ApiManager';
+import { useTickets } from '../../contexts/TicketContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import CustomButton from '../../components/CustomButton';
 
@@ -27,6 +28,7 @@ interface Props {
 
 const ProductDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   const { productId } = route.params;
+  const { addTickets, refreshTickets } = useTickets();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
@@ -65,29 +67,32 @@ const ProductDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           onPress: async () => {
             try {
               setPurchasing(true);
+              const result = await apiManager.purchaseProduct(product.id);
               
-              // Call backend purchase endpoint (creates order and generates tickets)
-              const result = await apiManager.purchaseProduct(product.id, 1);
+              console.log('✅ Purchase successful:', result);
               
-              console.log('✅ Purchase completed:', {
-                order_id: result?.order?.id,
-                tickets_generated: result?.tickets_count,
-                batch_id: result?.batch_info?.batch_id
-              });
+              // Handle tickets from purchase response
+              if (result?.tickets && Array.isArray(result.tickets) && result.tickets.length > 0) {
+                console.log(`📥 Adding ${result.tickets.length} tickets from purchase response`);
+                addTickets(result.tickets);
+              } else {
+                // If no tickets in response, refresh from API
+                console.log('🔄 No tickets in response, refreshing from API...');
+                await refreshTickets();
+              }
               
-              // Extract data from backend response
-              const ticketsGenerated = result?.tickets_count || product.ticket_count;
-              const orderTotal = result?.order?.total_price || product.price;
-              const batchId = result?.batch_info?.batch_id;
+              // Check if this was a simulated purchase
+              const isSimulated = result?.simulated === true;
+              const ticketsCount = result?.tickets_count || result?.tickets?.length || product.ticket_count;
               
               Alert.alert(
                 '🎉 Purchase Successful!',
-                `You have successfully purchased ${product.name}!\n\n✓ Order #${result?.order?.id} created\n✓ ${ticketsGenerated} lottery ticket${ticketsGenerated !== 1 ? 's' : ''} generated\n✓ Batch ID: ${batchId || 'N/A'}\n✓ Entered into ${product.ticket_category} category draw\n\nYour tickets are now available in the Tickets tab.`,
+                `You have successfully purchased ${product.name}!\n\n✓ ${ticketsCount} lottery ticket${ticketsCount !== 1 ? 's' : ''} generated\n✓ Entered into ${product.ticket_category} category draw${isSimulated ? '\n\n⚠️ Demo Mode: This is a simulated purchase for testing. Real backend integration is pending.' : ''}\n\nYour tickets are now available in the Tickets tab.`,
                 [
                   {
                     text: 'View Tickets',
                     onPress: () => {
-                      // Navigate to Tickets tab (assuming it's in main tab navigator)
+                      // Navigate to main tabs and switch to Tickets
                       navigation.navigate('ProductList');
                     },
                   },
@@ -102,20 +107,23 @@ const ProductDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               console.error('❌ Purchase failed:', error);
               const errorMessage = getErrorMessage(error);
               
-              // Show more helpful error message based on error type
+              // Show more helpful error message
               let helpText = '';
-              if (errorMessage.includes('login') || errorMessage.includes('logged in')) {
-                helpText = '\n\n💡 Tip: Make sure you are logged in with a valid account.';
-              } else if (errorMessage.includes('out of stock')) {
-                helpText = '\n\n💡 Tip: This product is currently unavailable. Please try another product.';
-              } else if (errorMessage.includes('Invalid')) {
-                helpText = '\n\n💡 Tip: Please refresh the page and try again.';
+              if (errorMessage.includes('login') || errorMessage.includes('authentication')) {
+                helpText = '\n\nPlease make sure you are logged in to purchase products.';
+              } else if (errorMessage.includes('temporarily unavailable')) {
+                helpText = '\n\nThe purchase system is currently being set up. Please try again later.';
               }
               
               Alert.alert(
                 '❌ Purchase Failed', 
                 errorMessage + helpText,
-                [{ text: 'OK', style: 'default' }]
+                [
+                  {
+                    text: 'OK',
+                    style: 'default',
+                  },
+                ]
               );
             } finally {
               setPurchasing(false);
