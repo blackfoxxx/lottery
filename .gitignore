@@ -281,3 +281,7 @@ getMessage
 is_admin
 save
 email
+
+# Old mobile apps (replaced by NewMobile)
+mobile/
+mobile-app/
