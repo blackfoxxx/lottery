@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "بلخير",
+    "slug": "belkheir-lottery",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f53003"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.belkheir.lottery"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#f53003"
+      },
+      "package": "com.belkheir.lottery",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "belkheir-lottery"
+      }
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}
