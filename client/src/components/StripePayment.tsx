@@ -11,9 +11,10 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-// Initialize Stripe with publishable key
-// Replace with your actual Stripe publishable key
-const stripePromise = loadStripe("pk_test_51234567890abcdefghijklmnopqrstuvwxyz");
+import { env } from "@/config/env";
+
+// Initialize Stripe with publishable key from environment
+const stripePromise = loadStripe(env.stripe.publishableKey);
 
 interface PaymentFormProps {
   amount: number;

@@ -1,4 +1,5 @@
 import { Order } from "./api";
+import { env } from "@/config/env";
 
 export interface EmailTemplate {
   to: string;
@@ -274,23 +275,54 @@ export class EmailService {
   }
 
   /**
-   * Send email (mock implementation - replace with actual email service)
+   * Send email using configured email service
    */
   static async sendEmail(template: EmailTemplate): Promise<boolean> {
-    console.log("📧 Email would be sent:");
+    console.log("📧 Sending email:");
     console.log("To:", template.to);
     console.log("Subject:", template.subject);
-    console.log("HTML length:", template.html.length);
-    
-    // In production, integrate with email service like SendGrid, AWS SES, etc.
-    // Example:
-    // const response = await fetch('/api/send-email', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(template)
-    // });
-    // return response.ok;
-    
-    return true;
+
+    // Check if email service is configured
+    if (!env.email.apiKey) {
+      console.warn("⚠️  Email API key not configured. Email not sent.");
+      console.log("Configure VITE_EMAIL_API_KEY in environment variables.");
+      return false;
+    }
+
+    try {
+      // SendGrid implementation
+      if (env.email.provider === 'sendgrid') {
+        const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${env.email.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            personalizations: [{ to: [{ email: template.to }] }],
+            from: { email: env.email.fromEmail, name: env.email.fromName },
+            subject: template.subject,
+            content: [{ type: 'text/html', value: template.html }],
+          }),
+        });
+
+        if (response.ok) {
+          console.log("✅ Email sent successfully via SendGrid");
+          return true;
+        } else {
+          const error = await response.text();
+          console.error("❌ SendGrid error:", error);
+          return false;
+        }
+      }
+
+      // For other providers (SES, SMTP), implement similar logic
+      // or use a backend endpoint
+      console.warn(`Email provider '${env.email.provider}' not yet implemented`);
+      return false;
+    } catch (error) {
+      console.error("❌ Email sending failed:", error);
+      return false;
+    }
   }
 }

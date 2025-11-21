@@ -59,6 +59,11 @@ export interface Order {
   customer_email: string;
   customer_phone: string;
   lottery_tickets?: number;
+  tracking_number?: string;
+  shipment_status?: 'pending' | 'processing' | 'shipped' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'cancelled';
+  shipped_at?: string;
+  delivered_at?: string;
+  carrier?: string;
   created_at: string;
   updated_at: string;
 }

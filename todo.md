@@ -193,3 +193,35 @@
 - [x] Create lottery winner email templates
 - [x] Add email notification to order creation
 - [x] Professional HTML email templates with branding
+
+## Stripe Configuration (New)
+- [ ] Create environment variable configuration for Stripe
+- [ ] Add Stripe publishable key to .env
+- [ ] Update StripePayment component to use env variable
+- [ ] Add instructions for setting up Stripe account
+
+## Email Service Integration (New)
+- [ ] Create email service configuration
+- [ ] Add SendGrid/SMTP credentials to environment
+- [ ] Implement actual email sending with API
+- [ ] Test email delivery
+- [ ] Add email templates preview page
+
+## Order Tracking System (New)
+- [ ] Add tracking_number field to Order interface
+- [ ] Add shipment_status to Order (pending, shipped, in_transit, delivered)
+- [ ] Create OrderTracking page for customers
+- [ ] Add tracking number input in admin orders
+- [ ] Create shipment status timeline component
+- [ ] Add email notification when order ships
+- [ ] Integrate with courier API (optional)
+
+## Latest Completed Features
+- [x] Create environment configuration system (env.ts)
+- [x] Update StripePayment to use env configuration
+- [x] Implement SendGrid email integration in EmailService
+- [x] Add tracking fields to Order interface
+- [x] Create ShipmentTimeline component with status visualization
+- [x] Build OrderTracking page with shipment timeline
+- [x] Add tracking button to OrderHistory page
+- [x] Add /track/:orderId route to App

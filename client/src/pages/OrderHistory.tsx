@@ -136,7 +136,14 @@ export default function OrderHistory() {
                   </div>
                 </div>
 
-                <div className="flex justify-end mt-4">
+                <div className="flex justify-end gap-2 mt-4">
+                  {order.tracking_number && (
+                    <Link href={`/track/${order.id}`}>
+                      <Button variant="outline">
+                        Track Shipment
+                      </Button>
+                    </Link>
+                  )}
                   <Link href={`/order-confirmation/${order.id}`}>
                     <Button variant="outline">
                       View Details
