@@ -6,6 +6,8 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { api, Product } from "@/lib/api";
 import { ShoppingCart, Star, ArrowRight, Sparkles } from "lucide-react";
+import RecentlyViewed from "@/components/RecentlyViewed";
+import PromotionalBanners from "@/components/PromotionalBanners";
 import { APP_TITLE } from "@/const";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
@@ -43,6 +45,11 @@ export default function Home() {
       <Header />
 
       <main className="flex-1">
+        <div className="container py-8">
+          {/* Promotional Banners */}
+          <PromotionalBanners />
+        </div>
+
         {/* Hero Section */}
         <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-primary/5">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iIzE2MjEzZSIgc3Ryb2tlLXdpZHRoPSIuNSIgb3BhY2l0eT0iLjEiLz48L2c+PC9zdmc+')] opacity-30" />
@@ -219,6 +226,9 @@ export default function Home() {
             )}
           </div>
         </section>
+
+        {/* Recently Viewed Products */}
+        <RecentlyViewed />
       </main>
 
       {/* Footer */}

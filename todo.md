@@ -255,3 +255,46 @@
 - [x] Add stock availability filter
 - [x] Add sort options (price, rating, newest)
 - [x] Make filters responsive and collapsible
+
+## Product Comparison Feature (New)
+- [ ] Create ComparisonContext with localStorage
+- [ ] Add comparison checkbox to product cards
+- [ ] Create Compare page with side-by-side view
+- [ ] Show comparison button in header with count
+- [ ] Compare specifications, prices, ratings
+
+## Recently Viewed Products (New)
+- [ ] Track viewed products in localStorage
+- [ ] Create RecentlyViewed component
+- [ ] Display on homepage
+- [ ] Limit to last 10 products
+- [ ] Auto-remove duplicates
+
+## Promotional Banners System (New)
+- [ ] Create Banner model/interface
+- [ ] Build Banners admin page
+- [ ] Add banner create/edit forms
+- [ ] Display active banners on homepage
+- [ ] Support image upload and scheduling
+
+## Product Comparison Feature (Completed)
+- [x] Create ComparisonContext with localStorage
+- [x] Add comparison checkbox to product cards
+- [x] Create Compare page with side-by-side view
+- [x] Show comparison button in header with count
+- [x] Compare specifications, prices, ratings
+
+## Recently Viewed Products (Completed)
+- [x] Track viewed products in localStorage
+- [x] Create RecentlyViewed component
+- [x] Display on homepage
+- [x] Limit to last 10 products
+- [x] Auto-remove duplicates
+
+## Promotional Banners System (Completed)
+- [x] Create Banner model/interface
+- [x] Build Banners admin page
+- [x] Add banner create/edit forms
+- [x] Display active banners on homepage
+- [x] Support image upload and scheduling
+- [x] Auto-carousel with navigation

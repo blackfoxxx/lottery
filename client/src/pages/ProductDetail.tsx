@@ -11,6 +11,7 @@ import StarRating from "@/components/StarRating";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
+import { trackProductView } from "@/components/RecentlyViewed";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
@@ -27,6 +28,13 @@ export default function ProductDetail() {
       loadReviews();
     }
   }, [params?.id]);
+
+  // Track product view
+  useEffect(() => {
+    if (product) {
+      trackProductView(product);
+    }
+  }, [product]);
 
   function loadReviews() {
     // Mock reviews - replace with API call

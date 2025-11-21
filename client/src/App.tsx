@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
 import { WishlistProvider } from "./contexts/WishlistContext";
+import { ComparisonProvider } from "./contexts/ComparisonContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import CartSidebar from "./components/CartSidebar";
@@ -18,11 +19,13 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import OrderHistory from "./pages/OrderHistory";
 import OrderTracking from "./pages/OrderTracking";
 import Wishlist from "./pages/Wishlist";
+import Compare from "./pages/Compare";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
 import LotteryTickets from "./pages/admin/LotteryTickets";
 import LotteryDraws from "./pages/admin/LotteryDraws";
+import Banners from "./pages/admin/Banners";
 
 function Router() {
   return (
@@ -36,11 +39,13 @@ function Router() {
       <Route path="/orders" component={OrderHistory} />
       <Route path="/track/:orderId" component={OrderTracking} />
       <Route path="/wishlist" component={Wishlist} />
+      <Route path="/compare" component={Compare} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/lottery-tickets" component={LotteryTickets} />
       <Route path="/admin/lottery-draws" component={LotteryDraws} />
+      <Route path="/admin/banners" component={Banners} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -54,13 +59,15 @@ function App() {
         <TooltipProvider>
           <AuthProvider>
             <LanguageProvider>
-              <WishlistProvider>
-                <CartProvider>
+          <WishlistProvider>
+            <ComparisonProvider>
+              <CartProvider>
                   <Toaster />
                   <Router />
                   <CartSidebar />
                 </CartProvider>
-              </WishlistProvider>
+              </ComparisonProvider>
+            </WishlistProvider>
             </LanguageProvider>
           </AuthProvider>
         </TooltipProvider>

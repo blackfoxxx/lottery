@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   X,
+  ImageIcon,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -29,6 +30,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
     { name: "Lottery Tickets", href: "/admin/lottery-tickets", icon: Ticket },
     { name: "Lottery Draws", href: "/admin/lottery-draws", icon: Trophy },
+    { name: "Banners", href: "/admin/banners", icon: ImageIcon },
   ];
 
   function isActive(href: string) {

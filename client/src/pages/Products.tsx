@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 import ProductFilters, { FilterState } from "@/components/ProductFilters";
 import WishlistButton from "@/components/WishlistButton";
+import ComparisonButton from "@/components/ComparisonButton";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -241,7 +242,7 @@ export default function Products() {
                         )}
                       </CardContent>
 
-                      <CardFooter className="p-4 pt-0">
+                      <CardFooter className="p-4 pt-0 space-y-2">
                         <Button
                           className="w-full"
                           onClick={() => handleAddToCart(product)}
@@ -250,6 +251,7 @@ export default function Products() {
                           <ShoppingCart className="h-4 w-4 mr-2" />
                           {product.stock_quantity === 0 ? "Out of Stock" : "Add to Cart"}
                         </Button>
+                        <ComparisonButton product={product} />
                       </CardFooter>
                     </Card>
                   ))}

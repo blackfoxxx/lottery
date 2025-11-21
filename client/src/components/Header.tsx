@@ -1,4 +1,4 @@
-import { ShoppingCart, Search, User, LogOut, Settings, X, Package, Heart } from "lucide-react";
+import { ShoppingCart, Search, User, LogOut, Settings, X, Package, Heart, GitCompare } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,9 +21,11 @@ import LoginModal from "./LoginModal";
 import RegisterModal from "./RegisterModal";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useComparison } from "@/contexts/ComparisonContext";
 
 export default function Header() {
   const { getTotalItems, openCart } = useCart();
+  const { comparison } = useComparison();
   const { user, logout, isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const totalItems = getTotalItems();
@@ -122,6 +124,20 @@ export default function Header() {
             <Link href="/wishlist">
               <Button variant="ghost" size="icon">
                 <Heart className="h-5 w-5" />
+              </Button>
+            </Link>
+            
+            <Link href="/compare">
+              <Button variant="ghost" size="icon" className="relative">
+                <GitCompare className="h-5 w-5" />
+                {comparison.length > 0 && (
+                  <Badge
+                    variant="secondary"
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                  >
+                    {comparison.length}
+                  </Badge>
+                )}
               </Button>
             </Link>
             
