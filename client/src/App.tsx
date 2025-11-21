@@ -14,9 +14,12 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import OrderHistory from "./pages/OrderHistory";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
+import LotteryTickets from "./pages/admin/LotteryTickets";
+import LotteryDraws from "./pages/admin/LotteryDraws";
 
 function Router() {
   return (
@@ -27,9 +30,12 @@ function Router() {
       <Route path="/cart" component={Cart} />
       <Route path="/checkout" component={Checkout} />
       <Route path="/order-confirmation/:id" component={OrderConfirmation} />
+      <Route path="/orders" component={OrderHistory} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
+      <Route path="/admin/lottery-tickets" component={LotteryTickets} />
+      <Route path="/admin/lottery-draws" component={LotteryDraws} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

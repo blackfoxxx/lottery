@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   Users,
   Ticket,
+  Trophy,
   Settings,
   LogOut,
   Menu,
@@ -26,9 +27,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
-    { name: "Customers", href: "/admin/customers", icon: Users },
-    { name: "Lottery", href: "/admin/lottery", icon: Ticket },
-    { name: "Settings", href: "/admin/settings", icon: Settings },
+    { name: "Lottery Tickets", href: "/admin/lottery-tickets", icon: Ticket },
+    { name: "Lottery Draws", href: "/admin/lottery-draws", icon: Trophy },
   ];
 
   function isActive(href: string) {

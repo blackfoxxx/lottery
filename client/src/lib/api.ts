@@ -58,6 +58,7 @@ export interface Order {
   customer_name: string;
   customer_email: string;
   customer_phone: string;
+  lottery_tickets?: number;
   created_at: string;
   updated_at: string;
 }
@@ -141,6 +142,10 @@ class APIClient {
 
   async getOrder(id: number): Promise<{ success: boolean; data: Order }> {
     return this.request<{ success: boolean; data: Order }>(`/orders/${id}`);
+  }
+
+  async getOrders(): Promise<{ success: boolean; data: Order[] }> {
+    return this.request<{ success: boolean; data: Order[] }>('/orders');
   }
 
   async login(email: string, password: string): Promise<{ success: boolean; data: AuthResponse }> {

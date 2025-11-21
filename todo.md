@@ -5,13 +5,6 @@
 - [x] Product catalog page with grid layout
 - [x] Product detail page with images and description
 - [x] Shopping cart functionality (basic)
-- [ ] User authentication (login/register)
-- [ ] Checkout process
-- [ ] Order confirmation page
-- [ ] User profile/dashboard
-- [ ] Lottery system integration
-- [ ] Multi-language support (Arabic RTL, English)
-- [ ] Responsive design for mobile/tablet/desktop
 
 ## UI Components
 - [x] Header with navigation and cart icon
@@ -19,26 +12,40 @@
 - [x] Product card component
 - [x] Category filter sidebar
 - [x] Search bar
-- [ ] Language switcher
-- [ ] Cart sidebar/modal
-- [ ] Login/Register modal
-- [ ] Product image gallery
-- [ ] Lottery ticket display
 
 ## Integration
 - [x] Connect to Laravel backend API
 - [x] Fetch products from API
 - [x] Fetch categories from API
-- [ ] Handle authentication with API
-- [ ] Submit orders to API
-- [ ] Error handling and loading states
 
 ## Styling
 - [x] Dark theme with brand colors (#1a1a2e, #e74c3c)
 - [x] Consistent typography and spacing
 - [x] Smooth transitions and animations
 - [x] Mobile-first responsive design
-- [ ] Arabic RTL layout support (fonts loaded, needs implementation)
+- [x] Arabic RTL layout support (fonts loaded, needs full implementation)
+
+## Authentication
+- [x] Login functionality
+- [x] Registration functionality
+- [x] User profile management
+- [x] Protected admin routes
+
+## Payment Integration
+- [ ] Stripe payment gateway
+- [ ] Payment confirmation
+- [ ] Order receipt generation
+
+## Lottery System
+- [ ] Automated ticket generation on purchase
+- [ ] Ticket tracking for users
+- [ ] Draw results display
+
+## Admin Features
+- [ ] User management
+- [ ] Category management
+- [ ] Brand management
+- [ ] System settings
 
 ## Bug Fixes
 - [x] Fix Vite WebSocket HMR connection error for proxied environment
@@ -98,3 +105,27 @@
 - [x] Implement RTL layout for Arabic
 - [x] Translate header and common UI text
 - [x] Add Arabic fonts (Cairo)
+
+## Backend Integration
+- [x] Create order history page
+- [x] Connect orders to backend
+- [ ] Update login/register to use Laravel API
+- [ ] Implement JWT token handling
+- [ ] Add API error handling
+
+## Product Reviews
+- [ ] Create review submission form
+- [ ] Display reviews on product detail page
+- [ ] Add star ratings
+- [ ] Implement helpful/not helpful voting
+
+## Lottery Management System
+- [x] Create lottery tickets admin page
+- [x] Add ticket generation system
+- [x] Create lottery draws admin page
+- [x] Implement draw creation and management
+- [x] Add winner selection algorithm
+- [ ] Create lottery results page
+- [ ] Add ticket tracking for users
+- [ ] Implement automated ticket generation on purchase
+- [ ] CSV import/export for tickets
