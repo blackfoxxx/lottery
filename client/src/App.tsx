@@ -5,6 +5,8 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import CartSidebar from "./components/CartSidebar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -37,14 +39,20 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
-        <CartProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-            <CartSidebar />
-          </TooltipProvider>
-        </CartProvider>
+      <ThemeProvider
+        defaultTheme="dark"
+      >
+        <TooltipProvider>
+          <Toaster />
+          <LanguageProvider>
+            <AuthProvider>
+              <CartProvider>
+                <Router />
+                <CartSidebar />
+              </CartProvider>
+            </AuthProvider>
+          </LanguageProvider>
+        </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

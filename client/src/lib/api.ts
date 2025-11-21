@@ -62,6 +62,16 @@ export interface Order {
   updated_at: string;
 }
 
+export interface AuthResponse {
+  token: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+  };
+}
+
 export interface CreateOrderData {
   items: Array<{
     product_id: number;
@@ -131,6 +141,20 @@ class APIClient {
 
   async getOrder(id: number): Promise<{ success: boolean; data: Order }> {
     return this.request<{ success: boolean; data: Order }>(`/orders/${id}`);
+  }
+
+  async login(email: string, password: string): Promise<{ success: boolean; data: AuthResponse }> {
+    return this.request<{ success: boolean; data: AuthResponse }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+  }
+
+  async register(name: string, email: string, password: string): Promise<{ success: boolean; data: AuthResponse }> {
+    return this.request<{ success: boolean; data: AuthResponse }>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password }),
+    });
   }
 }
 

@@ -14,13 +14,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
-import { api, Product } from "@/lib/api";
+import { api, Product, Category } from "@/lib/api";
 import { toast } from "sonner";
+import ProductForm from "@/components/ProductForm";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     loadProducts();
@@ -28,16 +32,38 @@ export default function AdminProducts() {
 
   async function loadProducts() {
     try {
-      const response = await api.getProducts({});
-      if (response.success && response.data.data) {
-        setProducts(response.data.data);
+      const [productsRes, categoriesRes] = await Promise.all([
+        api.getProducts({}),
+        api.getCategories(),
+      ]);
+      
+      if (productsRes.success && productsRes.data.data) {
+        setProducts(productsRes.data.data);
+      }
+      
+      if (categoriesRes.success && categoriesRes.data) {
+        setCategories(categoriesRes.data);
       }
     } catch (error) {
-      console.error("Failed to load products:", error);
-      toast.error("Failed to load products");
+      console.error("Failed to load data:", error);
+      toast.error("Failed to load data");
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleAddProduct() {
+    setEditingProduct(null);
+    setFormOpen(true);
+  }
+
+  function handleEditProduct(product: Product) {
+    setEditingProduct(product);
+    setFormOpen(true);
+  }
+
+  function handleFormSuccess() {
+    loadProducts();
   }
 
   const filteredProducts = products.filter(product =>
@@ -62,7 +88,7 @@ export default function AdminProducts() {
               Manage your product catalog
             </p>
           </div>
-          <Button>
+          <Button onClick={handleAddProduct}>
             <Plus className="h-4 w-4 mr-2" />
             Add Product
           </Button>
@@ -175,7 +201,7 @@ export default function AdminProducts() {
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="text-destructive">
@@ -196,6 +222,14 @@ export default function AdminProducts() {
           <p>Showing {filteredProducts.length} of {products.length} products</p>
           <p>{products.filter(p => p.stock_quantity < 10).length} products with low stock</p>
         </div>
+
+        <ProductForm
+          open={formOpen}
+          onOpenChange={setFormOpen}
+          product={editingProduct}
+          categories={categories}
+          onSuccess={handleFormSuccess}
+        />
       </div>
     </AdminLayout>
   );

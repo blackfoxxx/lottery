@@ -74,3 +74,27 @@
 - [ ] Add product create/edit forms
 - [ ] Add order detail view with status updates
 - [ ] Add analytics charts for sales and revenue
+
+## User Authentication
+- [x] Create AuthContext with JWT token management
+- [x] Build Login modal component
+- [x] Build Register modal component
+- [x] Add protected routes for admin
+- [x] Store auth token in localStorage
+- [x] Add user profile dropdown in header
+
+## Product Management Forms
+- [x] Create ProductForm component for add/edit
+- [x] Add image upload functionality (URL input)
+- [x] Category and brand selection dropdowns
+- [x] Lottery ticket configuration
+- [x] SKU auto-generation
+- [x] Form validation
+
+## Multi-Language Support
+- [x] Create LanguageContext for i18n
+- [x] Add language switcher component
+- [x] Create translation files (Arabic, English, Kurdish)
+- [x] Implement RTL layout for Arabic
+- [x] Translate header and common UI text
+- [x] Add Arabic fonts (Cairo)
