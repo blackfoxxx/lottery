@@ -9,14 +9,18 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { CreditCard, Wallet, Banknote, Ticket, Lock } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import StripePayment from "@/components/StripePayment";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+import { EmailService } from "@/lib/emailService";
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
   const { items, getTotalPrice, getTotalLotteryTickets, clearCart } = useCart();
   
   const [loading, setLoading] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("credit_card");
   const [formData, setFormData] = useState({
     fullName: "",
@@ -55,6 +59,22 @@ export default function Checkout() {
       return;
     }
 
+    // If credit card payment, show Stripe modal
+    if (paymentMethod === "credit_card") {
+      setShowPaymentModal(true);
+      return;
+    }
+
+    // For other payment methods, process directly
+    processOrder();
+  }
+
+  function handlePaymentSuccess(paymentIntentId: string) {
+    setShowPaymentModal(false);
+    processOrder(paymentIntentId);
+  }
+
+  async function processOrder(paymentIntentId?: string) {
     setLoading(true);
 
     try {
@@ -78,7 +98,14 @@ export default function Checkout() {
       const response = await api.createOrder(orderData);
 
       if (response.success && response.data) {
-        toast.success("Order placed successfully!");
+        // Send order confirmation email
+        const emailTemplate = EmailService.generateOrderConfirmationEmail(
+          response.data,
+          formData.email
+        );
+        await EmailService.sendEmail(emailTemplate);
+        
+        toast.success("Order placed successfully! Check your email for confirmation.");
         clearCart();
         setLocation(`/order-confirmation/${response.data.id}`);
       } else {
@@ -352,6 +379,20 @@ export default function Checkout() {
               </div>
             </div>
           </form>
+
+          {/* Stripe Payment Modal */}
+          <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Complete Payment</DialogTitle>
+              </DialogHeader>
+              <StripePayment
+                amount={total}
+                onSuccess={handlePaymentSuccess}
+                onCancel={() => setShowPaymentModal(false)}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
       </main>
     </div>

@@ -160,3 +160,36 @@
 - [x] Create ReviewList component with voting
 - [x] Add reviews section to ProductDetail page
 - [x] Implement helpful/not helpful voting system
+
+## Database Connection Fix (New)
+- [ ] Fix MySQL authentication error in Laravel
+- [ ] Update database credentials in .env
+- [ ] Test database connection
+- [ ] Verify all migrations are running
+- [ ] Test API endpoints with real data
+
+## Stripe Payment Integration (New)
+- [ ] Install Stripe SDK in frontend
+- [ ] Create Stripe checkout component
+- [ ] Add payment processing to checkout page
+- [ ] Implement payment confirmation
+- [ ] Add order status updates after payment
+- [ ] Test payment flow end-to-end
+
+## Email Notifications (New)
+- [ ] Configure email service in Laravel
+- [ ] Create order confirmation email template
+- [ ] Create lottery ticket email template
+- [ ] Create winner announcement email template
+- [ ] Add email sending to order creation
+- [ ] Add email sending to lottery draws
+- [ ] Test email delivery
+
+## Recently Completed (Latest)
+- [x] Install Stripe SDK (@stripe/stripe-js, @stripe/react-stripe-js)
+- [x] Create StripePayment component with card element
+- [x] Integrate Stripe payment modal in checkout
+- [x] Create EmailService with order confirmation templates
+- [x] Create lottery winner email templates
+- [x] Add email notification to order creation
+- [x] Professional HTML email templates with branding
