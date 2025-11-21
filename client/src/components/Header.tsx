@@ -1,4 +1,4 @@
-import { ShoppingCart, Search, User, LogOut, Settings, X, Package, Heart, GitCompare } from "lucide-react";
+import { ShoppingCart, Search, User, LogOut, Settings, X, Package, Heart, GitCompare, Trophy } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -172,6 +172,12 @@ export default function Header() {
                     <Link href="/orders">
                       <Package className="mr-2 h-4 w-4" />
                       My Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/loyalty">
+                      <Trophy className="mr-2 h-4 w-4" />
+                      Loyalty Rewards
                     </Link>
                   </DropdownMenuItem>
                   {user?.role === "admin" && (

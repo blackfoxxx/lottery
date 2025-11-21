@@ -14,10 +14,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { EmailService } from "@/lib/emailService";
+import { useLoyalty } from "@/contexts/LoyaltyContext";
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
   const { items, getTotalPrice, getTotalLotteryTickets, clearCart } = useCart();
+  const { addPoints } = useLoyalty();
   
   const [loading, setLoading] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -105,7 +107,12 @@ export default function Checkout() {
         );
         await EmailService.sendEmail(emailTemplate);
         
-        toast.success("Order placed successfully! Check your email for confirmation.");
+        // Award loyalty points
+        const pointsEarned = Math.floor(total);
+        addPoints(pointsEarned, `Purchase order #${response.data.id}`);
+        
+        toast.success(`Order placed successfully! You earned ${pointsEarned} loyalty points!`);
+        toast.info("Check your email for confirmation.");
         clearCart();
         setLocation(`/order-confirmation/${response.data.id}`);
       } else {

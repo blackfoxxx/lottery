@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 import { trackProductView } from "@/components/RecentlyViewed";
+import ImageZoom from "@/components/ImageZoom";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
@@ -156,20 +157,17 @@ export default function ProductDetail() {
       <main className="flex-1">
         <div className="container py-8">
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Product Image */}
-            <div className="aspect-square bg-card rounded-lg overflow-hidden">
-              {product.images && product.images.length > 0 ? (
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-muted">
-                  <span className="text-muted-foreground">No image</span>
-                </div>
-              )}
-            </div>
+            {/* Product Image with Zoom */}
+            {product.images && product.images.length > 0 ? (
+              <ImageZoom
+                src={product.images[0]}
+                alt={product.name}
+              />
+            ) : (
+              <div className="aspect-square bg-card rounded-lg flex items-center justify-center">
+                <span className="text-muted-foreground">No image</span>
+              </div>
+            )}
 
             {/* Product Info */}
             <div className="space-y-6">
