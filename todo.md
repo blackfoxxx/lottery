@@ -129,3 +129,34 @@
 - [ ] Add ticket tracking for users
 - [ ] Implement automated ticket generation on purchase
 - [ ] CSV import/export for tickets
+
+## Laravel Backend Integration (New)
+- [ ] Update AuthContext to use Laravel API endpoints
+- [ ] Fix login API call to use /api/v1/auth/login
+- [ ] Fix register API call to use /api/v1/auth/register  
+- [ ] Update order creation to use Laravel API
+- [ ] Add JWT token handling and refresh
+- [ ] Test authentication flow with real backend
+
+## Automated Lottery Ticket Generation (New)
+- [ ] Add lottery ticket generation logic to order creation
+- [ ] Update backend Order controller to generate tickets
+- [ ] Create lottery ticket assignment on purchase
+- [ ] Display generated tickets in order confirmation
+- [ ] Add ticket tracking to user dashboard
+
+## Product Reviews System (New)
+- [ ] Create Review model and migration in Laravel
+- [ ] Add review submission API endpoint
+- [ ] Create ReviewForm component in frontend
+- [ ] Display reviews on product detail page
+- [ ] Add star rating component
+- [ ] Implement helpful/not helpful voting
+- [ ] Add review moderation in admin panel
+
+## Recently Completed
+- [x] Create StarRating component for reviews
+- [x] Create ReviewForm component with validation
+- [x] Create ReviewList component with voting
+- [x] Add reviews section to ProductDetail page
+- [x] Implement helpful/not helpful voting system

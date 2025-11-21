@@ -4,7 +4,11 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { api, Product } from "@/lib/api";
-import { ShoppingCart, Star, Minus, Plus } from "lucide-react";
+import { ShoppingCart, Star, Minus, Plus, MessageSquare } from "lucide-react";
+import ReviewForm from "@/components/ReviewForm";
+import ReviewList, { Review } from "@/components/ReviewList";
+import StarRating from "@/components/StarRating";
+import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 
@@ -13,13 +17,77 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [showReviewForm, setShowReviewForm] = useState(false);
   const { addToCart, openCart } = useCart();
 
   useEffect(() => {
     if (params?.id) {
       loadProduct(parseInt(params.id));
+      loadReviews();
     }
   }, [params?.id]);
+
+  function loadReviews() {
+    // Mock reviews - replace with API call
+    const mockReviews: Review[] = [
+      {
+        id: 1,
+        user_name: "Ahmed Ali",
+        rating: 5,
+        comment: "Excellent product! Highly recommended. The quality is outstanding and delivery was fast.",
+        helpful_count: 12,
+        not_helpful_count: 1,
+        created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 2,
+        user_name: "Sara Mohammed",
+        rating: 4,
+        comment: "Good product overall, but the packaging could be better. Product itself is great!",
+        helpful_count: 8,
+        not_helpful_count: 2,
+        created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 3,
+        user_name: "Omar Hassan",
+        rating: 5,
+        comment: "Perfect! Exactly as described. Will definitely buy again.",
+        helpful_count: 15,
+        not_helpful_count: 0,
+        created_at: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ];
+    setReviews(mockReviews);
+  }
+
+  function handleSubmitReview(reviewData: { rating: number; comment: string }) {
+    const newReview: Review = {
+      id: reviews.length + 1,
+      user_name: "Current User",
+      rating: reviewData.rating,
+      comment: reviewData.comment,
+      helpful_count: 0,
+      not_helpful_count: 0,
+      created_at: new Date().toISOString(),
+    };
+    setReviews([newReview, ...reviews]);
+    setShowReviewForm(false);
+  }
+
+  function handleVote(reviewId: number, helpful: boolean) {
+    setReviews(reviews.map(review => {
+      if (review.id === reviewId) {
+        return {
+          ...review,
+          helpful_count: helpful ? review.helpful_count + 1 : review.helpful_count,
+          not_helpful_count: !helpful ? review.not_helpful_count + 1 : review.not_helpful_count,
+        };
+      }
+      return review;
+    }));
+  }
 
   async function loadProduct(id: number) {
     try {
@@ -186,6 +254,34 @@ export default function ProductDetail() {
                 {product.stock_quantity === 0 ? "Out of Stock" : "Add to Cart"}
               </Button>
             </div>
+          </div>
+
+          {/* Reviews Section */}
+          <div className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <MessageSquare className="h-6 w-6" />
+                Customer Reviews
+              </h2>
+              <Button
+                variant="outline"
+                onClick={() => setShowReviewForm(!showReviewForm)}
+              >
+                {showReviewForm ? "Cancel" : "Write a Review"}
+              </Button>
+            </div>
+
+            {showReviewForm && (
+              <Card className="p-6 mb-6">
+                <h3 className="text-lg font-semibold mb-4">Write Your Review</h3>
+                <ReviewForm
+                  productId={product.id}
+                  onSubmit={handleSubmitReview}
+                />
+              </Card>
+            )}
+
+            <ReviewList reviews={reviews} onVote={handleVote} />
           </div>
         </div>
       </main>
