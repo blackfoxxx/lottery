@@ -1,14 +1,53 @@
-import { ShoppingCart, Search, Menu } from "lucide-react";
+import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { APP_LOGO, APP_TITLE } from "@/const";
 import { useCart } from "@/contexts/CartContext";
+import { useState, useRef, useEffect } from "react";
+import { useProductSearch } from "@/hooks/useProductSearch";
+import SearchResults from "./SearchResults";
 
 export default function Header() {
   const { getTotalItems, openCart } = useCart();
   const totalItems = getTotalItems();
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  
+  const { results, loading } = useProductSearch(searchQuery);
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Show results when user types
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2) {
+      setShowResults(true);
+    } else {
+      setShowResults(false);
+    }
+  }, [searchQuery]);
+
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchQuery(e.target.value);
+  }
+
+  function handleCloseResults() {
+    setShowResults(false);
+    setSearchQuery("");
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -20,15 +59,38 @@ export default function Header() {
         </Link>
 
         {/* Search Bar (Desktop) */}
-        <div className="hidden md:flex flex-1 max-w-md mx-8">
+        <div className="hidden md:flex flex-1 max-w-md mx-8 relative" ref={searchRef}>
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
             <Input
               type="search"
               placeholder="Search products..."
-              className="pl-10 bg-card"
+              className="pl-10 pr-10 bg-card"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={() => searchQuery.trim().length >= 2 && setShowResults(true)}
             />
+            {searchQuery && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setShowResults(false);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
+          
+          {showResults && (
+            <SearchResults
+              results={results}
+              loading={loading}
+              query={searchQuery}
+              onClose={handleCloseResults}
+            />
+          )}
         </div>
 
         {/* Navigation */}
