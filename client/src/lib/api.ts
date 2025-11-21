@@ -45,6 +45,39 @@ export interface CartItem {
   quantity: number;
 }
 
+export interface Order {
+  id: number;
+  user_id?: number;
+  total_amount: number;
+  shipping_cost: number;
+  tax_amount: number;
+  shipping_address: string;
+  payment_method: string;
+  payment_status: string;
+  status: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateOrderData {
+  items: Array<{
+    product_id: number;
+    quantity: number;
+    price: number;
+  }>;
+  shipping_address: string;
+  shipping_cost: number;
+  tax_amount: number;
+  total_amount: number;
+  payment_method: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+}
+
 class APIClient {
   private baseURL: string;
 
@@ -87,6 +120,17 @@ class APIClient {
 
   async getCategories(): Promise<{ success: boolean; data: Category[] }> {
     return this.request<{ success: boolean; data: Category[] }>('/categories');
+  }
+
+  async createOrder(orderData: CreateOrderData): Promise<{ success: boolean; data: Order }> {
+    return this.request<{ success: boolean; data: Order }>('/orders', {
+      method: 'POST',
+      body: JSON.stringify(orderData),
+    });
+  }
+
+  async getOrder(id: number): Promise<{ success: boolean; data: Order }> {
+    return this.request<{ success: boolean; data: Order }>(`/orders/${id}`);
   }
 }
 

@@ -56,3 +56,11 @@
 - [x] Build SearchResults dropdown component
 - [x] Integrate search into Header with click-outside detection
 - [ ] Add mobile-responsive search modal
+
+## Checkout Implementation
+- [x] Update Cart page with full cart view and checkout button
+- [x] Create Checkout page with shipping address form
+- [x] Add payment method selection (Credit Card, PayPal, Cash on Delivery)
+- [x] Display order summary with totals and lottery tickets
+- [x] Create OrderConfirmation page with order details
+- [x] Form validation for shipping information
