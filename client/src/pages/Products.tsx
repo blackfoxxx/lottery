@@ -7,12 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { api, Product, Category } from "@/lib/api";
 import { ShoppingCart, Star } from "lucide-react";
 import { toast } from "sonner";
+import { useCart } from "@/contexts/CartContext";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
   const [loading, setLoading] = useState(true);
+  const { addToCart, openCart } = useCart();
 
   useEffect(() => {
     loadData();
@@ -41,8 +43,10 @@ export default function Products() {
     }
   }
 
-  function addToCart(product: Product) {
+  function handleAddToCart(product: Product) {
+    addToCart(product, 1);
     toast.success(`Added ${product.name} to cart`);
+    setTimeout(() => openCart(), 300);
   }
 
   return (
@@ -154,7 +158,7 @@ export default function Products() {
                   <CardFooter className="p-4 pt-0">
                     <Button
                       className="w-full"
-                      onClick={() => addToCart(product)}
+                      onClick={() => handleAddToCart(product)}
                       disabled={product.stock_quantity === 0}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />

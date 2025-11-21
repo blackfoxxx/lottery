@@ -8,10 +8,12 @@ import { api, Product } from "@/lib/api";
 import { ShoppingCart, Star, ArrowRight, Sparkles } from "lucide-react";
 import { APP_TITLE } from "@/const";
 import { toast } from "sonner";
+import { useCart } from "@/contexts/CartContext";
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart, openCart } = useCart();
 
   useEffect(() => {
     loadFeaturedProducts();
@@ -30,8 +32,10 @@ export default function Home() {
     }
   }
 
-  function addToCart(product: Product) {
+  function handleAddToCart(product: Product) {
+    addToCart(product, 1);
     toast.success(`Added ${product.name} to cart`);
+    setTimeout(() => openCart(), 300);
   }
 
   return (
@@ -202,7 +206,7 @@ export default function Home() {
                     <CardFooter className="p-4 pt-0">
                       <Button
                         className="w-full"
-                        onClick={() => addToCart(product)}
+                        onClick={() => handleAddToCart(product)}
                         disabled={product.stock_quantity === 0}
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />

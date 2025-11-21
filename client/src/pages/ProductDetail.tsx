@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { api, Product } from "@/lib/api";
 import { ShoppingCart, Star, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useCart } from "@/contexts/CartContext";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const { addToCart, openCart } = useCart();
 
   useEffect(() => {
     if (params?.id) {
@@ -34,9 +36,11 @@ export default function ProductDetail() {
     }
   }
 
-  function addToCart() {
+  function handleAddToCart() {
     if (product) {
+      addToCart(product, quantity);
       toast.success(`Added ${quantity} x ${product.name} to cart`);
+      setTimeout(() => openCart(), 300);
     }
   }
 
@@ -175,7 +179,7 @@ export default function ProductDetail() {
               <Button
                 size="lg"
                 className="w-full"
-                onClick={addToCart}
+                onClick={handleAddToCart}
                 disabled={product.stock_quantity === 0}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
