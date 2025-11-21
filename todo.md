@@ -39,3 +39,6 @@
 - [x] Smooth transitions and animations
 - [x] Mobile-first responsive design
 - [ ] Arabic RTL layout support (fonts loaded, needs implementation)
+
+## Bug Fixes
+- [x] Fix Vite WebSocket HMR connection error for proxied environment
