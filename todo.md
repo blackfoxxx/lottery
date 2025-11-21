@@ -225,3 +225,33 @@
 - [x] Build OrderTracking page with shipment timeline
 - [x] Add tracking button to OrderHistory page
 - [x] Add /track/:orderId route to App
+
+## Wishlist Functionality (New)
+- [ ] Create WishlistContext with localStorage
+- [ ] Add heart icon to product cards
+- [ ] Create Wishlist page
+- [ ] Add wishlist link to header
+- [ ] Sync wishlist across sessions
+
+## Advanced Product Filtering (New)
+- [ ] Add price range slider filter
+- [ ] Add brand checkbox filters
+- [ ] Add rating filter (4+ stars, 3+ stars, etc.)
+- [ ] Add stock availability filter
+- [ ] Add sort options (price, rating, newest)
+- [ ] Make filters responsive and collapsible
+
+## Wishlist Functionality (Completed)
+- [x] Create WishlistContext with localStorage
+- [x] Add heart icon to product cards
+- [x] Create Wishlist page
+- [x] Add wishlist link to header
+- [x] Sync wishlist across sessions
+
+## Advanced Product Filtering (Completed)
+- [x] Add price range slider filter
+- [x] Add brand checkbox filters
+- [x] Add rating filter (4+ stars, 3+ stars, etc.)
+- [x] Add stock availability filter
+- [x] Add sort options (price, rating, newest)
+- [x] Make filters responsive and collapsible

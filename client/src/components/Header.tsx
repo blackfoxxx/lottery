@@ -1,4 +1,4 @@
-import { ShoppingCart, Search, User, LogOut, Settings, X, Package } from "lucide-react";
+import { ShoppingCart, Search, User, LogOut, Settings, X, Package, Heart } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -118,6 +118,12 @@ export default function Header() {
             </Link>
             
             <LanguageSwitcher />
+            
+            <Link href="/wishlist">
+              <Button variant="ghost" size="icon">
+                <Heart className="h-5 w-5" />
+              </Button>
+            </Link>
             
             <Button variant="ghost" size="icon" className="relative" onClick={openCart}>
               <ShoppingCart className="h-5 w-5" />

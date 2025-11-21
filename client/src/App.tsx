@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import CartSidebar from "./components/CartSidebar";
@@ -16,6 +17,7 @@ import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import OrderHistory from "./pages/OrderHistory";
 import OrderTracking from "./pages/OrderTracking";
+import Wishlist from "./pages/Wishlist";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
@@ -33,6 +35,7 @@ function Router() {
       <Route path="/order-confirmation/:id" component={OrderConfirmation} />
       <Route path="/orders" component={OrderHistory} />
       <Route path="/track/:orderId" component={OrderTracking} />
+      <Route path="/wishlist" component={Wishlist} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
@@ -47,19 +50,19 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="dark"
-      >
+      <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
-          <Toaster />
-          <LanguageProvider>
-            <AuthProvider>
-              <CartProvider>
-                <Router />
-                <CartSidebar />
-              </CartProvider>
-            </AuthProvider>
-          </LanguageProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <WishlistProvider>
+                <CartProvider>
+                  <Toaster />
+                  <Router />
+                  <CartSidebar />
+                </CartProvider>
+              </WishlistProvider>
+            </LanguageProvider>
+          </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
