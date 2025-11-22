@@ -19,6 +19,7 @@ import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import OrderHistory from "./pages/OrderHistory";
 import OrderTracking from "./pages/OrderTracking";
+import MyLottery from "./pages/MyLottery";
 import Wishlist from "./pages/Wishlist";
 import Compare from "./pages/Compare";
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -40,7 +41,8 @@ function Router() {
       <Route path="/checkout" component={Checkout} />
       <Route path="/order-confirmation" component={OrderConfirmation} />
       <Route path="/orders" component={OrderHistory} />
-      <Route path="/track/:orderId" component={OrderTracking} />
+      <Route path="/order-tracking/:orderId" component={OrderTracking} />
+      <Route path="/my-lottery" component={MyLottery} />
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/compare" component={Compare} />
       <Route path="/loyalty" component={Loyalty} />

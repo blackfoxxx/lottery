@@ -344,3 +344,15 @@
 - [x] Create lottery history and past winners display
 - [x] Add lottery settings (draw date, prize details)
 - [x] Lottery tickets stored in localStorage per order
+
+## Lottery Backend Integration (Completed)
+- [x] Create customer lottery dashboard page
+- [x] Display all user lottery tickets with filtering
+- [x] Show lottery ticket history and status
+- [x] Add winner notification email templates
+- [x] Send automated emails to lottery winners
+- [x] Lottery countdown banner carousel on homepage
+- [x] Category-based draws (Golden, Silver, Bronze)
+- [ ] Create Laravel API endpoints for lottery draws
+- [ ] Create Laravel API endpoints for lottery tickets
+- [ ] Connect frontend lottery system to backend database

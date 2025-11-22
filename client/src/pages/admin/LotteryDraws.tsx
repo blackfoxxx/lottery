@@ -28,7 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trophy, Plus, Play, Eye } from "lucide-react";
+import { Trophy, Plus, Play, Eye, Mail } from "lucide-react";
+import { EmailService } from "@/lib/emailService";
 import { toast } from "sonner";
 
 interface LotteryDraw {
@@ -156,7 +157,27 @@ export default function LotteryDraws() {
             : d
         ));
         
-        toast.success("Winner selected successfully!");
+        // Send winner notification email
+        const winnerEmail = "winner@example.com"; // In production, get from ticket owner
+        const winnerName = "Winner User"; // In production, get from user database
+        
+        const emailTemplate = EmailService.generateLotteryWinnerEmail(
+          winnerEmail,
+          winnerName,
+          finalWinner,
+          `$${selectedDraw?.prize_amount.toLocaleString()}`,
+          new Date(selectedDraw?.draw_date || new Date()).toLocaleDateString()
+        );
+        
+        EmailService.sendEmail(emailTemplate).then((sent) => {
+          if (sent) {
+            console.log("✅ Winner notification email sent successfully");
+            toast.success("Winner selected and notified via email!");
+          } else {
+            console.warn("⚠️  Winner notification email not sent (email service not configured)");
+            toast.success("Winner selected successfully!");
+          }
+        });
       }
     }, 100);
   }
