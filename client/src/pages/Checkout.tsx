@@ -95,47 +95,96 @@ export default function Checkout() {
         customer_name: formData.fullName,
         customer_email: formData.email,
         customer_phone: formData.phone,
+        payment_intent_id: paymentIntentId,
       };
 
-      // Generate lottery tickets for each product
-      const lotteryTickets: Array<{
-        ticket_number: string;
-        category: string;
-        product_name: string;
-      }> = [];
-
-      items.forEach((item) => {
-        const ticketCount = item.product.lottery_tickets || 0;
-        const category = (item.product as any).lottery_category || "bronze";
-        
-        for (let i = 0; i < ticketCount * item.quantity; i++) {
-          const timestamp = Date.now();
-          const random = Math.random().toString(36).substr(2, 9).toUpperCase();
-          const ticketNumber = `${category.toUpperCase()}-${timestamp}-${random}`;
-          lotteryTickets.push({
-            ticket_number: ticketNumber,
-            category: category,
-            product_name: item.product.name,
-          });
-        }
-      });
-
+      // Create order via backend API
       const response = await api.createOrder(orderData);
 
       if (response.success && response.data) {
-        // Store lottery tickets (in production, save to database)
-        if (lotteryTickets.length > 0) {
-          localStorage.setItem(
-            `lottery_tickets_${response.data.id}`,
-            JSON.stringify(lotteryTickets)
-          );
+        const orderId = response.data.id;
+        
+        // Generate lottery tickets via backend API
+        const ticketsData = items.map(item => ({
+          category: (item.product as any).lottery_category || "bronze",
+          product_name: item.product.name,
+          quantity: (item.product.lottery_tickets || 0) * item.quantity,
+        })).filter(t => t.quantity > 0);
+
+        let generatedTickets: any[] = [];
+        
+        if (ticketsData.length > 0) {
+          try {
+            const ticketResponse = await fetch('http://localhost:8000/api/v1/lottery/tickets/generate', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+              },
+              body: JSON.stringify({
+                order_id: orderId,
+                user_id: 1, // TODO: Get from auth context
+                tickets: ticketsData,
+              }),
+            });
+
+            const ticketResult = await ticketResponse.json();
+            
+            if (ticketResult.success && ticketResult.data) {
+              generatedTickets = ticketResult.data;
+              
+              // Store tickets in localStorage for display
+              localStorage.setItem(
+                `lottery_tickets_${orderId}`,
+                JSON.stringify(generatedTickets)
+              );
+              
+              // Also save to order history
+              const savedOrders = localStorage.getItem('belkhair_orders');
+              const orders = savedOrders ? JSON.parse(savedOrders) : [];
+              const newOrder = {
+                id: orderId,
+                date: new Date().toISOString(),
+                total: total,
+                status: 'processing',
+                items: items.map(item => ({
+                  name: item.product.name,
+                  quantity: item.quantity,
+                  price: item.product.price,
+                  image: item.product.images?.[0] || '/placeholder.png',
+                })),
+                lotteryTickets: generatedTickets.map((ticket: any) => ({
+                  ticketNumber: ticket.ticket_number,
+                  category: ticket.category,
+                  drawDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+                })),
+              };
+              orders.push(newOrder);
+              localStorage.setItem('belkhair_orders', JSON.stringify(orders));
+              
+              toast.success(`${generatedTickets.length} lottery tickets generated!`);
+            }
+          } catch (ticketError) {
+            console.error('Failed to generate lottery tickets:', ticketError);
+            toast.warning('Order placed but lottery tickets could not be generated');
+          }
         }
-        // Send order confirmation email
-        const emailTemplate = EmailService.generateOrderConfirmationEmail(
-          response.data,
-          formData.email
-        );
-        await EmailService.sendEmail(emailTemplate);
+        // Send order confirmation email via backend
+        try {
+          await fetch('http://localhost:8000/api/v1/orders/send-confirmation', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              order_id: orderId,
+              email: formData.email,
+              tickets_count: generatedTickets.length,
+            }),
+          });
+        } catch (emailError) {
+          console.error('Failed to send confirmation email:', emailError);
+        }
         
         // Award loyalty points
         const pointsEarned = Math.floor(total);

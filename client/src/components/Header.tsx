@@ -119,7 +119,7 @@ export default function Header() {
               <Button variant="ghost">{t("header.products")}</Button>
             </Link>
             
-            <Link href="/my-lottery">
+            <Link href="/lottery">
               <Button variant="ghost">{t("header.lottery") || "Lottery"}</Button>
             </Link>
             

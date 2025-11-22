@@ -408,3 +408,27 @@
 - [ ] Send ticket details in order confirmation email
 - [ ] Show ticket count and categories in cart summary
 - [ ] Add ticket preview before checkout completion
+
+## Checkout-Backend Integration (New Priority)
+- [x] Update Checkout.tsx to call Laravel API for ticket generation
+- [x] Integrate order creation with backend database
+- [ ] Display generated tickets in OrderConfirmation page
+- [x] Add error handling for API failures during checkout
+- [x] Store order and ticket data in MySQL instead of localStorage
+
+## Email Notification System (New Priority)
+- [x] Configure Laravel mail settings in .env
+- [x] Create email template for ticket generation confirmation
+- [x] Create email template for lottery draw winner announcement
+- [x] Create email template for upcoming draw reminders
+- [x] Add email queue system for background processing
+- [ ] Test email delivery with Mailtrap or similar service
+
+## Dedicated Lottery Page (New Priority)
+- [x] Create /lottery route and page component
+- [x] Display all active lottery draws with countdown timers
+- [x] Show past winners section with prize details
+- [x] Add lottery rules and how-to-participate section
+- [x] Display ticket statistics and odds calculation
+- [x] Add responsive design for mobile viewing
+- [x] Integrate with backend API to fetch real-time draw data
