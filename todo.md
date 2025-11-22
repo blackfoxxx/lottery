@@ -459,3 +459,29 @@
 - [x] Implement date range filtering for payments
 - [x] Add export to CSV functionality for payment reports
 - [x] Create payment status badges and visual indicators
+
+## Refund Email Notifications (New Priority)
+- [x] Create refund confirmation email template in Laravel
+- [x] Add email sending to refund processing endpoint
+- [x] Include refund amount, reason, and timeline in email
+- [ ] Test email delivery for full and partial refunds
+
+## Payment Dispute Management System (New Priority)
+- [x] Create payment_disputes database table
+- [x] Add dispute status tracking (open, investigating, resolved, rejected)
+- [x] Create backend API for submitting disputes
+- [x] Create backend API for admin dispute management
+- [ ] Build customer dispute submission form
+- [x] Create admin dispute management dashboard
+- [x] Add dispute resolution workflow
+- [x] Implement dispute-to-payment linkage
+
+## Automated Fraud Detection (New Priority)
+- [x] Create fraud_scores table for tracking suspicious activity
+- [x] Implement fraud scoring algorithm (failed attempts, unusual amounts, IP tracking)
+- [x] Add automatic flagging for high-risk transactions
+- [x] Create admin fraud review dashboard
+- [x] Add manual review workflow for flagged payments
+- [x] Implement IP address tracking and geolocation
+- [x] Add velocity checks (multiple payments in short time)
+- [x] Create fraud alerts and notifications
