@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   ImageIcon,
+  CreditCard,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -28,6 +29,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+    { name: "Payments", href: "/admin/payments", icon: CreditCard },
     { name: "Lottery Tickets", href: "/admin/lottery-tickets", icon: Ticket },
     { name: "Lottery Categories", href: "/admin/lottery-categories", icon: Trophy },
     { name: "Lottery Draws", href: "/admin/lottery-draws", icon: Trophy },

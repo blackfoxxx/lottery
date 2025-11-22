@@ -444,3 +444,18 @@
 - [x] Handle payment success and failure scenarios
 - [ ] Test complete payment flow with QiCard sandbox
 - [x] Add payment status tracking in orders table
+
+## Admin Payment Management Dashboard (New Priority)
+- [x] Create backend API endpoint for listing all payments with filters
+- [x] Create backend API endpoint for payment details
+- [x] Implement QiCard refund API integration
+- [x] Create backend endpoint for refund processing
+- [x] Build admin payments dashboard page (/admin/payments)
+- [x] Add payment transaction table with sorting and filtering
+- [x] Create payment details modal with full transaction info
+- [x] Add refund button and confirmation dialog
+- [x] Create webhook logs viewer with payload inspection
+- [x] Add payment analytics dashboard (total revenue, success rate, etc.)
+- [x] Implement date range filtering for payments
+- [x] Add export to CSV functionality for payment reports
+- [x] Create payment status badges and visual indicators
