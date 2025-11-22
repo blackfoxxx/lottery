@@ -32,6 +32,7 @@ import Banners from "./pages/admin/Banners";
 import Payments from "./pages/admin/Payments";
 import Disputes from "./pages/admin/Disputes";
 import FraudReview from "./pages/admin/FraudReview";
+import MyDisputes from "./pages/MyDisputes";
 import Loyalty from "./pages/Loyalty";
 import Profile from "./pages/Profile";
 import PaymentComplete from "./pages/PaymentComplete";
@@ -47,7 +48,8 @@ function Router() {
       <Route path="/checkout" component={Checkout} />
       <Route path="/order-confirmation" component={OrderConfirmation} />
       <Route path="/orders" component={OrderHistory} />
-      <Route path="/order-tracking/:orderId" component={OrderTracking} />
+      <Route path="/track/:orderId" component={OrderTracking} />
+      <Route path="/orders/:orderId" component={OrderTracking} />
       <Route path="/my-lottery" component={MyLottery} />
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/compare" component={Compare} />
@@ -55,6 +57,7 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/payment/complete" component={PaymentComplete} />
       <Route path="/lottery" component={Lottery} />
+      <Route path="/my-disputes" component={MyDisputes} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />

@@ -10,7 +10,9 @@ import { api, Order } from "@/lib/api";
 import { toast } from "sonner";
 
 export default function OrderTracking() {
-  const [, params] = useRoute("/track/:orderId");
+  const [, trackParams] = useRoute("/track/:orderId");
+  const [, orderParams] = useRoute("/orders/:orderId");
+  const params = trackParams || orderParams;
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 

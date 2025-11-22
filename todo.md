@@ -485,3 +485,23 @@
 - [x] Implement IP address tracking and geolocation
 - [x] Add velocity checks (multiple payments in short time)
 - [x] Create fraud alerts and notifications
+
+## Customer Dispute Submission (New Priority)
+- [x] Create customer dispute submission page (/my-disputes)
+- [x] Add dispute submission form with payment selection
+- [x] Display user's dispute history with status tracking
+- [x] Integrate with backend dispute API
+- [x] Add dispute detail view for customers
+- [x] Show resolution notes when disputes are resolved
+
+## Order Tracking System (New Priority)
+- [x] Enhance orders table with detailed status tracking
+- [x] Add order_status_history table for timeline tracking
+- [x] Create backend API for order status updates
+- [x] Build user order tracking page (/orders/{orderId})
+- [x] Add order status timeline visualization
+- [ ] Create admin order status update interface
+- [x] Add order tracking number generation
+- [ ] Implement email notifications for status changes
+- [x] Add shipping carrier and tracking URL support
+- [ ] Create order search and filter in admin panel
