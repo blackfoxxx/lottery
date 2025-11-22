@@ -356,3 +356,16 @@
 - [ ] Create Laravel API endpoints for lottery draws
 - [ ] Create Laravel API endpoints for lottery tickets
 - [ ] Connect frontend lottery system to backend database
+
+## Laravel Backend Integration for Lottery (Completed)
+- [x] Create LotteryController in Laravel backend
+- [x] Create LotteryDraw and LotteryTicket models
+- [x] Add lottery draws API endpoints (CRUD)
+- [x] Add lottery tickets API endpoints (create, list, filter)
+- [x] Add lottery winners API endpoints
+- [x] Add lottery methods to frontend API client
+- [x] Create comprehensive integration guide document
+- [ ] Fix MySQL database connection (requires setup)
+- [ ] Update frontend components to use API instead of localStorage
+- [ ] Test lottery ticket generation on purchase with real backend
+- [ ] Test lottery draw winner selection with database

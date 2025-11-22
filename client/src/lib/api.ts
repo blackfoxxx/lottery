@@ -78,6 +78,32 @@ export interface AuthResponse {
   };
 }
 
+export interface LotteryDraw {
+  id: number;
+  name: string;
+  category: 'bronze' | 'silver' | 'golden';
+  draw_date: string;
+  prize_amount: number;
+  prize_description?: string;
+  status: 'upcoming' | 'in_progress' | 'completed';
+  total_tickets: number;
+  winner_ticket?: string;
+  winner_user_id?: number;
+  drawn_at?: string;
+}
+
+export interface LotteryTicket {
+  id: number;
+  ticket_number: string;
+  user_id: number;
+  order_id: number;
+  category: 'bronze' | 'silver' | 'golden';
+  product_name: string;
+  status: 'active' | 'winner' | 'expired';
+  draw_id?: number;
+  created_at: string;
+}
+
 export interface CreateOrderData {
   items: Array<{
     product_id: number;
@@ -165,6 +191,57 @@ class APIClient {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
     });
+  }
+
+  // Lottery API methods
+  async getLotteryDraws(category?: string, status?: string): Promise<{ success: boolean; data: LotteryDraw[] }> {
+    const params = new URLSearchParams();
+    if (category) params.append('category', category);
+    if (status) params.append('status', status);
+    
+    const query = params.toString();
+    return this.request<{ success: boolean; data: LotteryDraw[] }>(
+      `/lottery/draws${query ? `?${query}` : ''}`
+    );
+  }
+
+  async createLotteryDraw(drawData: Partial<LotteryDraw>): Promise<{ success: boolean; data: LotteryDraw }> {
+    return this.request<{ success: boolean; data: LotteryDraw }>('/lottery/draws', {
+      method: 'POST',
+      body: JSON.stringify(drawData),
+    });
+  }
+
+  async updateLotteryDraw(id: number, drawData: Partial<LotteryDraw>): Promise<{ success: boolean; data: LotteryDraw }> {
+    return this.request<{ success: boolean; data: LotteryDraw }>(`/lottery/draws/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(drawData),
+    });
+  }
+
+  async performLotteryDraw(id: number): Promise<{ success: boolean; data: { draw: LotteryDraw; winning_ticket: LotteryTicket } }> {
+    return this.request<{ success: boolean; data: { draw: LotteryDraw; winning_ticket: LotteryTicket } }>(
+      `/lottery/draws/${id}/perform`,
+      { method: 'POST' }
+    );
+  }
+
+  async generateLotteryTickets(ticketData: any): Promise<{ success: boolean; data: LotteryTicket[] }> {
+    return this.request<{ success: boolean; data: LotteryTicket[] }>('/lottery/tickets/generate', {
+      method: 'POST',
+      body: JSON.stringify(ticketData),
+    });
+  }
+
+  async getUserLotteryTickets(userId: number): Promise<{ success: boolean; data: { tickets: LotteryTicket[]; stats: any } }> {
+    return this.request<{ success: boolean; data: { tickets: LotteryTicket[]; stats: any } }>(
+      `/lottery/users/${userId}/tickets`
+    );
+  }
+
+  async getLotteryWinners(category?: string): Promise<{ success: boolean; data: LotteryDraw[] }> {
+    const query = category ? `?category=${category}` : '';
+    return this.request<{ success: boolean; data: LotteryDraw[] }>(`/lottery/winners${query}`);
   }
 }
 
