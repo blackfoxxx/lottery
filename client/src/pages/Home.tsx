@@ -8,6 +8,7 @@ import { api, Product } from "@/lib/api";
 import { ShoppingCart, Star, ArrowRight, Sparkles } from "lucide-react";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import PromotionalBanners from "@/components/PromotionalBanners";
+import LotteryCountdownBanner from "@/components/LotteryCountdownBanner";
 import { APP_TITLE } from "@/const";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
@@ -46,8 +47,13 @@ export default function Home() {
 
       <main className="flex-1">
         <div className="container py-8">
+          {/* Lottery Countdown Banner */}
+          <LotteryCountdownBanner />
+
           {/* Promotional Banners */}
-          <PromotionalBanners />
+          <div className="mt-8">
+            <PromotionalBanners />
+          </div>
         </div>
 
         {/* Hero Section */}

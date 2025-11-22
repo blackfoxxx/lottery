@@ -97,9 +97,39 @@ export default function Checkout() {
         customer_phone: formData.phone,
       };
 
+      // Generate lottery tickets for each product
+      const lotteryTickets: Array<{
+        ticket_number: string;
+        category: string;
+        product_name: string;
+      }> = [];
+
+      items.forEach((item) => {
+        const ticketCount = item.product.lottery_tickets || 0;
+        const category = (item.product as any).lottery_category || "bronze";
+        
+        for (let i = 0; i < ticketCount * item.quantity; i++) {
+          const timestamp = Date.now();
+          const random = Math.random().toString(36).substr(2, 9).toUpperCase();
+          const ticketNumber = `${category.toUpperCase()}-${timestamp}-${random}`;
+          lotteryTickets.push({
+            ticket_number: ticketNumber,
+            category: category,
+            product_name: item.product.name,
+          });
+        }
+      });
+
       const response = await api.createOrder(orderData);
 
       if (response.success && response.data) {
+        // Store lottery tickets (in production, save to database)
+        if (lotteryTickets.length > 0) {
+          localStorage.setItem(
+            `lottery_tickets_${response.data.id}`,
+            JSON.stringify(lotteryTickets)
+          );
+        }
         // Send order confirmation email
         const emailTemplate = EmailService.generateOrderConfirmationEmail(
           response.data,

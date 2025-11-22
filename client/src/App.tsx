@@ -25,7 +25,8 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
 import LotteryTickets from "./pages/admin/LotteryTickets";
-import LotteryDraws from "./pages/admin/LotteryDraws";
+import LotteryDraws from "@/pages/admin/LotteryDraws";
+import LotteryCategories from "@/pages/admin/LotteryCategories";
 import Banners from "./pages/admin/Banners";
 import Loyalty from "./pages/Loyalty";
 
@@ -47,7 +48,8 @@ function Router() {
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/lottery-tickets" component={LotteryTickets} />
-      <Route path="/admin/lottery-draws" component={LotteryDraws} />
+        <Route path="/admin/lottery-draws" component={LotteryDraws} />
+        <Route path="/admin/lottery-categories" component={LotteryCategories} />
       <Route path="/admin/banners" component={Banners} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
