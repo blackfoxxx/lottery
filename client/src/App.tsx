@@ -30,6 +30,7 @@ import LotteryDraws from "@/pages/admin/LotteryDraws";
 import LotteryCategories from "@/pages/admin/LotteryCategories";
 import Banners from "./pages/admin/Banners";
 import Loyalty from "./pages/Loyalty";
+import Profile from "./pages/Profile";
 
 function Router() {
   return (
@@ -46,6 +47,7 @@ function Router() {
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/compare" component={Compare} />
       <Route path="/loyalty" component={Loyalty} />
+      <Route path="/profile" component={Profile} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />

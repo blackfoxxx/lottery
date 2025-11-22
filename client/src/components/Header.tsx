@@ -119,6 +119,10 @@ export default function Header() {
               <Button variant="ghost">{t("header.products")}</Button>
             </Link>
             
+            <Link href="/my-lottery">
+              <Button variant="ghost">{t("header.lottery") || "Lottery"}</Button>
+            </Link>
+            
             <LanguageSwitcher />
             
             <Link href="/wishlist">
@@ -168,6 +172,12 @@ export default function Header() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      My Profile
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/orders">
                       <Package className="mr-2 h-4 w-4" />
