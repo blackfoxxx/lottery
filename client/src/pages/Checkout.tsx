@@ -23,7 +23,8 @@ export default function Checkout() {
   
   const [loading, setLoading] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("credit_card");
+  const [paymentMethod, setPaymentMethod] = useState("qicard");
+  const [qicardPaymentUrl, setQicardPaymentUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -67,6 +68,12 @@ export default function Checkout() {
       return;
     }
 
+    // If QiCard payment, initialize payment first
+    if (paymentMethod === "qicard") {
+      await initializeQiCardPayment();
+      return;
+    }
+
     // For other payment methods, process directly
     processOrder();
   }
@@ -74,6 +81,79 @@ export default function Checkout() {
   function handlePaymentSuccess(paymentIntentId: string) {
     setShowPaymentModal(false);
     processOrder(paymentIntentId);
+  }
+
+  async function initializeQiCardPayment() {
+    setLoading(true);
+
+    try {
+      // First create the order
+      const orderData = {
+        items: items.map(item => ({
+          product_id: item.product.id,
+          quantity: item.quantity,
+          price: item.product.price,
+        })),
+        shipping_address: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}`,
+        shipping_cost: shipping,
+        tax_amount: tax,
+        total_amount: total,
+        payment_method: "qicard",
+        customer_name: formData.fullName,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        status: "pending_payment",
+      };
+
+      const orderResponse = await api.createOrder(orderData);
+
+      if (!orderResponse.success || !orderResponse.data) {
+        toast.error("Failed to create order");
+        setLoading(false);
+        return;
+      }
+
+      const orderId = orderResponse.data.id;
+
+      // Initialize QiCard payment
+      const paymentResponse = await fetch('http://localhost:8000/api/v1/qicard/initialize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          order_id: orderId,
+          amount: total,
+          customer_info: {
+            firstName: formData.fullName.split(' ')[0],
+            lastName: formData.fullName.split(' ').slice(1).join(' ') || formData.fullName,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            city: formData.city,
+          },
+        }),
+      });
+
+      const paymentResult = await paymentResponse.json();
+
+      if (paymentResult.success && paymentResult.data?.formUrl) {
+        // Store order ID for later retrieval
+        localStorage.setItem('pending_order_id', orderId.toString());
+        
+        // Redirect to QiCard payment page
+        toast.success("Redirecting to payment gateway...");
+        window.location.href = paymentResult.data.formUrl;
+      } else {
+        toast.error(paymentResult.error?.description || "Failed to initialize payment");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('QiCard payment initialization failed:', error);
+      toast.error("Payment initialization failed. Please try again.");
+      setLoading(false);
+    }
   }
 
   async function processOrder(paymentIntentId?: string) {
@@ -325,6 +405,20 @@ export default function Checkout() {
                   
                   <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
                     <div className="space-y-3">
+                      <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer">
+                        <RadioGroupItem value="qicard" id="qicard" />
+                        <Label htmlFor="qicard" className="flex-1 cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <Lock className="h-5 w-5 text-primary" />
+                            <span className="font-medium">QiCard Payment Gateway</span>
+                            <Badge variant="default" className="ml-2">Recommended</Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Secure payment with QiCard - Iraq's trusted payment gateway
+                          </p>
+                        </Label>
+                      </div>
+
                       <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:bg-accent transition-colors cursor-pointer">
                         <RadioGroupItem value="credit_card" id="credit_card" />
                         <Label htmlFor="credit_card" className="flex-1 cursor-pointer">

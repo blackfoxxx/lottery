@@ -432,3 +432,15 @@
 - [x] Display ticket statistics and odds calculation
 - [x] Add responsive design for mobile viewing
 - [x] Integrate with backend API to fetch real-time draw data
+
+## QiCard Payment Gateway Integration (New Priority)
+- [x] Research QiCard API documentation and endpoints
+- [x] Create QiCard payment service in Laravel backend
+- [x] Add QiCard API credentials to .env file
+- [x] Implement payment initialization endpoint
+- [x] Implement payment verification/callback endpoint
+- [x] Update Checkout.tsx to integrate QiCard payment flow
+- [x] Add QiCard payment option to checkout page
+- [x] Handle payment success and failure scenarios
+- [ ] Test complete payment flow with QiCard sandbox
+- [x] Add payment status tracking in orders table
