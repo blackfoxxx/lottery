@@ -520,3 +520,35 @@
 - [x] Display order statistics cards (total orders, pending, shipped, delivered)
 - [x] Integrate with backend order management API
 - [x] Add navigation link in AdminLayout sidebar
+
+## Automated Order Status Email Notifications (New Priority)
+- [x] Create email templates for order status changes (confirmed, processing, shipped, delivered, cancelled)
+- [x] Add tracking link and estimated delivery date to shipped email
+- [x] Integrate email sending into OrderController status update
+- [ ] Add email notification toggle in admin settings
+- [ ] Create email preview functionality for testing
+- [ ] Add customer email preferences management
+
+## Inventory Management System (New Priority)
+- [x] Add stock_quantity and low_stock_threshold fields to products table
+- [x] Create inventory_logs table for tracking stock changes
+- [x] Build backend API for inventory management
+- [x] Create admin inventory dashboard page
+- [x] Add low stock alerts and notifications
+- [x] Implement automatic stock deduction on order completion
+- [x] Add manual stock adjustment interface
+- [x] Create inventory reports (stock levels, movements, alerts)
+- [ ] Add bulk inventory import/export functionality
+- [ ] Implement stock reservation system for pending orders
+
+## Customer Management Dashboard (New Priority)
+- [x] Create admin customers page with user listing
+- [x] Display customer lifetime value (total orders, total spent)
+- [x] Show customer order history with quick view
+- [ ] Display loyalty points and tier information
+- [x] Add customer dispute history view
+- [x] Create customer detail modal with complete profile
+- [x] Add customer search and filtering
+- [x] Implement customer segmentation (VIP, regular, new)
+- [ ] Add bulk email functionality for targeted promotions
+- [x] Create customer analytics dashboard (new vs returning, top customers)

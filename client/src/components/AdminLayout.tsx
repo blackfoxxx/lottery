@@ -15,6 +15,8 @@ import {
   ImageIcon,
   CreditCard,
   AlertTriangle,
+  PackageOpen,
+  Users as UsersIcon,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -31,6 +33,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
     { name: "Orders Management", href: "/admin/orders-management", icon: Package },
+    { name: "Inventory", href: "/admin/inventory", icon: PackageOpen },
+    { name: "Customers", href: "/admin/customers", icon: UsersIcon },
     { name: "Payments", href: "/admin/payments", icon: CreditCard },
     { name: "Disputes", href: "/admin/disputes", icon: AlertTriangle },
     { name: "Fraud Review", href: "/admin/fraud-review", icon: Settings },
