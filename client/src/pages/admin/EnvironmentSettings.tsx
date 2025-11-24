@@ -26,6 +26,9 @@ import { toast } from 'sonner';
 import ConfigurationTemplates from '@/components/ConfigurationTemplates';
 import ConfigurationHistory from '@/components/ConfigurationHistory';
 import HealthMonitoring from '@/components/HealthMonitoring';
+import AlertSettings from '@/components/AlertSettings';
+import ConfigurationComparison from '@/components/ConfigurationComparison';
+import KeyRotationScheduler from '@/components/KeyRotationScheduler';
 
 interface EnvVariable {
   key: string;
@@ -531,6 +534,15 @@ export default function EnvironmentSettings() {
 
         {/* Health Monitoring */}
         <HealthMonitoring />
+
+        {/* Alert Settings */}
+        <AlertSettings />
+
+        {/* Configuration Comparison */}
+        <ConfigurationComparison />
+
+        {/* API Key Rotation */}
+        <KeyRotationScheduler />
 
         {/* Configuration History */}
         <ConfigurationHistory
