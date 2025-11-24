@@ -1028,3 +1028,11 @@
 - [x] Show summary statistics (total, filtered, users, today)
 - [x] Add clear filters button
 - [x] Integrate with admin dashboard (System page)
+
+## Mobile App Lottery Banner (New - Completed)
+- [x] Add lottery banner component to mobile app home screen
+- [x] Match web version design (Golden Draw, countdown timer, prize amount)
+- [x] Add swipeable carousel for multiple lottery draws
+- [x] Add "View My Tickets" button
+- [x] Integrate with lottery API
+- [x] Push changes to GitHub
