@@ -35,6 +35,9 @@ import OrdersManagement from "./pages/admin/OrdersManagement";
 import Inventory from "./pages/admin/Inventory";
 import Customers from "./pages/admin/Customers";
 import FraudReview from "./pages/admin/FraudReview";
+import Reviews from "./pages/admin/Reviews";
+import Promotions from "./pages/admin/Promotions";
+import Analytics from "./pages/admin/Analytics";
 import MyDisputes from "./pages/MyDisputes";
 import Loyalty from "./pages/Loyalty";
 import Profile from "./pages/Profile";
@@ -74,6 +77,9 @@ function Router() {
       <Route path="/admin/inventory" component={Inventory} />
       <Route path="/admin/customers" component={Customers} />
       <Route path="/admin/fraud-review" component={FraudReview} />
+      <Route path="/admin/reviews" component={Reviews} />
+      <Route path="/admin/promotions" component={Promotions} />
+      <Route path="/admin/analytics" component={Analytics} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

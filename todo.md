@@ -552,3 +552,75 @@
 - [x] Implement customer segmentation (VIP, regular, new)
 - [ ] Add bulk email functionality for targeted promotions
 - [x] Create customer analytics dashboard (new vs returning, top customers)
+
+## Product Review and Rating System (New Priority)
+- [ ] Create product_reviews table with ratings, comments, images, verified purchase flag
+- [ ] Build backend API for review submission and moderation
+- [ ] Add review display on product pages with star ratings
+- [ ] Create review submission form for customers
+- [ ] Add review moderation dashboard for admins
+- [ ] Implement review helpfulness voting (helpful/not helpful)
+- [ ] Add verified purchase badge for reviews
+- [ ] Calculate and display average product ratings
+- [ ] Add review photos/images upload functionality
+- [ ] Create review filtering (most recent, highest rated, lowest rated)
+
+## Promotional Campaigns Manager (New Priority)
+- [ ] Create promotions table for discount codes and campaigns
+- [ ] Build backend API for promotion management
+- [ ] Create admin promotions dashboard at /admin/promotions
+- [ ] Add discount code creation with types (percentage, fixed amount, free shipping)
+- [ ] Implement usage limits and expiration dates
+- [ ] Add flash sale scheduler with countdown timers
+- [ ] Create bundle offer management
+- [ ] Add BOGO (Buy One Get One) deal configuration
+- [ ] Implement promotion performance tracking
+- [ ] Add promotion code validation in checkout
+
+## Sales Analytics Dashboard (New Priority)
+- [ ] Create admin analytics dashboard at /admin/analytics
+- [ ] Add revenue trends chart (daily, weekly, monthly)
+- [ ] Display best-selling products with quantities and revenue
+- [ ] Calculate customer acquisition cost (CAC)
+- [ ] Show conversion rate metrics
+- [ ] Add order value distribution chart
+- [ ] Create exportable reports (CSV, PDF)
+- [ ] Display top categories by revenue
+- [ ] Add customer lifetime value (CLV) metrics
+- [ ] Show traffic and sales correlation data
+
+## Enhanced Product Management (New Priority)
+- [ ] Add bulk product import/export (CSV)
+- [ ] Implement bulk price updates
+- [ ] Add bulk category assignment
+- [ ] Create product duplication feature
+- [ ] Add advanced filtering (price range, category, stock status, rating)
+- [ ] Implement product variants (size, color) management
+- [ ] Add SEO fields (meta title, meta description, keywords)
+- [ ] Create product scheduling (publish date, unpublish date)
+- [ ] Add related products management
+- [ ] Implement product tags system
+
+## Enhanced User Management (New Priority)
+- [ ] Add user role management (admin, customer, moderator)
+- [ ] Implement bulk user actions (activate, deactivate, delete)
+- [ ] Add user activity log viewer
+- [ ] Create user notes/comments for admins
+- [ ] Add user ban/suspension functionality
+- [ ] Implement email verification status tracking
+- [ ] Add user export functionality
+- [ ] Create user registration analytics
+- [ ] Add password reset management
+- [ ] Implement user group/segment management
+
+## Enhanced Lottery Management (New Priority)
+- [ ] Add automated winner selection with random algorithm
+- [ ] Implement winner notification emails
+- [ ] Create lottery results page showing past winners
+- [ ] Add lottery draw scheduler (auto-execute at draw date)
+- [ ] Implement ticket number validation and uniqueness
+- [ ] Add lottery statistics (total tickets sold, revenue per draw)
+- [ ] Create lottery audit trail for transparency
+- [ ] Add manual winner override capability
+- [ ] Implement prize claim tracking
+- [ ] Create lottery performance reports

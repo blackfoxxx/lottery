@@ -17,6 +17,9 @@ import {
   AlertTriangle,
   PackageOpen,
   Users as UsersIcon,
+  Star,
+  Tag,
+  BarChart3,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -38,6 +41,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Payments", href: "/admin/payments", icon: CreditCard },
     { name: "Disputes", href: "/admin/disputes", icon: AlertTriangle },
     { name: "Fraud Review", href: "/admin/fraud-review", icon: Settings },
+    { name: "Reviews", href: "/admin/reviews", icon: Star },
+    { name: "Promotions", href: "/admin/promotions", icon: Tag },
+    { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     { name: "Lottery Tickets", href: "/admin/lottery-tickets", icon: Ticket },
     { name: "Lottery Categories", href: "/admin/lottery-categories", icon: Trophy },
     { name: "Lottery Draws", href: "/admin/lottery-draws", icon: Trophy },
