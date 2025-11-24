@@ -650,3 +650,15 @@
 - [ ] Create notification preferences settings
 - [ ] Add email notification toggle
 - [x] Show notification badges for critical alerts
+
+## Product Image Gallery & Zoom (New Priority)
+- [x] Create ProductImageGallery component with thumbnail navigation
+- [x] Implement main image display with hover zoom preview
+- [x] Create lightbox modal for full-screen image viewing
+- [x] Add zoom in/out functionality in lightbox
+- [x] Implement image navigation (prev/next) in lightbox
+- [x] Add keyboard navigation support (arrow keys, ESC)
+- [x] Create smooth transitions and animations
+- [x] Integrate gallery into ProductDetail page
+- [x] Add responsive design for mobile devices
+- [x] Support multiple product images from backend
