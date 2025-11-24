@@ -693,3 +693,55 @@
 - [x] Add "Flash Sale" badge to products
 - [ ] Create flash sales section on homepage
 - [ ] Implement backend API for flash sale products
+
+## Abandoned Cart Recovery System (New Priority)
+- [x] Create abandoned_carts table in database
+- [x] Track cart abandonment events (cart created, items added, no checkout after 1 hour)
+- [x] Create backend API for abandoned cart detection
+- [x] Build email template for cart recovery reminders
+- [x] Include product images and direct checkout links in emails
+- [ ] Implement scheduled job to send recovery emails (1 hour, 24 hours, 3 days)
+- [x] Add discount code incentive for cart recovery
+- [x] Track recovery conversion rates in analytics
+- [ ] Create admin dashboard for abandoned cart monitoring
+- [ ] Add unsubscribe option for cart recovery emails
+
+## Product Recommendations Engine (New Priority)
+- [x] Create product_views and purchase_history tracking tables
+- [x] Implement collaborative filtering algorithm
+- [x] Build "Customers also bought" recommendations
+- [x] Create "You may also like" based on browsing history
+- [x] Add "Frequently bought together" bundles
+- [x] Implement recommendation API endpoints
+- [ ] Display recommendations on ProductDetail page
+- [ ] Show personalized recommendations on homepage
+- [ ] Add recommendation widgets in cart and checkout
+- [ ] Track recommendation click-through and conversion rates
+
+## Progressive Web App (PWA) (New Priority)
+- [x] Create service worker for offline support
+- [x] Generate web app manifest with icons
+- [ ] Implement app install prompt
+- [x] Add offline fallback pages
+- [x] Enable push notifications for web
+- [ ] Create notification permission request flow
+- [ ] Implement push notifications for order updates
+- [ ] Add push notifications for lottery draw results
+- [ ] Create push notifications for flash sales
+- [ ] Test PWA on mobile devices (iOS/Android)
+- [ ] Add "Add to Home Screen" prompt
+
+## Admin UI Customization Dashboard (New Priority)
+- [x] Create site_settings table for storing UI configurations
+- [x] Build admin settings page (/admin/ui-settings)
+- [x] Add logo upload functionality with preview
+- [x] Create color picker for primary/secondary colors
+- [x] Add theme selection (light/dark/auto)
+- [x] Implement site title and tagline editing
+- [x] Add favicon upload and management
+- [x] Create font family selector
+- [ ] Add custom CSS injection option
+- [x] Implement real-time preview of changes
+- [x] Create backend API for saving/loading UI settings
+- [x] Apply UI settings dynamically across the site
+- [x] Add reset to default settings option

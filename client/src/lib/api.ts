@@ -244,6 +244,66 @@ class APIClient {
     const query = category ? `?category=${category}` : '';
     return this.request<{ success: boolean; data: LotteryDraw[] }>(`/lottery/winners${query}`);
   }
+
+  // Site Settings
+  async getSiteSettings(): Promise<{ success: boolean; data: Record<string, any> }> {
+    return this.request<{ success: boolean; data: Record<string, any> }>('/site-settings');
+  }
+
+  async updateSiteSettings(settings: Record<string, any>): Promise<{ success: boolean; message: string }> {
+    return this.request<{ success: boolean; message: string }>('/site-settings/update-multiple', {
+      method: 'POST',
+      body: JSON.stringify({ settings }),
+    });
+  }
+
+  async resetSiteSettings(): Promise<{ success: boolean; message: string }> {
+    return this.request<{ success: boolean; message: string }>('/site-settings/reset-defaults', {
+      method: 'POST',
+    });
+  }
+
+  // Product Recommendations
+  async trackProductView(productId: number, userId?: number): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>('/recommendations/track-view', {
+      method: 'POST',
+      body: JSON.stringify({ product_id: productId, user_id: userId }),
+    });
+  }
+
+  async getAlsoBought(productId: number): Promise<{ success: boolean; data: Product[] }> {
+    return this.request<{ success: boolean; data: Product[] }>(`/recommendations/also-bought/${productId}`);
+  }
+
+  async getPersonalizedRecommendations(userId?: number): Promise<{ success: boolean; data: Product[] }> {
+    const query = userId ? `?user_id=${userId}` : '';
+    return this.request<{ success: boolean; data: Product[] }>(`/recommendations/personalized${query}`);
+  }
+
+  async getPopularProducts(): Promise<{ success: boolean; data: Product[] }> {
+    return this.request<{ success: boolean; data: Product[] }>('/recommendations/popular');
+  }
+
+  async getFrequentlyBoughtTogether(productId: number): Promise<{ success: boolean; data: Product[] }> {
+    return this.request<{ success: boolean; data: Product[] }>(`/recommendations/frequently-bought-together/${productId}`);
+  }
+
+  // Abandoned Cart
+  async trackAbandonedCart(cartData: any, totalAmount: number, email: string, userId?: number): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>('/abandoned-carts/track', {
+      method: 'POST',
+      body: JSON.stringify({ cart_data: cartData, total_amount: totalAmount, email, user_id: userId }),
+    });
+  }
+
+  async getAbandonedCarts(hours?: number): Promise<{ success: boolean; data: any }> {
+    const query = hours ? `?hours=${hours}` : '';
+    return this.request<{ success: boolean; data: any }>(`/abandoned-carts${query}`);
+  }
+
+  async getAbandonedCartStatistics(): Promise<{ success: boolean; data: any }> {
+    return this.request<{ success: boolean; data: any }>('/abandoned-carts/statistics');
+  }
 }
 
 export const api = new APIClient(API_BASE_URL);
