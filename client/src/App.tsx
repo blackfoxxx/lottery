@@ -31,6 +31,7 @@ import LotteryCategories from "@/pages/admin/LotteryCategories";
 import Banners from "./pages/admin/Banners";
 import Payments from "./pages/admin/Payments";
 import Disputes from "./pages/admin/Disputes";
+import OrdersManagement from "./pages/admin/OrdersManagement";
 import FraudReview from "./pages/admin/FraudReview";
 import MyDisputes from "./pages/MyDisputes";
 import Loyalty from "./pages/Loyalty";
@@ -67,6 +68,7 @@ function Router() {
       <Route path="/admin/banners" component={Banners} />
       <Route path="/admin/payments" component={Payments} />
       <Route path="/admin/disputes" component={Disputes} />
+      <Route path="/admin/orders-management" component={OrdersManagement} />
       <Route path="/admin/fraud-review" component={FraudReview} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

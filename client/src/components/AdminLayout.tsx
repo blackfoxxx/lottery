@@ -30,6 +30,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+    { name: "Orders Management", href: "/admin/orders-management", icon: Package },
     { name: "Payments", href: "/admin/payments", icon: CreditCard },
     { name: "Disputes", href: "/admin/disputes", icon: AlertTriangle },
     { name: "Fraud Review", href: "/admin/fraud-review", icon: Settings },

@@ -505,3 +505,18 @@
 - [ ] Implement email notifications for status changes
 - [x] Add shipping carrier and tracking URL support
 - [ ] Create order search and filter in admin panel
+
+## Admin Order Management UI (New Priority)
+- [x] Create /admin/orders-management page with order listing
+- [x] Add order table with sortable columns
+- [x] Implement pagination for order list
+- [x] Add search functionality (order number, customer name, email)
+- [x] Create status filter dropdown (all, pending, confirmed, processing, shipped, delivered, cancelled)
+- [x] Build status update modal with tracking information form
+- [x] Add tracking number, carrier, and URL input fields
+- [x] Implement estimated delivery date picker
+- [x] Create bulk actions (bulk status update, export to CSV)
+- [x] Add order details quick view modal
+- [x] Display order statistics cards (total orders, pending, shipped, delivered)
+- [x] Integrate with backend order management API
+- [x] Add navigation link in AdminLayout sidebar
