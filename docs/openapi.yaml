@@ -1,0 +1,644 @@
+openapi: 3.0.3
+info:
+  title: Belkhair E-Commerce API
+  description: |
+    Complete REST API for Belkhair E-Commerce Platform with lottery system, gift cards, and product bundles.
+    
+    ## Authentication
+    Most endpoints require authentication using JWT tokens. Include the token in the Authorization header:
+    ```
+    Authorization: Bearer {token}
+    ```
+    
+    ## Rate Limiting
+    API requests are limited to 60 requests per minute per user.
+    
+    ## Pagination
+    List endpoints support pagination with `page` and `per_page` query parameters.
+  version: 1.0.0
+  contact:
+    name: Belkhair Support
+    email: support@belkhair.com
+    url: https://docs.belkhair.com
+  license:
+    name: Proprietary
+    url: https://belkhair.com/license
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Development server
+  - url: https://api.belkhair.com/v1
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Products
+    description: Product management
+  - name: Orders
+    description: Order management
+  - name: Lottery
+    description: Lottery system
+  - name: Gift Cards
+    description: Gift card operations
+  - name: Bundles
+    description: Product bundles
+  - name: Social Proof
+    description: Social proof tracking
+  - name: Admin
+    description: Admin operations
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      description: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: password123
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+                    example: eyJ0eXAiOiJKV1QiLCJhbGc...
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      description: Authenticate user and return JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        '401':
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /products:
+    get:
+      tags:
+        - Products
+      summary: List all products
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  meta:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags:
+        - Products
+      summary: Create product
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get product details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Products
+      summary: Update product
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+    delete:
+      tags:
+        - Products
+      summary: Delete product
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Product deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /lottery/draws:
+    get:
+      tags:
+        - Lottery
+      summary: List lottery draws
+      responses:
+        '200':
+          description: Lottery draws
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LotteryDraw'
+
+  /lottery/purchase:
+    post:
+      tags:
+        - Lottery
+      summary: Purchase lottery tickets
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - draw_id
+                - quantity
+              properties:
+                draw_id:
+                  type: integer
+                quantity:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+      responses:
+        '201':
+          description: Tickets purchased
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tickets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LotteryTicket'
+                  total_cost:
+                    type: number
+
+  /lottery/my-tickets:
+    get:
+      tags:
+        - Lottery
+      summary: Get user's lottery tickets
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LotteryTicket'
+
+  /gift-cards:
+    get:
+      tags:
+        - Gift Cards
+      summary: List gift cards
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Gift cards list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GiftCard'
+
+  /gift-cards/purchase:
+    post:
+      tags:
+        - Gift Cards
+      summary: Purchase gift card
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - recipient_email
+              properties:
+                amount:
+                  type: number
+                  minimum: 10
+                  example: 50
+                recipient_email:
+                  type: string
+                  format: email
+                recipient_name:
+                  type: string
+                message:
+                  type: string
+      responses:
+        '201':
+          description: Gift card purchased
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GiftCard'
+
+  /gift-cards/balance:
+    get:
+      tags:
+        - Gift Cards
+      summary: Check gift card balance
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Gift card balance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  balance:
+                    type: number
+                  status:
+                    type: string
+                    enum: [active, redeemed, expired]
+
+  /bundles:
+    get:
+      tags:
+        - Bundles
+      summary: List product bundles
+      responses:
+        '200':
+          description: Product bundles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bundle'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        original_price:
+          type: number
+        discount:
+          type: number
+        image:
+          type: string
+        category:
+          type: string
+        stock:
+          type: integer
+        rating:
+          type: number
+        reviews_count:
+          type: integer
+
+    ProductInput:
+      type: object
+      required:
+        - name
+        - price
+        - category
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        original_price:
+          type: number
+        image:
+          type: string
+        category:
+          type: string
+        stock:
+          type: integer
+
+    LotteryDraw:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        prize_amount:
+          type: number
+        draw_date:
+          type: string
+          format: date-time
+        ticket_price:
+          type: number
+        tickets_sold:
+          type: integer
+        status:
+          type: string
+          enum: [active, completed, cancelled]
+
+    LotteryTicket:
+      type: object
+      properties:
+        id:
+          type: integer
+        draw_id:
+          type: integer
+        ticket_number:
+          type: string
+        purchase_date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [active, won, lost]
+
+    GiftCard:
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+        amount:
+          type: number
+        balance:
+          type: number
+        recipient_email:
+          type: string
+        status:
+          type: string
+          enum: [active, redeemed, expired]
+        expires_at:
+          type: string
+          format: date-time
+
+    Bundle:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        total_price:
+          type: number
+        discount_percentage:
+          type: number
+        savings:
+          type: number
+
+    Pagination:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+        last_page:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthenticated
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Forbidden
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Resource not found
