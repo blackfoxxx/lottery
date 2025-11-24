@@ -50,6 +50,7 @@ import TierComparison from "@/pages/TierComparison";
 import SharedWishlist from "./pages/SharedWishlist";
 import Notifications from "./pages/admin/Notifications";
 import GiftCards from "./pages/GiftCards";
+import GiftCardBalance from "./pages/GiftCardBalance";
 import Bundles from "./pages/Bundles";
 import AdminGiftCards from "./pages/admin/GiftCards";
 import AdminBundles from "./pages/admin/Bundles";
@@ -78,6 +79,7 @@ function Router() {
       <Route path={"/shared-wishlist/:id"} component={SharedWishlist} />
       <Route path="/my-disputes" component={MyDisputes} />
       <Route path="/gift-cards" component={GiftCards} />
+      <Route path="/gift-card-balance" component={GiftCardBalance} />
       <Route path="/bundles" component={Bundles} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />

@@ -8,6 +8,7 @@ import { ShoppingCart, Star, Minus, Plus, MessageSquare } from "lucide-react";
 import ReviewForm from "@/components/ReviewForm";
 import ReviewList, { Review } from "@/components/ReviewList";
 import StarRating from "@/components/StarRating";
+import FrequentlyBoughtTogether from "@/components/FrequentlyBoughtTogether";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
@@ -320,6 +321,14 @@ export default function ProductDetail() {
             )}
 
             <ReviewList reviews={reviews} onVote={handleVote} />
+          </div>
+
+          {/* Frequently Bought Together */}
+          <div className="lg:col-span-2">
+            <FrequentlyBoughtTogether
+              productId={product.id}
+              currentProduct={product}
+            />
           </div>
         </div>
       </main>

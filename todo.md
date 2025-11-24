@@ -868,3 +868,32 @@
 - [x] Add gift card purchase functionality to mobile app
 - [x] Add bundle viewing and cart integration to mobile app
 - [x] Test all three features on mobile app
+
+## Push Notifications System (New - Completed)
+- [x] Install Firebase Cloud Messaging in mobile app
+- [x] Configure push notification service
+- [x] Add notification permissions handling
+- [x] Send push notification on gift card delivery
+- [x] Send push notification for bundle promotions
+- [x] Add notification preferences in user profile
+- [x] Create comprehensive setup guide
+
+## Gift Card Balance Checker (New - Completed)
+- [x] Create GiftCardBalance page for web
+- [x] Add balance check API endpoint integration
+- [x] Add dropdown menu in header for gift card options
+- [x] Display gift card details (balance, status, expiry)
+- [x] Add "How to Use" instructions
+- [ ] Create balance checker in mobile app
+- [ ] Add balance display in user profile
+- [ ] Show balance history and transactions
+
+## Frequently Bought Together (New - Completed)
+- [x] Create FrequentlyBoughtTogether component for web
+- [x] Add backend API for product recommendations
+- [x] Display on product detail page
+- [x] Add "Add All to Cart" functionality
+- [x] Show bundle savings calculation
+- [x] Product selection with checkboxes
+- [x] Display total price and savings
+- [ ] Create mobile version of frequently bought together

@@ -94,9 +94,23 @@ export default function Header() {
               <Button variant="ghost">{t("header.lottery") || "Lottery"}</Button>
             </Link>
             
-            <Link href="/gift-cards">
-              <Button variant="ghost">Gift Cards</Button>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">Gift Cards</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link href="/gift-cards">
+                    <span>Purchase Gift Card</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/gift-card-balance">
+                    <span>Check Balance</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             <Link href="/bundles">
               <Button variant="ghost">Bundles</Button>
