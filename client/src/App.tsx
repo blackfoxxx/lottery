@@ -54,6 +54,7 @@ import GiftCardBalance from "./pages/GiftCardBalance";
 import Bundles from "./pages/Bundles";
 import AdminGiftCards from "./pages/admin/GiftCards";
 import AdminBundles from "./pages/admin/Bundles";
+import EnvironmentSettings from "./pages/admin/EnvironmentSettings";
 
 function Router() {
   return (
@@ -101,6 +102,7 @@ function Router() {
       <Route path="/admin/notifications" component={Notifications} />
       <Route path="/admin/gift-cards" component={AdminGiftCards} />
       <Route path="/admin/bundles" component={AdminBundles} />
+      <Route path="/admin/environment" component={EnvironmentSettings} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
