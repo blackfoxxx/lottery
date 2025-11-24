@@ -10,6 +10,7 @@ import { ComparisonProvider } from "./contexts/ComparisonContext";
 import { LoyaltyProvider } from "./contexts/LoyaltyContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import CartSidebar from "./components/CartSidebar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -43,6 +44,7 @@ import Loyalty from "./pages/Loyalty";
 import Profile from "./pages/Profile";
 import PaymentComplete from "./pages/PaymentComplete";
 import Lottery from "./pages/Lottery";
+import Notifications from "./pages/admin/Notifications";
 
 function Router() {
   return (
@@ -80,6 +82,7 @@ function Router() {
       <Route path="/admin/reviews" component={Reviews} />
       <Route path="/admin/promotions" component={Promotions} />
       <Route path="/admin/analytics" component={Analytics} />
+      <Route path="/admin/notifications" component={Notifications} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -90,7 +93,8 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
-        <LanguageProvider>
+        <NotificationProvider>
+          <LanguageProvider>
           <LoyaltyProvider>
             <ComparisonProvider>
               <AuthProvider>
@@ -107,6 +111,7 @@ function App() {
             </ComparisonProvider>
           </LoyaltyProvider>
         </LanguageProvider>
+        </NotificationProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

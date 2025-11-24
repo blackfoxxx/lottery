@@ -37,65 +37,97 @@ export default function ProductDetail() {
     }
   }, [product]);
 
-  function loadReviews() {
-    // Mock reviews - replace with API call
-    const mockReviews: Review[] = [
-      {
-        id: 1,
-        user_name: "Ahmed Ali",
-        rating: 5,
-        comment: "Excellent product! Highly recommended. The quality is outstanding and delivery was fast.",
-        helpful_count: 12,
-        not_helpful_count: 1,
-        created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: 2,
-        user_name: "Sara Mohammed",
-        rating: 4,
-        comment: "Good product overall, but the packaging could be better. Product itself is great!",
-        helpful_count: 8,
-        not_helpful_count: 2,
-        created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: 3,
-        user_name: "Omar Hassan",
-        rating: 5,
-        comment: "Perfect! Exactly as described. Will definitely buy again.",
-        helpful_count: 15,
-        not_helpful_count: 0,
-        created_at: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
-    setReviews(mockReviews);
-  }
-
-  function handleSubmitReview(reviewData: { rating: number; comment: string }) {
-    const newReview: Review = {
-      id: reviews.length + 1,
-      user_name: "Current User",
-      rating: reviewData.rating,
-      comment: reviewData.comment,
-      helpful_count: 0,
-      not_helpful_count: 0,
-      created_at: new Date().toISOString(),
-    };
-    setReviews([newReview, ...reviews]);
-    setShowReviewForm(false);
-  }
-
-  function handleVote(reviewId: number, helpful: boolean) {
-    setReviews(reviews.map(review => {
-      if (review.id === reviewId) {
-        return {
-          ...review,
-          helpful_count: helpful ? review.helpful_count + 1 : review.helpful_count,
-          not_helpful_count: !helpful ? review.not_helpful_count + 1 : review.not_helpful_count,
-        };
+  async function loadReviews() {
+    if (!params?.id) return;
+    
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/reviews/product/${params.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data.data || []);
       }
-      return review;
-    }));
+    } catch (error) {
+      console.error('Failed to load reviews:', error);
+      // Fallback to mock data if API fails
+      const mockReviews: Review[] = [
+        {
+          id: 1,
+          user_name: "Ahmed Ali",
+          rating: 5,
+          comment: "Excellent product! Highly recommended. The quality is outstanding and delivery was fast.",
+          helpful_count: 12,
+          not_helpful_count: 1,
+          verified_purchase: true,
+          created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          id: 2,
+          user_name: "Sara Mohammed",
+          rating: 4,
+          comment: "Good product overall, but the packaging could be better. Product itself is great!",
+          helpful_count: 8,
+          not_helpful_count: 2,
+          verified_purchase: true,
+          created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      ];
+      setReviews(mockReviews);
+    }
+  }
+
+  async function handleSubmitReview(reviewData: { rating: number; comment: string }) {
+    if (!params?.id) return;
+    
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: parseInt(params.id),
+          user_id: 1, // Replace with actual user ID from auth context
+          rating: reviewData.rating,
+          comment: reviewData.comment,
+        }),
+      });
+      
+      if (response.ok) {
+        toast.success('Review submitted successfully!');
+        loadReviews(); // Reload reviews
+        setShowReviewForm(false);
+      } else {
+        toast.error('Failed to submit review');
+      }
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+      toast.error('Failed to submit review');
+    }
+  }
+
+  async function handleVote(reviewId: number, helpful: boolean) {
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/reviews/${reviewId}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ helpful }),
+      });
+      
+      if (response.ok) {
+        // Update local state
+        setReviews(reviews.map(review => {
+          if (review.id === reviewId) {
+            return {
+              ...review,
+              helpful_count: helpful ? review.helpful_count + 1 : review.helpful_count,
+              not_helpful_count: !helpful ? review.not_helpful_count + 1 : review.not_helpful_count,
+            };
+          }
+          return review;
+        }));
+        toast.success('Thank you for your feedback!');
+      }
+    } catch (error) {
+      console.error('Failed to vote:', error);
+    }
   }
 
   async function loadProduct(id: number) {

@@ -22,6 +22,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { useState } from "react";
+import NotificationBell from "./NotificationBell";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -138,6 +139,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex-1">
             <h1 className="text-xl font-semibold">Admin Dashboard</h1>
           </div>
+          <NotificationBell />
         </header>
 
         {/* Page Content */}

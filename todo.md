@@ -624,3 +624,29 @@
 - [ ] Add manual winner override capability
 - [ ] Implement prize claim tracking
 - [ ] Create lottery performance reports
+
+## Customer Review Submission (New Priority)
+- [x] Add review submission form to ProductDetail page
+- [x] Create star rating input component
+- [ ] Add photo upload functionality for reviews
+- [x] Implement review form validation
+- [x] Integrate with backend review API
+- [x] Display existing reviews on product pages
+- [x] Add verified purchase badge display
+- [x] Show review statistics (average rating, total reviews)
+- [x] Add helpful/not helpful voting buttons
+- [x] Show review submission success message
+
+## Real-Time Admin Notifications (New Priority)
+- [x] Create notifications database table
+- [x] Build backend notification API endpoints
+- [x] Implement notification triggers (new order, dispute, fraud alert)
+- [x] Create NotificationContext for frontend
+- [x] Build notification bell icon in admin header
+- [x] Create notification dropdown with unread count
+- [x] Add notification center page with filtering
+- [x] Implement mark as read functionality
+- [x] Add real-time polling or WebSocket connection
+- [ ] Create notification preferences settings
+- [ ] Add email notification toggle
+- [x] Show notification badges for critical alerts

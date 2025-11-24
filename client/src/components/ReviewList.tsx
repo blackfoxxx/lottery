@@ -15,6 +15,7 @@ export interface Review {
   not_helpful_count: number;
   created_at: string;
   user_found_helpful?: boolean;
+  verified_purchase?: boolean;
 }
 
 interface ReviewListProps {
