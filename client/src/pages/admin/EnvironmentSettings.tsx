@@ -23,6 +23,9 @@ import {
   Lock,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import ConfigurationTemplates from '@/components/ConfigurationTemplates';
+import ConfigurationHistory from '@/components/ConfigurationHistory';
+import HealthMonitoring from '@/components/HealthMonitoring';
 
 interface EnvVariable {
   key: string;
@@ -517,6 +520,24 @@ export default function EnvironmentSettings() {
             Never share API keys or secrets publicly.
           </AlertDescription>
         </Alert>
+
+        {/* Configuration Templates */}
+        <ConfigurationTemplates
+          onApplyTemplate={(config) => {
+            setEnvVariables((prev) => ({ ...prev, ...config }));
+            setHasChanges(true);
+          }}
+        />
+
+        {/* Health Monitoring */}
+        <HealthMonitoring />
+
+        {/* Configuration History */}
+        <ConfigurationHistory
+          onRollback={(version) => {
+            loadEnvironmentVariables();
+          }}
+        />
 
         <Tabs defaultValue="payment" className="space-y-6">
           <TabsList className="grid grid-cols-7 w-full">
