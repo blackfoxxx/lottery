@@ -20,6 +20,8 @@ import {
   Star,
   Tag,
   BarChart3,
+  Gift,
+  Package as PackageIcon,
 } from "lucide-react";
 import { useState } from "react";
 import NotificationBell from "./NotificationBell";
@@ -44,6 +46,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Fraud Review", href: "/admin/fraud-review", icon: Settings },
     { name: "Reviews", href: "/admin/reviews", icon: Star },
     { name: "Promotions", href: "/admin/promotions", icon: Tag },
+    { name: "Gift Cards", href: "/admin/gift-cards", icon: Gift },
+    { name: "Bundles", href: "/admin/bundles", icon: PackageIcon },
     { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     { name: "UI Settings", href: "/admin/ui-settings", icon: Settings },
     { name: "Lottery Tickets", href: "/admin/lottery-tickets", icon: Ticket },

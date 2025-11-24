@@ -94,6 +94,14 @@ export default function Header() {
               <Button variant="ghost">{t("header.lottery") || "Lottery"}</Button>
             </Link>
             
+            <Link href="/gift-cards">
+              <Button variant="ghost">Gift Cards</Button>
+            </Link>
+            
+            <Link href="/bundles">
+              <Button variant="ghost">Bundles</Button>
+            </Link>
+            
             <LanguageSwitcher />
             
             <Link href="/wishlist">

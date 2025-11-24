@@ -787,3 +787,74 @@
 - [ ] Add missing Arabic translations to database
 - [x] Test all pages in both languages
 - [ ] Add language-specific formatting (dates, numbers, currency)
+
+## Social Proof Widgets (New Priority)
+- [ ] Create product_activity table for tracking views and purchases
+- [ ] Implement real-time activity tracking backend API
+- [ ] Create SocialProofBadge component for product cards
+- [ ] Add "X people viewing" indicator with live count
+- [ ] Add "Y purchased in last 24 hours" badge
+- [ ] Implement recent purchase notifications popup
+- [ ] Add stock urgency indicator ("Only X left in stock")
+- [ ] Create admin dashboard for activity analytics
+- [ ] Add configurable thresholds for showing badges
+- [ ] Implement privacy-friendly tracking (no personal data)
+
+## Gift Card System (New Priority)
+- [ ] Create gift_cards table in database
+- [ ] Add gift card purchase page with custom amounts
+- [ ] Implement unique code generation algorithm
+- [ ] Create gift card redemption flow in checkout
+- [ ] Add email delivery system for gift cards
+- [ ] Build gift card balance checking
+- [ ] Create admin gift card management dashboard
+- [ ] Add gift card transaction history
+- [ ] Implement partial redemption support
+- [ ] Add gift card expiration date handling
+- [ ] Create gift card design templates
+
+## Product Bundles with Discounts (New Priority)
+- [ ] Create product_bundles table in database
+- [ ] Build admin bundle creation interface
+- [ ] Add bundle product selection with multi-select
+- [ ] Implement automatic bundle discount calculation
+- [ ] Create bundle display on product pages
+- [ ] Add "Frequently bought together" section
+- [ ] Implement bundle add-to-cart functionality
+- [ ] Create dedicated bundles page
+- [ ] Add bundle inventory management
+- [ ] Show savings amount prominently
+- [ ] Create bundle analytics tracking
+
+## Social Proof Widgets (New - Completed)
+- [x] Create SocialProofBadge component with real-time activity indicators
+- [x] Add backend API endpoint for product activity tracking
+- [x] Display "X people viewing" and "Y purchased in last 24 hours" badges
+- [x] Integrate social proof badges on product cards
+- [x] Auto-refresh activity data every 30 seconds
+
+## Gift Card System (New - Completed)
+- [x] Create gift_cards database table with code generation
+- [x] Build backend API for gift card purchase and redemption
+- [x] Create GiftCards purchase page with preset and custom amounts
+- [x] Add recipient email and personal message functionality
+- [x] Create admin gift cards management page at /admin/gift-cards
+- [x] Display gift card statistics (total cards, active, value, redeemed)
+- [x] Add gift card filtering by status (active, used, expired)
+- [x] Implement gift card details modal for admin
+- [x] Add gift card redemption at checkout
+- [x] Email delivery of gift card codes to recipients
+- [x] Add Gift Cards link to header navigation
+
+## Product Bundles System (New - Completed)
+- [x] Create product_bundles database table with bundle_items relationship
+- [x] Build backend API for bundle management (CRUD operations)
+- [x] Create admin bundles page at /admin/bundles
+- [x] Add bundle create/edit form with product selection
+- [x] Support percentage and fixed discount types
+- [x] Create Bundles customer page displaying active bundles
+- [x] Show bundle savings and discounted prices
+- [x] Add bundle to cart functionality (all products at once)
+- [x] Display bundle products with images and prices
+- [x] Add Bundles link to header navigation
+- [x] Add Gift Cards and Bundles to admin sidebar navigation

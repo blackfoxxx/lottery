@@ -49,6 +49,10 @@ import ProductComparison from "@/pages/ProductComparison";
 import TierComparison from "@/pages/TierComparison";
 import SharedWishlist from "./pages/SharedWishlist";
 import Notifications from "./pages/admin/Notifications";
+import GiftCards from "./pages/GiftCards";
+import Bundles from "./pages/Bundles";
+import AdminGiftCards from "./pages/admin/GiftCards";
+import AdminBundles from "./pages/admin/Bundles";
 
 function Router() {
   return (
@@ -73,6 +77,8 @@ function Router() {
       <Route path="/loyalty-tiers" component={TierComparison} />
       <Route path={"/shared-wishlist/:id"} component={SharedWishlist} />
       <Route path="/my-disputes" component={MyDisputes} />
+      <Route path="/gift-cards" component={GiftCards} />
+      <Route path="/bundles" component={Bundles} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
@@ -91,6 +97,8 @@ function Router() {
       <Route path="/admin/analytics" component={Analytics} />
       <Route path="/admin/ui-settings" component={UISettings} />
       <Route path="/admin/notifications" component={Notifications} />
+      <Route path="/admin/gift-cards" component={AdminGiftCards} />
+      <Route path="/admin/bundles" component={AdminBundles} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

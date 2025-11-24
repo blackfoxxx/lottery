@@ -12,6 +12,7 @@ import ProductFilters, { FilterState } from "@/components/ProductFilters";
 import WishlistButton from "@/components/WishlistButton";
 import ComparisonButton from "@/components/ComparisonButton";
 import CountdownTimer from "@/components/CountdownTimer";
+import SocialProofBadge from "@/components/SocialProofBadge";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -255,6 +256,8 @@ export default function Products() {
                             🎫 {product.lottery_tickets} Lottery Tickets
                           </Badge>
                         )}
+
+                        <SocialProofBadge productId={product.id} />
                       </CardContent>
 
                       <CardFooter className="p-4 pt-0 space-y-2">
