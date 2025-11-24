@@ -1062,3 +1062,41 @@
 - [x] Add visual effects for countdown
 - [x] Animate each time unit independently
 - [x] Use Animated API for smooth transitions
+
+## My Tickets Screen (New - Completed)
+- [x] Create MyTicketsScreen component
+- [x] Display all purchased lottery tickets
+- [x] Show ticket numbers and purchase dates
+- [x] Display draw dates and status (active/past/won/lost)
+- [x] Add win/loss status indicators with colors
+- [x] Implement filtering by all/active/past draws
+- [x] Add ticket details modal with full information
+- [x] Integrate with navigation
+- [x] Show prize amounts for won tickets
+- [x] Add empty state for no tickets
+
+## Product Detail Modal (New - Completed)
+- [x] Create ProductDetailModal component
+- [x] Add tap-to-expand functionality on carousel products
+- [x] Display full product description
+- [x] Show multiple product images with swipeable gallery
+- [x] Add product specifications section
+- [x] Display customer reviews and ratings
+- [x] Add larger "Add to Cart" button with price
+- [x] Implement horizontal scrolling image gallery
+- [x] Add pagination dots for images
+- [x] Show discount badge and original price
+- [x] Add share button in header
+
+## Lottery Results Screen (New - Completed)
+- [x] Create LotteryResultsScreen component
+- [x] Display past draw winners
+- [x] Show winning ticket numbers in green badges
+- [x] Display prize amounts for each draw
+- [x] Add "Check My Tickets" functionality
+- [x] Compare user tickets against winning numbers
+- [x] Show win/loss notifications in modal
+- [x] Add draw history with cards
+- [x] Display total tickets sold per draw
+- [x] Show congratulations modal for wins
+- [x] Navigate to purchase or tickets based on result
