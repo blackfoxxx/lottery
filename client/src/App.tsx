@@ -44,6 +44,8 @@ import Loyalty from "./pages/Loyalty";
 import Profile from "./pages/Profile";
 import PaymentComplete from "./pages/PaymentComplete";
 import Lottery from "./pages/Lottery";
+import ProductComparison from "./pages/ProductComparison";
+import SharedWishlist from "./pages/SharedWishlist";
 import Notifications from "./pages/admin/Notifications";
 
 function Router() {
@@ -64,7 +66,9 @@ function Router() {
       <Route path="/loyalty" component={Loyalty} />
       <Route path="/profile" component={Profile} />
       <Route path="/payment/complete" component={PaymentComplete} />
-      <Route path="/lottery" component={Lottery} />
+      <Route path={"/lottery"} component={Lottery} />
+      <Route path={"/compare"} component={ProductComparison} />
+      <Route path={"/shared-wishlist/:id"} component={SharedWishlist} />
       <Route path="/my-disputes" component={MyDisputes} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />

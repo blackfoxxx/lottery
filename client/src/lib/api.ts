@@ -20,6 +20,7 @@ export interface Product {
   brand_id?: number;
   category?: Category;
   brand?: Brand;
+  sale_end_date?: string;
 }
 
 export interface Category {

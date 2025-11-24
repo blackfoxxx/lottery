@@ -662,3 +662,34 @@
 - [x] Integrate gallery into ProductDetail page
 - [x] Add responsive design for mobile devices
 - [x] Support multiple product images from backend
+
+## Product Comparison Feature (New Priority)
+- [x] Create comparison page with side-by-side product view
+- [x] Add comparison table with specifications, prices, ratings
+- [x] Implement add/remove products from comparison
+- [x] Add comparison button on product cards
+- [x] Show comparison badge with product count
+- [x] Support up to 4 products in comparison
+- [x] Add export comparison as PDF/image
+- [x] Create responsive design for mobile comparison
+
+## Wishlist Sharing (New Priority)
+- [x] Generate unique shareable URLs for wishlists
+- [x] Create wishlist share modal with social media buttons
+- [x] Add share to Facebook, Twitter, WhatsApp
+- [x] Implement copy link to clipboard functionality
+- [x] Create public wishlist view page
+- [x] Add privacy settings (public/private wishlist)
+- [x] Show shared wishlist with product details
+- [x] Add "Add to my wishlist" from shared wishlist
+
+## Flash Sale Countdown Timers (New Priority)
+- [x] Add sale_end_date field to products
+- [x] Create CountdownTimer component
+- [x] Display countdown on product cards
+- [ ] Show countdown on ProductDetail page
+- [x] Add visual urgency indicators (red text, pulsing)
+- [x] Auto-hide timer when sale ends
+- [x] Add "Flash Sale" badge to products
+- [ ] Create flash sales section on homepage
+- [ ] Implement backend API for flash sale products

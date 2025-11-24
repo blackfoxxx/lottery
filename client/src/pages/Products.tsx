@@ -11,6 +11,7 @@ import { useCart } from "@/contexts/CartContext";
 import ProductFilters, { FilterState } from "@/components/ProductFilters";
 import WishlistButton from "@/components/WishlistButton";
 import ComparisonButton from "@/components/ComparisonButton";
+import CountdownTimer from "@/components/CountdownTimer";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -195,6 +196,11 @@ export default function Products() {
                             product={product}
                             className="absolute top-3 right-3 z-10"
                           />
+                          {product.sale_end_date && new Date(product.sale_end_date) > new Date() && (
+                            <Badge className="absolute top-3 left-3 z-10 bg-red-600 hover:bg-red-700 animate-pulse">
+                              Flash Sale
+                            </Badge>
+                          )}
                           {product.images && product.images.length > 0 ? (
                             <img
                               src={product.images[0]}
@@ -234,6 +240,15 @@ export default function Products() {
                             </span>
                           )}
                         </div>
+
+                        {product.sale_end_date && new Date(product.sale_end_date) > new Date() && (
+                          <div className="mb-3">
+                            <CountdownTimer 
+                              endDate={product.sale_end_date} 
+                              size="sm"
+                            />
+                          </div>
+                        )}
 
                         {product.lottery_tickets > 0 && (
                           <Badge variant="secondary" className="mb-3">
