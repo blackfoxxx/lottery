@@ -17,6 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState, useRef, useEffect } from "react";
 import { useProductSearch } from "@/hooks/useProductSearch";
 import SearchResults from "./SearchResults";
+import SearchAutocomplete from "./SearchAutocomplete";
 import LoginModal from "./LoginModal";
 import RegisterModal from "./RegisterModal";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -80,37 +81,7 @@ export default function Header() {
 
           {/* Search Bar (Desktop) */}
           <div className="hidden md:flex flex-1 max-w-md mx-8 relative" ref={searchRef}>
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
-              <Input
-                type="search"
-                placeholder={t("header.search")}
-                className="pl-10 pr-10 bg-card"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                onFocus={() => searchQuery.trim().length >= 2 && setShowResults(true)}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setShowResults(false);
-                  }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-            
-            {showResults && (
-              <SearchResults
-                results={results}
-                loading={loading}
-                query={searchQuery}
-                onClose={handleCloseResults}
-              />
-            )}
+            <SearchAutocomplete />
           </div>
 
           {/* Navigation */}
