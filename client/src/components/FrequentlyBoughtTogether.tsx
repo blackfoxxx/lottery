@@ -12,7 +12,8 @@ interface Product {
   name: string;
   price: number;
   original_price?: number;
-  images: string[];
+  images?: string[];
+  image_url?: string;
   stock_quantity: number;
 }
 
@@ -68,14 +69,14 @@ export default function FrequentlyBoughtTogether({
     let originalTotal = 0;
 
     if (selectedProducts.has(productId)) {
-      total += currentProduct.price;
-      originalTotal += currentProduct.original_price || currentProduct.price;
+      total += Number(currentProduct.price);
+      originalTotal += Number(currentProduct.original_price || currentProduct.price);
     }
 
     relatedProducts.forEach((product) => {
       if (selectedProducts.has(product.id)) {
-        total += product.price;
-        originalTotal += product.original_price || product.price;
+        total += Number(product.price);
+        originalTotal += Number(product.original_price || product.price);
       }
     });
 
@@ -120,7 +121,7 @@ export default function FrequentlyBoughtTogether({
           <div className="flex items-start gap-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
             <Checkbox checked disabled className="mt-1" />
             <img
-              src={currentProduct.images[0]}
+              src={currentProduct.images?.[0] || currentProduct.image_url || '/placeholder.png'}
               alt={currentProduct.name}
               className="w-20 h-20 object-cover rounded"
             />
@@ -153,7 +154,7 @@ export default function FrequentlyBoughtTogether({
                   className="mt-1"
                 />
                 <img
-                  src={product.images[0]}
+                  src={product.images?.[0] || product.image_url || '/placeholder.png'}
                   alt={product.name}
                   className="w-20 h-20 object-cover rounded"
                 />
