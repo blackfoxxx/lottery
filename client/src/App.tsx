@@ -67,6 +67,7 @@ import OrderManagement from "./pages/admin/OrderManagement";
 import UserProfile from "./pages/UserProfile";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import QiCardSettings from "./pages/admin/QiCardSettings";
 
 function Router() {
   return (
@@ -120,6 +121,7 @@ function Router() {
       <Route path="/admin/environment" component={EnvironmentSettings} />
       <Route path="/admin/system" component={System} />
       <Route path="/admin/system-settings" component={SystemSettings} />
+      <Route path="/admin/qicard-settings" component={QiCardSettings} />
       <Route path="/admin/complete-lottery" component={CompleteLotteryManagement} />
       <Route path="/admin/product-management" component={ProductManagement} />
       <Route path="/admin/product-categories" component={ProductCategories} />
