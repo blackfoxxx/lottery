@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, X } from "lucide-react";
+import { useSwipeable } from "react-swipeable";
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -42,8 +43,15 @@ export default function ProductImageGallery({ images, productName }: ProductImag
     if (e.key === "-") handleZoomOut();
   }
 
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => handleNext(),
+    onSwipedRight: () => handlePrevious(),
+    trackMouse: false,
+    trackTouch: true,
+  });
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" {...swipeHandlers}>
       {/* Main Image */}
       <div
         className="relative aspect-square bg-muted rounded-lg overflow-hidden cursor-zoom-in group"

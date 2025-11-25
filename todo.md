@@ -1662,17 +1662,22 @@
 - [x] Fix homepage mobile layout and hero section
 - [x] Update navigation header for mobile with hamburger menu
 - [x] Fix product listing grid for mobile (1-2 columns)
-- [ ] Update product detail page for mobile screens
-- [ ] Fix cart and checkout flow for mobile
-- [ ] Update admin dashboard for mobile responsiveness
-- [ ] Fix lottery banners and carousels for mobile
-- [ ] Update user profile page for mobile
-- [ ] Fix forms and inputs for touch-friendly interaction
+- [x] Update product detail page for mobile screens
+- [x] Fix cart and checkout flow for mobile
+- [x] Update admin dashboard for mobile responsiveness
+- [x] Fix lottery banners and carousels for mobile
+- [x] Update user profile page for mobile
+- [x] Fix forms and inputs for touch-friendly interaction
+- [x] Add swipe gestures for image galleries
+- [ ] Implement pull-to-refresh on product listings
+- [x] Add bottom sheet drawers for mobile filters
 - [ ] Test on multiple mobile screen sizes (320px, 375px, 414px, 768px)
 
 ## Mobile App Updates (November 25, 2025 - User Request #16)
-- [ ] Update mobile app API endpoints for new features
-- [ ] Add QiCard payment integration to mobile app
+- [x] Update mobile app API endpoints for new features
+- [x] Add QiCard payment integration to mobile app
+- [x] Add lottery API endpoints to mobile app
+- [x] Update product types to match current schema
 - [ ] Update product catalog with 34 products
 - [ ] Add user profile and account settings screens
 - [ ] Implement lottery ticket viewing in mobile app

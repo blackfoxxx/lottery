@@ -398,6 +398,7 @@ export default function OrderManagement() {
             <CardDescription>View and manage all customer orders</CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -462,6 +463,7 @@ export default function OrderManagement() {
                 )}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
 
