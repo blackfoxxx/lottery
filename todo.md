@@ -1242,3 +1242,27 @@
 - [x] Verify all translation keys are present
 - [x] Fixed "header.lottery" translation issue
 - [x] Language switcher functionality verified
+
+## Lottery Winner Announcement Banner (New - Completed)
+- [x] Create LotteryWinnerBanner component for web
+- [x] Display recent lottery winners with rotating carousel
+- [x] Show winner names, prize amounts, and ticket numbers
+- [x] Add auto-rotation with pause on hover (web)
+- [x] Add translations for all text (en, ar, ku)
+- [x] Create LotteryWinnerBanner component for mobile app
+- [x] Integrate banner on homepage (web and mobile)
+- [x] Add animation effects for winner announcements (fade in/out)
+- [x] Add pagination dots for navigation
+- [x] Match design between web and mobile
+
+## Web-Mobile Feature Parity Check (New - Completed)
+- [x] Verify lottery countdown banner exists on both platforms
+- [x] Verify lottery winner banner exists on both platforms
+- [x] Verify product carousel exists on both platforms
+- [x] Verify gift cards feature exists on both platforms
+- [x] Verify bundles feature exists on both platforms
+- [x] Verify social proof badges exist on both platforms
+- [x] Verify lottery purchase flow exists on both platforms
+- [x] Verify my tickets screen exists on both platforms
+- [x] Verify lottery results screen exists on both platforms
+- [x] Verify all navigation links match between platforms

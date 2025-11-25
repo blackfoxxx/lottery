@@ -9,6 +9,7 @@ import { ShoppingCart, Star, ArrowRight, Sparkles } from "lucide-react";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import PromotionalBanners from "@/components/PromotionalBanners";
 import LotteryCountdownBanner from "@/components/LotteryCountdownBanner";
+import LotteryWinnerBanner from "@/components/LotteryWinnerBanner";
 import { APP_TITLE } from "@/const";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
@@ -49,6 +50,7 @@ export default function Home() {
         <div className="container py-8">
           {/* Lottery Countdown Banner */}
           <LotteryCountdownBanner />
+      <LotteryWinnerBanner />
 
           {/* Promotional Banners */}
           <div className="mt-8">

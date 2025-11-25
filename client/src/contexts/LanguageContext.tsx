@@ -135,6 +135,10 @@ const translations: Record<Language, Record<string, string>> = {
     "lottery.totalSpent": "Total Spent",
     "lottery.totalTickets": "Total Tickets",
     "lottery.totalWinnings": "Total Winnings",
+    "lottery.recentWinners": "Recent Lottery Winners",
+    "lottery.congratulations": "Congratulations to our winners!",
+    "lottery.wonPrize": "won",
+    "lottery.withTicket": "with ticket",
   },
   ar: {
     // Header
@@ -258,6 +262,10 @@ const translations: Record<Language, Record<string, string>> = {
     "lottery.totalSpent": "إجمالي المصروفات",
     "lottery.totalTickets": "إجمالي التذاكر",
     "lottery.totalWinnings": "إجمالي الأرباح",
+    "lottery.recentWinners": "الفائزون الأخيرون في اليانصيب",
+    "lottery.congratulations": "تهانينا للفائزين!",
+    "lottery.wonPrize": "فاز بـ",
+    "lottery.withTicket": "بالتذكرة",
   },
   ku: {
     // Header
@@ -381,6 +389,10 @@ const translations: Record<Language, Record<string, string>> = {
     "lottery.totalSpent": "کۆی خەرجکراو",
     "lottery.totalTickets": "کۆی تکێتەکان",
     "lottery.totalWinnings": "کۆی بردنەوەکان",
+    "lottery.recentWinners": "بردەوەکانی دواتری یانەسیب",
+    "lottery.congratulations": "پیرۆزە بۆ بردەوەکان!",
+    "lottery.wonPrize": "بردییەوە",
+    "lottery.withTicket": "بە تکێتی",
   },
 };
 
