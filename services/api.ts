@@ -2,7 +2,8 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // API Configuration
-const API_BASE_URL = 'https://8000-i1gsqlojk4l922n82631o-c4e07aaa.manusvm.computer/api/v1';
+// Update this to your backend URL
+const API_BASE_URL = 'https://3000-iq33rt7vhyykz7thscpau-0526df27.manusvm.computer/api/trpc';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -118,6 +119,60 @@ export interface Brand {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface Banner {
+  id: number;
+  title: string;
+  description?: string;
+  image_url: string;
+  link_url?: string;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Bundle {
+  id: number;
+  name: string;
+  description?: string;
+  discount_type: 'percentage' | 'fixed';
+  discount_value: number;
+  is_active: boolean;
+  product_ids: number[];
+  products?: Product[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Review {
+  id: number;
+  product_id: number;
+  user_id: number;
+  rating: number;
+  title?: string;
+  comment?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  helpful_count: number;
+  created_at: string;
+  updated_at: string;
+  user?: User;
+  product?: Product;
+}
+
+export interface BundleAnalytics {
+  total_bundles: number;
+  active_bundles: number;
+  total_revenue: number;
+  bundles: Array<{
+    id: number;
+    name: string;
+    views: number;
+    conversions: number;
+    revenue: number;
+    conversion_rate: number;
+  }>;
 }
 
 export interface Order {
@@ -316,6 +371,150 @@ export const ordersAPI = {
     notes?: string;
   }): Promise<ApiResponse<Order>> => {
     const response = await api.post('/orders', orderData);
+    return response.data;
+  },
+};
+
+// Banners API
+export const bannersAPI = {
+  getBanners: async (params?: { is_active?: boolean }): Promise<ApiResponse<Banner[]>> => {
+    const response = await api.get('/banners.list', { params });
+    return response.data;
+  },
+
+  createBanner: async (bannerData: Omit<Banner, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Banner>> => {
+    const response = await api.post('/banners.create', bannerData);
+    return response.data;
+  },
+
+  updateBanner: async (id: number, bannerData: Partial<Banner>): Promise<ApiResponse<Banner>> => {
+    const response = await api.put('/banners.update', { id, ...bannerData });
+    return response.data;
+  },
+
+  deleteBanner: async (id: number): Promise<ApiResponse<null>> => {
+    const response = await api.delete(`/banners.delete?id=${id}`);
+    return response.data;
+  },
+
+  toggleActive: async (id: number): Promise<ApiResponse<Banner>> => {
+    const response = await api.post('/banners.toggleActive', { id });
+    return response.data;
+  },
+};
+
+// Bundles API
+export const bundlesAPI = {
+  getBundles: async (params?: { is_active?: boolean }): Promise<ApiResponse<Bundle[]>> => {
+    const response = await api.get('/bundles.list', { params });
+    return response.data;
+  },
+
+  getBundle: async (id: number): Promise<ApiResponse<Bundle>> => {
+    const response = await api.get(`/bundles.getById?id=${id}`);
+    return response.data;
+  },
+
+  createBundle: async (bundleData: Omit<Bundle, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Bundle>> => {
+    const response = await api.post('/bundles.create', bundleData);
+    return response.data;
+  },
+
+  updateBundle: async (id: number, bundleData: Partial<Bundle>): Promise<ApiResponse<Bundle>> => {
+    const response = await api.put('/bundles.update', { id, ...bundleData });
+    return response.data;
+  },
+
+  deleteBundle: async (id: number): Promise<ApiResponse<null>> => {
+    const response = await api.delete(`/bundles.delete?id=${id}`);
+    return response.data;
+  },
+
+  toggleActive: async (id: number): Promise<ApiResponse<Bundle>> => {
+    const response = await api.post('/bundles.toggleActive', { id });
+    return response.data;
+  },
+};
+
+// Reviews API
+export const reviewsAPI = {
+  getReviews: async (params?: { 
+    product_id?: number;
+    status?: 'pending' | 'approved' | 'rejected';
+  }): Promise<ApiResponse<Review[]>> => {
+    const response = await api.get('/reviews.list', { params });
+    return response.data;
+  },
+
+  getProductReviews: async (productId: number): Promise<ApiResponse<Review[]>> => {
+    const response = await api.get(`/reviews.byProduct?product_id=${productId}`);
+    return response.data;
+  },
+
+  createReview: async (reviewData: {
+    product_id: number;
+    rating: number;
+    title?: string;
+    comment?: string;
+  }): Promise<ApiResponse<Review>> => {
+    const response = await api.post('/reviews.create', reviewData);
+    return response.data;
+  },
+
+  approveReview: async (id: number): Promise<ApiResponse<Review>> => {
+    const response = await api.post('/reviews.approve', { id });
+    return response.data;
+  },
+
+  rejectReview: async (id: number): Promise<ApiResponse<Review>> => {
+    const response = await api.post('/reviews.reject', { id });
+    return response.data;
+  },
+
+  deleteReview: async (id: number): Promise<ApiResponse<null>> => {
+    const response = await api.delete(`/reviews.delete?id=${id}`);
+    return response.data;
+  },
+
+  bulkApprove: async (ids: number[]): Promise<ApiResponse<null>> => {
+    const response = await api.post('/reviews.bulkApprove', { ids });
+    return response.data;
+  },
+
+  bulkReject: async (ids: number[]): Promise<ApiResponse<null>> => {
+    const response = await api.post('/reviews.bulkReject', { ids });
+    return response.data;
+  },
+};
+
+// Bundle Analytics API
+export const bundleAnalyticsAPI = {
+  getOverview: async (params?: {
+    start_date?: string;
+    end_date?: string;
+  }): Promise<ApiResponse<BundleAnalytics>> => {
+    const response = await api.get('/bundleAnalytics.overview', { params });
+    return response.data;
+  },
+
+  getPerformance: async (params?: {
+    start_date?: string;
+    end_date?: string;
+  }): Promise<ApiResponse<BundleAnalytics['bundles']>> => {
+    const response = await api.get('/bundleAnalytics.performance', { params });
+    return response.data;
+  },
+
+  trackView: async (bundleId: number): Promise<ApiResponse<null>> => {
+    const response = await api.post('/bundleAnalytics.trackView', { bundle_id: bundleId });
+    return response.data;
+  },
+
+  trackConversion: async (bundleId: number, orderId: number): Promise<ApiResponse<null>> => {
+    const response = await api.post('/bundleAnalytics.trackConversion', { 
+      bundle_id: bundleId,
+      order_id: orderId 
+    });
     return response.data;
   },
 };

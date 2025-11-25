@@ -37,6 +37,11 @@ import AddPaymentMethodScreen from './screens/AddPaymentMethodScreen';
 import PaymentHistoryScreen from './screens/PaymentHistoryScreen';
 import AddressesScreen from './screens/AddressesScreen';
 import AddAddressScreen from './screens/AddAddressScreen';
+import AdminDashboardScreen from './screens/AdminDashboardScreen';
+import AdminBannersScreen from './screens/AdminBannersScreen';
+import AdminBundlesScreen from './screens/AdminBundlesScreen';
+import AdminReviewsScreen from './screens/AdminReviewsScreen';
+import AdminAnalyticsScreen from './screens/AdminAnalyticsScreen';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 
 const Stack = createStackNavigator();
@@ -199,6 +204,11 @@ const AppNavigator = () => {
             <Stack.Screen name="PaymentHistory" component={PaymentHistoryScreen} />
             <Stack.Screen name="Addresses" component={AddressesScreen} />
             <Stack.Screen name="AddAddress" component={AddAddressScreen} />
+            <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
+            <Stack.Screen name="AdminBanners" component={AdminBannersScreen} />
+            <Stack.Screen name="AdminBundles" component={AdminBundlesScreen} />
+            <Stack.Screen name="AdminReviews" component={AdminReviewsScreen} />
+            <Stack.Screen name="AdminAnalytics" component={AdminAnalyticsScreen} />
           </>
         ) : (
           <Stack.Screen name="Auth" component={AuthStack} />

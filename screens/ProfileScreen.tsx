@@ -84,6 +84,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
   };
 
   const menuItems = [
+    ...(user?.role === 'admin' ? [{
+      id: 'admin',
+      icon: 'shield-checkmark-outline',
+      label: 'Admin Dashboard',
+      onPress: () => navigation.navigate('AdminDashboard'),
+    }] : []),
     {
       id: 'orders',
       icon: 'receipt-outline',

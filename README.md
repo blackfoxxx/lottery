@@ -45,6 +45,14 @@ A comprehensive mobile e-commerce application with integrated lottery system, bu
 - **Payment Method Management** - Securely store and manage payment methods
 - **Transaction History** - Complete payment history with filtering and export
 
+### Admin Features (New in v1.1.0)
+- **Admin Dashboard** - Centralized management hub with quick stats
+- **Banners Management** - Create, edit, delete promotional banners with image upload
+- **Bundles Management** - Create product bundles with multi-select and discount configuration
+- **Reviews Moderation** - Approve/reject reviews with bulk actions and filtering
+- **Bundle Analytics** - Track views, conversions, revenue with date range filtering
+- **tRPC Integration** - Type-safe API communication with the backend
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -128,6 +136,11 @@ belkhair-mobile/
 │   ├── PaymentHistoryScreen.tsx
 │   ├── AddressesScreen.tsx
 │   ├── AddAddressScreen.tsx
+│   ├── AdminDashboardScreen.tsx    # NEW: Admin hub
+│   ├── AdminBannersScreen.tsx      # NEW: Banners management
+│   ├── AdminBundlesScreen.tsx      # NEW: Bundles management
+│   ├── AdminReviewsScreen.tsx      # NEW: Reviews moderation
+│   ├── AdminAnalyticsScreen.tsx    # NEW: Bundle analytics
 │   └── ...
 ├── contexts/            # React contexts
 │   ├── AuthContext.tsx
@@ -137,10 +150,14 @@ belkhair-mobile/
 │   ├── TransactionContext.tsx
 │   ├── AddressContext.tsx
 │   └── ...
+├── services/            # API services
+│   ├── api.ts          # REST API client (legacy)
+│   └── trpc.ts         # NEW: tRPC client
 ├── types/               # TypeScript types
 │   ├── payment.ts
 │   ├── transaction.ts
 │   ├── address.ts
+│   ├── trpc.ts         # NEW: tRPC type definitions
 │   └── ...
 ├── i18n.ts              # i18n configuration
 ├── App.tsx              # Main app component
@@ -227,6 +244,13 @@ Language can be changed from Settings → Language & Region.
 - **Change Password** - Update password
 - **About** - App information
 
+### Admin Screens (Admin Role Required)
+- **Admin Dashboard** - Management hub with stats
+- **Banners Management** - CRUD operations for banners
+- **Bundles Management** - Create/edit product bundles
+- **Reviews Management** - Moderate customer reviews
+- **Bundle Analytics** - Performance metrics and insights
+
 ## 🔒 Security Features
 
 - Biometric authentication (Face ID/Fingerprint)
@@ -263,6 +287,10 @@ Contributions are welcome! Please follow these steps:
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+## 📚 Documentation
+
+For detailed admin features documentation, see [ADMIN_FEATURES_UPDATE.md](./ADMIN_FEATURES_UPDATE.md).
 
 ## 🆘 Support
 
