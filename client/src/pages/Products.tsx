@@ -41,8 +41,10 @@ export default function Products() {
         api.getCategories(),
       ]);
 
-      if (productsRes.success && productsRes.data.data) {
-        setProducts(productsRes.data.data);
+      if (productsRes.success && productsRes.data) {
+        // Handle both array and paginated response formats
+        const productData = Array.isArray(productsRes.data) ? productsRes.data : productsRes.data.data || [];
+        setProducts(productData);
       }
 
       if (categoriesRes.success && categoriesRes.data) {
