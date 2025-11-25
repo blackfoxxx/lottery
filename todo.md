@@ -1656,3 +1656,28 @@
 - [ ] Test complete payment flow
 - [x] Add payment method selection in checkout
 - [x] Create QiCard payment documentation
+
+
+## Mobile Responsiveness Fixes (November 25, 2025 - User Request #15)
+- [x] Fix homepage mobile layout and hero section
+- [x] Update navigation header for mobile with hamburger menu
+- [x] Fix product listing grid for mobile (1-2 columns)
+- [ ] Update product detail page for mobile screens
+- [ ] Fix cart and checkout flow for mobile
+- [ ] Update admin dashboard for mobile responsiveness
+- [ ] Fix lottery banners and carousels for mobile
+- [ ] Update user profile page for mobile
+- [ ] Fix forms and inputs for touch-friendly interaction
+- [ ] Test on multiple mobile screen sizes (320px, 375px, 414px, 768px)
+
+## Mobile App Updates (November 25, 2025 - User Request #16)
+- [ ] Update mobile app API endpoints for new features
+- [ ] Add QiCard payment integration to mobile app
+- [ ] Update product catalog with 34 products
+- [ ] Add user profile and account settings screens
+- [ ] Implement lottery ticket viewing in mobile app
+- [ ] Add order history and tracking to mobile app
+- [ ] Update mobile app authentication flow
+- [ ] Add product categories navigation
+- [ ] Implement mobile-optimized search
+- [ ] Test mobile app on iOS and Android

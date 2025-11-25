@@ -23,6 +23,7 @@ import RegisterModal from "./RegisterModal";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useComparison } from "@/contexts/ComparisonContext";
+import MobileMenu from "./MobileMenu";
 
 export default function Header() {
   const { getTotalItems, openCart } = useCart();
@@ -73,6 +74,9 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
+          {/* Mobile Menu */}
+          <MobileMenu />
+          
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             {APP_LOGO && <img src={APP_LOGO} alt={APP_TITLE} className="h-8 w-auto" />}

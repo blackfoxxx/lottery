@@ -9,6 +9,7 @@ import { ShoppingCart, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 import ProductFilters, { FilterState } from "@/components/ProductFilters";
+import MobileFiltersDrawer from "@/components/MobileFiltersDrawer";
 import WishlistButton from "@/components/WishlistButton";
 import ComparisonButton from "@/components/ComparisonButton";
 import CountdownTimer from "@/components/CountdownTimer";
@@ -154,8 +155,8 @@ export default function Products() {
           </div>
 
           <div className="grid lg:grid-cols-4 gap-8">
-            {/* Filters Sidebar */}
-            <aside className="lg:col-span-1">
+            {/* Filters Sidebar - Hidden on mobile, shown in drawer */}
+            <aside className="hidden lg:block lg:col-span-1">
               <ProductFilters
                 filters={filters}
                 onFiltersChange={setFilters}
@@ -166,6 +167,14 @@ export default function Products() {
 
             {/* Products Grid */}
             <div className="lg:col-span-3">
+              {/* Mobile Filters Button */}
+              <MobileFiltersDrawer
+                filters={filters}
+                onFiltersChange={setFilters}
+                availableBrands={availableBrands}
+                maxPrice={maxPrice}
+              />
+              
               <div className="mb-4 text-sm text-muted-foreground">
                 Showing {filteredProducts.length} of {products.length} products
               </div>
