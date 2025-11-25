@@ -1797,3 +1797,15 @@
 - [x] Integrate saved addresses into mobile checkout
 - [x] Integrate saved payment methods into mobile checkout
 - [x] Test all mobile features
+
+## GitHub Push & Installation Scripts (November 25, 2025 - User Request #23)
+- [ ] Create installation script for web app
+- [ ] Create installation script for mobile app
+- [ ] Create comprehensive README for web app
+- [ ] Create comprehensive README for mobile app
+- [ ] Initialize git repository for web app
+- [ ] Push web app to GitHub
+- [ ] Initialize git repository for mobile app
+- [ ] Push mobile app to GitHub
+- [ ] Create .gitignore files
+- [ ] Update documentation with setup instructions
