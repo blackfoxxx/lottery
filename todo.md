@@ -1781,3 +1781,19 @@
 - [ ] Integrate Google Maps for address autocomplete
 - [ ] Add address validation (postal code, phone)
 - [x] Update checkout to use saved addresses
+
+## Mobile App Parity - Payment & Address Features (November 25, 2025 - User Request #22)
+- [x] Create Transaction types for mobile app
+- [x] Create TransactionContext for mobile app
+- [x] Build PaymentHistoryScreen with filtering
+- [x] Add transaction details modal
+- [x] Implement CSV export for mobile
+- [x] Add pull-to-refresh for transactions
+- [x] Create Address types for mobile app
+- [x] Create AddressContext for mobile app
+- [x] Build AddressesScreen with CRUD operations
+- [x] Create AddAddressScreen with form validation
+- [x] Add default address selection
+- [x] Integrate saved addresses into mobile checkout
+- [x] Integrate saved payment methods into mobile checkout
+- [x] Test all mobile features
