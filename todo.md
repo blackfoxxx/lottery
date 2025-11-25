@@ -1550,3 +1550,27 @@
 - [x] Implement order cancellation with inventory restoration
 - [ ] Add admin order management interface
 - [ ] Create order history view for customers
+
+
+## Admin Order Management Dashboard (November 25, 2025 - User Request #6)
+- [x] Create order listing page with pagination
+- [x] Add order filters (status, date range, customer, payment method)
+- [x] Implement order search by order number or customer name
+- [x] Add order details view with full information
+- [x] Implement order status update functionality
+- [x] Add bulk actions (mark as shipped, export to CSV)
+- [ ] Create invoice generation and printing
+- [ ] Add order timeline/activity log
+- [ ] Implement order notes for internal communication
+
+## User Profile Page (November 25, 2025 - User Request #7)
+- [x] Create user profile dashboard layout
+- [x] Add account information section (name, email, phone)
+- [x] Implement profile edit functionality
+- [x] Add order history view for users
+- [x] Create lottery tickets view for users
+- [x] Add account settings (notifications, preferences)
+- [x] Implement security settings (password change, 2FA)
+- [ ] Add address book management
+- [ ] Create wishlist functionality
+- [ ] Add payment methods management

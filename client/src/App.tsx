@@ -63,6 +63,8 @@ import SystemSettings from "./pages/admin/SystemSettings";
 import CompleteLotteryManagement from "./pages/admin/CompleteLotteryManagement";
 import ProductManagement from "./pages/admin/ProductManagement";
 import ProductCategories from "./pages/admin/ProductCategories";
+import OrderManagement from "./pages/admin/OrderManagement";
+import UserProfile from "./pages/UserProfile";
 
 function Router() {
   return (
@@ -119,6 +121,8 @@ function Router() {
       <Route path="/admin/complete-lottery" component={CompleteLotteryManagement} />
       <Route path="/admin/product-management" component={ProductManagement} />
       <Route path="/admin/product-categories" component={ProductCategories} />
+      <Route path="/admin/order-management" component={OrderManagement} />
+      <Route path="/profile" component={UserProfile} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
