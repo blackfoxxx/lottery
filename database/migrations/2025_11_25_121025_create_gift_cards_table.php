@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('gift_cards', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
+            $table->decimal('initial_balance', 10, 2);
+            $table->decimal('current_balance', 10, 2);
+            $table->foreignId('purchased_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('used_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->enum('status', ['active', 'used', 'expired'])->default('active');
+            $table->dateTime('expires_at')->nullable();
             $table->timestamps();
         });
     }

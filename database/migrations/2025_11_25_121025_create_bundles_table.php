@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('bundles', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->string('image');
+            $table->decimal('regular_price', 10, 2);
+            $table->decimal('bundle_price', 10, 2);
+            $table->integer('discount_percentage');
+            $table->json('product_ids');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

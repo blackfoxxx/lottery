@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('type', ['card', 'paypal', 'wallet'])->default('card');
+            $table->string('card_last4')->nullable();
+            $table->string('card_brand')->nullable();
+            $table->string('card_exp_month')->nullable();
+            $table->string('card_exp_year')->nullable();
+            $table->string('paypal_email')->nullable();
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
     }

@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('lottery_tickets', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('draw_id')->constrained('lottery_draws')->onDelete('cascade');
+            $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('ticket_number')->unique();
+            $table->enum('status', ['active', 'won', 'lost'])->default('active');
+            $table->dateTime('purchase_date');
             $table->timestamps();
         });
     }
