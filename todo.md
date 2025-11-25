@@ -1383,3 +1383,77 @@
 - [x] lottery_tickets migration already exists
 - [x] lottery_winners migration created
 - [x] Sample data includes 4 draws, 4 tickets, 1 winner
+
+## End-to-End Lottery Testing (New - In Progress)
+- [ ] Create env update script for backend
+- [ ] Update backend .env with database credentials
+- [ ] Run database migrations
+- [ ] Seed lottery data
+- [ ] Test GET /api/v1/lottery/draws endpoint
+- [ ] Test GET /api/v1/lottery/winners endpoint
+- [ ] Test GET /api/v1/lottery/users/{userId}/tickets endpoint
+- [ ] Test admin create lottery draw
+- [ ] Test admin conduct lottery draw
+- [ ] Verify frontend displays lottery data correctly
+- [ ] Test complete purchase-to-ticket flow
+- [ ] Test winner notification system
+
+
+## Admin System Settings (New - November 25, 2025)
+- [x] Create comprehensive SystemSettings page
+- [x] Add color scheme customization (6 color controls)
+- [x] Add typography settings (fonts, sizes)
+- [x] Add image asset management (logo, favicon, hero, banner)
+- [x] Add layout and spacing controls
+- [x] Add site content editing (name, description, hero text)
+- [x] Add lottery banner customization
+- [x] Add feature toggles (lottery, reviews, wishlist, newsletter)
+- [x] Add email configuration (SMTP settings)
+- [x] Add notification preferences
+- [x] Add settings persistence (localStorage)
+- [x] Add live preview of color changes
+- [x] Add route to App.tsx for /admin/system-settings
+- [ ] Connect settings to actual backend API
+- [ ] Add database storage for settings
+- [ ] Add settings export/import functionality
+- [ ] Add theme presets (light/dark/custom)
+- [ ] Add custom CSS editor
+- [ ] Add live preview mode
+- [ ] Add menu editor
+- [ ] Add footer editor
+
+## Database Setup (Completed - November 25, 2025)
+- [x] Create MySQL database `belkhair`
+- [x] Create lottery_draws table
+- [x] Create lottery_tickets table
+- [x] Create lottery_winners table
+- [x] Create users table
+- [x] Create products table
+- [x] Create orders table
+- [x] Create order_items table
+- [x] Seed sample lottery data (4 draws, 5 tickets, 1 winner)
+- [x] Seed sample users (1 admin, 3 customers)
+- [x] Seed sample products (4 products)
+- [x] Seed sample orders (2 orders)
+- [x] Update lottery_tickets with user references
+- [x] Update lottery_winners with user references
+
+## Backend API Fixes (In Progress)
+- [ ] Fix lottery winners endpoint (currently returns 500 error)
+- [ ] Add lottery statistics endpoint
+- [ ] Add authentication middleware to admin endpoints
+- [ ] Implement JWT authentication
+- [x] Fix LotteryWinner model to match database schema
+- [x] Update getWinners method in LotteryController
+
+## Admin Dashboard Enhancements (Next Priority)
+- [ ] Add lottery draw creation form
+- [ ] Add lottery draw edit functionality
+- [ ] Add conduct draw functionality with random winner selection
+- [ ] Add user creation/edit forms
+- [ ] Add product creation/edit forms with image upload
+- [ ] Add order management features (status updates, tracking)
+- [ ] Add real-time analytics charts
+- [ ] Add system monitoring dashboard
+- [ ] Add bulk operations (delete, export, import)
+- [ ] Add search and filtering for all tables
