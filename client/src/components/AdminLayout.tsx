@@ -57,6 +57,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: "Lottery Tickets", href: "/admin/lottery-tickets", icon: Ticket },
     { name: "Lottery Categories", href: "/admin/lottery-categories", icon: Trophy },
     { name: "Lottery Draws", href: "/admin/lottery-draws", icon: Trophy },
+    { name: "Lottery Management", href: "/admin/lottery-management", icon: Trophy },
     { name: "Banners", href: "/admin/banners", icon: ImageIcon },
   ];
 

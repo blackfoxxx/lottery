@@ -1266,3 +1266,57 @@
 - [x] Verify my tickets screen exists on both platforms
 - [x] Verify lottery results screen exists on both platforms
 - [x] Verify all navigation links match between platforms
+
+## Admin Lottery Management Dashboard (New - Completed)
+- [x] Create admin lottery management page
+- [x] Add lottery draw creation form (name, prize, draw date, ticket price)
+- [x] Add lottery draw editing functionality
+- [x] Add lottery draw deletion with confirmation
+- [x] Display list of all lottery draws with status
+- [x] Add conduct draw functionality
+- [x] Add winner selection and announcement
+- [x] Add lottery draw statistics (total draws, total prizes, tickets sold)
+- [x] Add ticket sales tracking
+- [x] Add route to App.tsx
+- [x] Add navigation link to AdminLayout
+- [ ] Integrate with backend API
+
+## Social Sharing for Winners (New - Completed)
+- [x] Create WinnerShareButtons component for web
+- [x] Add Facebook share button
+- [x] Add Twitter share button
+- [x] Add WhatsApp share button
+- [x] Add copy link functionality
+- [x] Create WinnerShareButtons component for mobile app
+- [x] Implement native Share API for mobile
+- [x] Add clipboard functionality for mobile
+
+## Lottery Statistics Dashboard (New - Completed)
+- [x] Create public lottery statistics page (LotteryStats.tsx)
+- [x] Display total prizes awarded
+- [x] Show biggest wins with details
+- [x] Display top winners list
+- [x] Add draw history with timeline
+- [x] Show statistics cards (total prizes, biggest win, tickets sold, total draws)
+- [x] Display winner details with ticket numbers
+- [ ] Add route to App.tsx
+- [ ] Implement on mobile app
+
+## Winner Notification System (New - In Progress)
+- [ ] Create email notification template for winners
+- [ ] Add push notification for mobile winners
+- [ ] Send automatic notifications when draw is conducted
+- [ ] Include direct link to claim prize
+- [ ] Include winning ticket details
+- [ ] Add notification preferences in user settings
+- [ ] Test email delivery
+- [ ] Test push notifications
+
+## Backend API Support Verification (New - In Progress)
+- [ ] Verify lottery CRUD API endpoints exist
+- [ ] Verify conduct draw API endpoint
+- [ ] Verify winner notification API
+- [ ] Verify statistics API endpoints
+- [ ] Verify social sharing metadata API
+- [ ] Document all lottery API endpoints
+- [ ] Create API integration tests

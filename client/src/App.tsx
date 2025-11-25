@@ -29,6 +29,7 @@ import AdminOrders from "./pages/admin/Orders";
 import LotteryTickets from "./pages/admin/LotteryTickets";
 import LotteryDraws from "@/pages/admin/LotteryDraws";
 import LotteryCategories from "@/pages/admin/LotteryCategories";
+import LotteryManagement from "@/pages/admin/LotteryManagement";
 import Banners from "./pages/admin/Banners";
 import Payments from "./pages/admin/Payments";
 import Disputes from "./pages/admin/Disputes";
@@ -46,6 +47,7 @@ import Profile from "./pages/Profile";
 import PaymentComplete from "./pages/PaymentComplete";
 import Lottery from "./pages/Lottery";
 import LotteryHistory from "./pages/LotteryHistory";
+import LotteryStats from "./pages/LotteryStats";
 import ProductComparison from "@/pages/ProductComparison";
 import TierComparison from "@/pages/TierComparison";
 import SharedWishlist from "./pages/SharedWishlist";
@@ -78,6 +80,7 @@ function Router() {
       <Route path="/payment/complete" component={PaymentComplete} />
       <Route path="/lottery" component={Lottery} />
       <Route path="/lottery/history" component={LotteryHistory} />
+      <Route path="/lottery/stats" component={LotteryStats} />
       <Route path="/compare" component={ProductComparison} />
       <Route path="/loyalty-tiers" component={TierComparison} />
       <Route path={"/shared-wishlist/:id"} component={SharedWishlist} />
@@ -91,6 +94,7 @@ function Router() {
       <Route path="/admin/lottery-tickets" component={LotteryTickets} />
         <Route path="/admin/lottery-draws" component={LotteryDraws} />
         <Route path="/admin/lottery-categories" component={LotteryCategories} />
+        <Route path="/admin/lottery-management" component={LotteryManagement} />
       <Route path="/admin/banners" component={Banners} />
       <Route path="/admin/payments" component={Payments} />
       <Route path="/admin/disputes" component={Disputes} />
