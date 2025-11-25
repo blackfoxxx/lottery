@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -15,15 +15,51 @@ import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { EmailService } from "@/lib/emailService";
 import { useLoyalty } from "@/contexts/LoyaltyContext";
+import { usePaymentMethods } from "@/contexts/PaymentMethodContext";
+import { maskCardNumber, CARD_BRANDS } from "@/types/payment";
+import { useAddresses } from "@/contexts/AddressContext";
+import { formatAddress } from "@/types/address";
+import { DollarSign, MapPin } from "lucide-react";
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
   const { items, getTotalPrice, getTotalLotteryTickets, clearCart } = useCart();
   const { addPoints } = useLoyalty();
+  const { paymentMethods, walletBalance, getDefaultPaymentMethod, deductFromWallet } = usePaymentMethods();
+  const { addresses, getDefaultAddress } = useAddresses();
   
   const [loading, setLoading] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("qicard");
+  const [paymentMethod, setPaymentMethod] = useState("saved");
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
+  const [showAddPaymentMethod, setShowAddPaymentMethod] = useState(false);
+  const [useSavedAddress, setUseSavedAddress] = useState(true);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  
+  // Set default payment method and address on mount
+  useEffect(() => {
+    const defaultMethod = getDefaultPaymentMethod();
+    if (defaultMethod) {
+      setSelectedPaymentMethodId(defaultMethod.id);
+    } else if (paymentMethods.length > 0) {
+      setSelectedPaymentMethodId(paymentMethods[0].id);
+    }
+
+    const defaultAddress = getDefaultAddress();
+    if (defaultAddress) {
+      setSelectedAddressId(defaultAddress.id);
+      setFormData({
+        fullName: defaultAddress.fullName,
+        email: formData.email,
+        phone: defaultAddress.phone,
+        address: defaultAddress.addressLine1,
+        city: defaultAddress.city,
+        state: defaultAddress.state,
+        zipCode: defaultAddress.zipCode,
+        country: defaultAddress.country,
+      });
+    }
+  }, [paymentMethods, addresses]);
   const [qicardPaymentUrl, setQicardPaymentUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -60,6 +96,42 @@ export default function Checkout() {
     if (!formData.fullName || !formData.email || !formData.phone || !formData.address || !formData.city) {
       toast.error("Please fill in all required fields");
       return;
+    }
+
+    // Validate payment method selection
+    if (paymentMethod === "saved" && !selectedPaymentMethodId) {
+      toast.error("Please select a payment method");
+      return;
+    }
+
+    // If wallet payment, check balance
+    if (paymentMethod === "wallet") {
+      if (walletBalance < total) {
+        toast.error(`Insufficient wallet balance. You need $${(total - walletBalance).toFixed(2)} more.`);
+        return;
+      }
+      // Deduct from wallet and process order
+      const success = await deductFromWallet(total);
+      if (success) {
+        processOrder();
+      } else {
+        toast.error("Failed to process wallet payment");
+      }
+      return;
+    }
+
+    // If saved payment method, process with that method
+    if (paymentMethod === "saved") {
+      const selectedMethod = paymentMethods.find(m => m.id === selectedPaymentMethodId);
+      if (selectedMethod?.type === "credit_card" || selectedMethod?.type === "debit_card") {
+        setShowPaymentModal(true);
+        return;
+      } else if (selectedMethod?.type === "paypal") {
+        // Process PayPal payment
+        toast.info("Redirecting to PayPal...");
+        setTimeout(() => processOrder(), 1000);
+        return;
+      }
     }
 
     // If credit card payment, show Stripe modal
@@ -299,7 +371,79 @@ export default function Checkout() {
               <div className="lg:col-span-2 space-y-6">
                 {/* Shipping Information */}
                 <Card className="p-6">
-                  <h2 className="text-xl font-bold mb-4">Shipping Information</h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold">Shipping Information</h2>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setLocation('/addresses')}
+                    >
+                      Manage Addresses
+                    </Button>
+                  </div>
+
+                  {/* Saved Addresses Selector */}
+                  {addresses.length > 0 && (
+                    <div className="mb-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <input
+                          type="checkbox"
+                          id="useSavedAddress"
+                          checked={useSavedAddress}
+                          onChange={(e) => setUseSavedAddress(e.target.checked)}
+                          className="rounded border-gray-300"
+                        />
+                        <Label htmlFor="useSavedAddress" className="cursor-pointer">
+                          Use saved address
+                        </Label>
+                      </div>
+
+                      {useSavedAddress && (
+                        <div className="space-y-2">
+                          {addresses.map((address) => (
+                            <div
+                              key={address.id}
+                              onClick={() => {
+                                setSelectedAddressId(address.id);
+                                setFormData({
+                                  fullName: address.fullName,
+                                  email: formData.email,
+                                  phone: address.phone,
+                                  address: address.addressLine1,
+                                  city: address.city,
+                                  state: address.state,
+                                  zipCode: address.zipCode,
+                                  country: address.country,
+                                });
+                              }}
+                              className={`p-4 rounded-lg border-2 cursor-pointer transition-colors ${
+                                selectedAddressId === address.id
+                                  ? 'border-primary bg-primary/10'
+                                  : 'border-border hover:border-primary/50'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <MapPin className="h-5 w-5 mt-0.5" />
+                                <div className="flex-1">
+                                  <div className="font-medium">{address.fullName}</div>
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    {formatAddress(address)}
+                                  </div>
+                                  <div className="text-sm text-muted-foreground">
+                                    {address.phone}
+                                  </div>
+                                </div>
+                                {address.isDefault && (
+                                  <Badge variant="outline" className="text-xs">Default</Badge>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
@@ -401,17 +545,110 @@ export default function Checkout() {
 
                 {/* Payment Method */}
                 <Card className="p-6">
-                  <h2 className="text-xl font-bold mb-4">Payment Method</h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold">Payment Method</h2>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setLocation('/payment-methods')}
+                    >
+                      Manage Payment Methods
+                    </Button>
+                  </div>
                   
                   <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
                     <div className="space-y-3">
-                      <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer">
+                      {/* Saved Payment Methods */}
+                      {paymentMethods.length > 0 && (
+                        <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-primary bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer">
+                          <RadioGroupItem value="saved" id="saved" />
+                          <Label htmlFor="saved" className="flex-1 cursor-pointer">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Lock className="h-5 w-5 text-primary" />
+                              <span className="font-medium">Saved Payment Method</span>
+                              <Badge variant="default" className="ml-2">Recommended</Badge>
+                            </div>
+                            {paymentMethod === 'saved' && (
+                              <div className="space-y-2 mt-3">
+                                {paymentMethods.map((method) => (
+                                  <div
+                                    key={method.id}
+                                    onClick={() => setSelectedPaymentMethodId(method.id)}
+                                    className={`p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                                      selectedPaymentMethodId === method.id
+                                        ? 'border-primary bg-primary/10'
+                                        : 'border-border hover:border-primary/50'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      {method.type === 'credit_card' || method.type === 'debit_card' ? (
+                                        <>
+                                          <CreditCard className="h-5 w-5" />
+                                          <div className="flex-1">
+                                            <div className="font-medium">
+                                              {CARD_BRANDS[method.cardBrand!].name}
+                                            </div>
+                                            <div className="text-sm text-muted-foreground">
+                                              {maskCardNumber(method.cardLast4!)}
+                                            </div>
+                                          </div>
+                                          {method.isDefault && (
+                                            <Badge variant="outline" className="text-xs">Default</Badge>
+                                          )}
+                                        </>
+                                      ) : method.type === 'paypal' ? (
+                                        <>
+                                          <DollarSign className="h-5 w-5 text-blue-600" />
+                                          <div className="flex-1">
+                                            <div className="font-medium">PayPal</div>
+                                            <div className="text-sm text-muted-foreground">
+                                              {method.paypalEmail}
+                                            </div>
+                                          </div>
+                                          {method.isDefault && (
+                                            <Badge variant="outline" className="text-xs">Default</Badge>
+                                          )}
+                                        </>
+                                      ) : null}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </Label>
+                        </div>
+                      )}
+
+                      {/* Wallet Balance */}
+                      {walletBalance > 0 && (
+                        <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:bg-accent transition-colors cursor-pointer">
+                          <RadioGroupItem value="wallet" id="wallet" />
+                          <Label htmlFor="wallet" className="flex-1 cursor-pointer">
+                            <div className="flex items-center gap-2">
+                              <Wallet className="h-5 w-5 text-green-600" />
+                              <span className="font-medium">Wallet Balance</span>
+                              <Badge variant="secondary" className="ml-2">${walletBalance.toFixed(2)}</Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Pay with your wallet balance
+                            </p>
+                            {paymentMethod === 'wallet' && walletBalance < total && (
+                              <p className="text-sm text-destructive mt-2">
+                                Insufficient balance. Need ${(total - walletBalance).toFixed(2)} more.
+                              </p>
+                            )}
+                          </Label>
+                        </div>
+                      )}
+
+                      {/* QiCard */}
+                      <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:bg-accent transition-colors cursor-pointer">
                         <RadioGroupItem value="qicard" id="qicard" />
                         <Label htmlFor="qicard" className="flex-1 cursor-pointer">
                           <div className="flex items-center gap-2">
-                            <Lock className="h-5 w-5 text-primary" />
+                            <Lock className="h-5 w-5" />
                             <span className="font-medium">QiCard Payment Gateway</span>
-                            <Badge variant="default" className="ml-2">Recommended</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground mt-1">
                             Secure payment with QiCard - Iraq's trusted payment gateway

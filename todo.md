@@ -1746,3 +1746,38 @@
 - [x] Test payment method CRUD operations
 - [x] Add security features (CVV verification)
 - [x] Update checkout to use saved payment methods
+
+## Checkout Payment Integration (November 25, 2025 - User Request #21)
+- [x] Update Checkout page to display saved payment methods
+- [x] Add payment method selector in checkout
+- [x] Allow adding new payment method during checkout
+- [x] Integrate wallet balance payment option
+- [x] Add payment method validation before order submission
+- [ ] Update mobile checkout with payment method selection
+- [ ] Test checkout flow with different payment methods
+
+## Payment History & Transaction Logs (November 25, 2025 - User Request #21)
+- [x] Create Transaction interface and types
+- [x] Create TransactionContext for state management
+- [x] Build PaymentHistory page for web app
+- [x] Add transaction list with filtering (type, date, status)
+- [x] Add transaction details modal
+- [x] Implement export to CSV/PDF functionality
+- [ ] Create PaymentHistoryScreen for mobile app
+- [ ] Add pull-to-refresh for transaction list
+- [ ] Add transaction search functionality
+- [ ] Display wallet top-ups, purchases, and refunds
+
+## Saved Addresses Management (November 25, 2025 - User Request #21)
+- [x] Create Address interface and types
+- [x] Create AddressContext for state management
+- [x] Build Addresses page for web app
+- [x] Add address form with validation
+- [x] Implement add/edit/delete address functionality
+- [x] Add default address selection
+- [x] Add address type (shipping/billing/both)
+- [ ] Create AddressesScreen for mobile app
+- [ ] Create AddAddressScreen for mobile
+- [ ] Integrate Google Maps for address autocomplete
+- [ ] Add address validation (postal code, phone)
+- [x] Update checkout to use saved addresses

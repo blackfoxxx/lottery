@@ -12,6 +12,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import { PaymentMethodProvider } from "./contexts/PaymentMethodContext";
+import { TransactionProvider } from "./contexts/TransactionContext";
+import { AddressProvider } from "./contexts/AddressContext";
 import CartSidebar from "./components/CartSidebar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -50,6 +52,8 @@ import Lottery from "./pages/Lottery";
 import LotteryHistory from "./pages/LotteryHistory";
 import LotteryStats from "./pages/LotteryStats";
 import PaymentMethods from "./pages/PaymentMethods";
+import PaymentHistory from "./pages/PaymentHistory";
+import Addresses from "./pages/Addresses";
 import ProductComparison from "@/pages/ProductComparison";
 import TierComparison from "@/pages/TierComparison";
 import SharedWishlist from "./pages/SharedWishlist";
@@ -89,6 +93,8 @@ function Router() {
       <Route path="/loyalty" component={Loyalty} />
       <Route path="/profile" component={Profile} />
       <Route path="/payment-methods" component={PaymentMethods} />
+      <Route path="/payment-history" component={PaymentHistory} />
+      <Route path="/addresses" component={Addresses} />
       <Route path="/payment/complete" component={PaymentComplete} />
       <Route path="/lottery" component={Lottery} />
       <Route path="/lottery/history" component={LotteryHistory} />
@@ -148,6 +154,8 @@ function App() {
             <ComparisonProvider>
               <AuthProvider>
                 <PaymentMethodProvider>
+                  <TransactionProvider>
+                  <AddressProvider>
                   <CartProvider>
                     <WishlistProvider>
                       <TooltipProvider>
@@ -157,6 +165,8 @@ function App() {
                       </TooltipProvider>
                     </WishlistProvider>
                   </CartProvider>
+                  </AddressProvider>
+                  </TransactionProvider>
                 </PaymentMethodProvider>
               </AuthProvider>
             </ComparisonProvider>
