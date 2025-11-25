@@ -45,6 +45,7 @@ import Loyalty from "./pages/Loyalty";
 import Profile from "./pages/Profile";
 import PaymentComplete from "./pages/PaymentComplete";
 import Lottery from "./pages/Lottery";
+import LotteryHistory from "./pages/LotteryHistory";
 import ProductComparison from "@/pages/ProductComparison";
 import TierComparison from "@/pages/TierComparison";
 import SharedWishlist from "./pages/SharedWishlist";
@@ -75,7 +76,8 @@ function Router() {
       <Route path="/loyalty" component={Loyalty} />
       <Route path="/profile" component={Profile} />
       <Route path="/payment/complete" component={PaymentComplete} />
-      <Route path={"/lottery"} component={Lottery} />
+      <Route path="/lottery" component={Lottery} />
+      <Route path="/lottery/history" component={LotteryHistory} />
       <Route path="/compare" component={ProductComparison} />
       <Route path="/loyalty-tiers" component={TierComparison} />
       <Route path={"/shared-wishlist/:id"} component={SharedWishlist} />
