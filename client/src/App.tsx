@@ -11,6 +11,7 @@ import { LoyaltyProvider } from "./contexts/LoyaltyContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
+import { PaymentMethodProvider } from "./contexts/PaymentMethodContext";
 import CartSidebar from "./components/CartSidebar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -48,6 +49,7 @@ import PaymentComplete from "./pages/PaymentComplete";
 import Lottery from "./pages/Lottery";
 import LotteryHistory from "./pages/LotteryHistory";
 import LotteryStats from "./pages/LotteryStats";
+import PaymentMethods from "./pages/PaymentMethods";
 import ProductComparison from "@/pages/ProductComparison";
 import TierComparison from "@/pages/TierComparison";
 import SharedWishlist from "./pages/SharedWishlist";
@@ -86,6 +88,7 @@ function Router() {
       <Route path="/compare" component={Compare} />
       <Route path="/loyalty" component={Loyalty} />
       <Route path="/profile" component={Profile} />
+      <Route path="/payment-methods" component={PaymentMethods} />
       <Route path="/payment/complete" component={PaymentComplete} />
       <Route path="/lottery" component={Lottery} />
       <Route path="/lottery/history" component={LotteryHistory} />
@@ -144,15 +147,17 @@ function App() {
           <LoyaltyProvider>
             <ComparisonProvider>
               <AuthProvider>
-                <CartProvider>
-                  <WishlistProvider>
-                    <TooltipProvider>
+                <PaymentMethodProvider>
+                  <CartProvider>
+                    <WishlistProvider>
+                      <TooltipProvider>
                       <Toaster />
                       <Router />
                       <CartSidebar />
-                    </TooltipProvider>
-                  </WishlistProvider>
-                </CartProvider>
+                      </TooltipProvider>
+                    </WishlistProvider>
+                  </CartProvider>
+                </PaymentMethodProvider>
               </AuthProvider>
             </ComparisonProvider>
           </LoyaltyProvider>
