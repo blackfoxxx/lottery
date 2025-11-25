@@ -17,6 +17,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Header
     "header.search": "Search products...",
     "header.products": "Products",
+    "header.lottery": "Lottery",
     "header.signIn": "Sign In",
     "header.signUp": "Sign Up",
     "header.logout": "Logout",
@@ -115,6 +116,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Header
     "header.search": "البحث عن المنتجات...",
     "header.products": "المنتجات",
+    "header.lottery": "اليانصيب",
     "header.signIn": "تسجيل الدخول",
     "header.signUp": "إنشاء حساب",
     "header.logout": "تسجيل الخروج",
@@ -213,6 +215,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Header
     "header.search": "گەڕان بۆ بەرهەمەکان...",
     "header.products": "بەرهەمەکان",
+    "header.lottery": "یانەسیب",
     "header.signIn": "چوونەژوورەوە",
     "header.signUp": "دروستکردنی هەژمار",
     "header.logout": "چوونەدەرەوە",

@@ -1204,3 +1204,9 @@
 - [x] Add troubleshooting section with common issues
 - [x] Add best practices (security, performance, customer service)
 - [x] Add appendix (shortcuts, glossary, video tutorials)
+
+## Translation Issues (Bug Fix - Completed)
+- [x] Fix "header.lottery" showing as raw translation key instead of "Lottery"
+- [x] Check all translation keys are properly loaded
+- [x] Verify language files are complete
+- [x] Test all navigation links
