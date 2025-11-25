@@ -1669,7 +1669,7 @@
 - [x] Update user profile page for mobile
 - [x] Fix forms and inputs for touch-friendly interaction
 - [x] Add swipe gestures for image galleries
-- [ ] Implement pull-to-refresh on product listings
+- [x] Implement pull-to-refresh on product listings
 - [x] Add bottom sheet drawers for mobile filters
 - [ ] Test on multiple mobile screen sizes (320px, 375px, 414px, 768px)
 
@@ -1686,3 +1686,25 @@
 - [ ] Add product categories navigation
 - [ ] Implement mobile-optimized search
 - [ ] Test mobile app on iOS and Android
+
+
+## Mobile Performance Optimization (November 25, 2025 - User Request #17)
+- [x] Add pull-to-refresh to Products page
+- [x] Add pull-to-refresh to Orders page
+- [x] Add pull-to-refresh to admin listing pages
+- [x] Implement lazy loading for product images
+- [x] Add virtual scrolling for long product lists
+- [x] Configure service workers for offline functionality
+- [x] Add image optimization and responsive images
+- [x] Implement code splitting for faster initial load
+- [x] Add loading skeletons for better perceived performance
+
+## Cross-Device Testing (November 25, 2025 - User Request #18)
+- [ ] Test on iPhone SE (320px width)
+- [ ] Test on iPhone 14 (390px width)
+- [ ] Test on iPad (768px width)
+- [ ] Test on Android Chrome (various sizes)
+- [ ] Test on iOS Safari
+- [ ] Verify touch interactions work correctly
+- [ ] Test landscape orientation on mobile
+- [ ] Verify all forms are accessible on mobile keyboards
