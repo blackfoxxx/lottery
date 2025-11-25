@@ -11,7 +11,8 @@ export interface Product {
   original_price?: number;
   stock_quantity: number;
   status: string;
-  images: string[];
+  images?: string[];
+  image_url?: string;
   lottery_tickets: number;
   lottery_category: string;
   rating: number;

@@ -65,6 +65,8 @@ import ProductManagement from "./pages/admin/ProductManagement";
 import ProductCategories from "./pages/admin/ProductCategories";
 import OrderManagement from "./pages/admin/OrderManagement";
 import UserProfile from "./pages/UserProfile";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 function Router() {
   return (
@@ -123,6 +125,8 @@ function Router() {
       <Route path="/admin/product-categories" component={ProductCategories} />
       <Route path="/admin/order-management" component={OrderManagement} />
       <Route path="/profile" component={UserProfile} />
+      <Route path="/signin" component={SignIn} />
+      <Route path="/signup" component={SignUp} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

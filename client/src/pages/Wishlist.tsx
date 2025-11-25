@@ -75,7 +75,7 @@ export default function Wishlist() {
                   {/* Product Image */}
                   <div className="relative aspect-square overflow-hidden bg-muted">
                     <img
-                      src={product.images[0] || '/placeholder-product.jpg'}
+                      src={product.images?.[0] || product.image_url || "" || '/placeholder-product.jpg'}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

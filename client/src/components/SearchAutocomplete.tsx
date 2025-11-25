@@ -169,7 +169,7 @@ export default function SearchAutocomplete() {
                     }`}
                   >
                     <img
-                      src={product.images[0] || "/placeholder.png"}
+                      src={product.images?.[0] || product.image_url || "" || "/placeholder.png"}
                       alt={product.name}
                       className="w-12 h-12 object-cover rounded"
                     />

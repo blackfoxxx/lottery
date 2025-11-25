@@ -94,7 +94,7 @@ export default function Compare() {
                       <div className="relative">
                         <div className="aspect-square overflow-hidden bg-muted">
                           <img
-                            src={product.images[0] || '/placeholder-product.jpg'}
+                            src={product.images?.[0] || product.image_url || "" || '/placeholder-product.jpg'}
                             alt={product.name}
                             className="w-full h-full object-cover"
                           />
