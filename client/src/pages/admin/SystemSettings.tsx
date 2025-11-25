@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,135 +15,275 @@ import {
   Layout,
   Mail,
   Bell,
-  Shield,
-  Database,
   Save,
   RefreshCw,
+  Loader2,
 } from "lucide-react";
+
+const API_BASE_URL = "http://localhost:8000/api/v1";
 
 /**
  * Comprehensive System Settings Page
  * Full control over all UI components, colors, typography, images, and system configuration
+ * Connected to Laravel backend API for persistent storage
  */
 
 export default function SystemSettings() {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
   // UI Customization State
   const [uiSettings, setUiSettings] = useState({
     // Colors
-    primaryColor: "#3b82f6",
-    secondaryColor: "#10b981",
-    accentColor: "#f59e0b",
-    backgroundColor: "#ffffff",
-    textColor: "#1f2937",
-    borderColor: "#e5e7eb",
+    primary_color: "#3b82f6",
+    secondary_color: "#10b981",
+    accent_color: "#f59e0b",
+    background_color: "#ffffff",
+    text_color: "#1f2937",
+    border_color: "#e5e7eb",
     
     // Typography
-    fontFamily: "Inter",
-    headingFontFamily: "Inter",
-    fontSize: "16px",
-    headingSize: "32px",
+    font_family: "Inter",
+    heading_font_family: "Inter",
+    font_size: "16px",
+    heading_size: "32px",
     
     // Layout
-    borderRadius: "0.5rem",
+    border_radius: "0.5rem",
     spacing: "1rem",
-    containerWidth: "1280px",
+    container_width: "1280px",
     
     // Images
-    logoUrl: "/logo.png",
-    faviconUrl: "/favicon.ico",
-    heroImageUrl: "",
-    bannerImageUrl: "",
+    logo_url: "/logo.png",
+    favicon_url: "/favicon.ico",
+    hero_image_url: "",
+    banner_image_url: "",
     
     // Site Content
-    siteName: "Belkhair E-Commerce",
-    siteDescription: "Your trusted online shopping destination in Iraq",
-    siteKeywords: "ecommerce, shopping, iraq, online store, lottery",
-    heroTitle: "Welcome to Belkhair",
-    heroSubtitle: "Discover amazing products and win exciting prizes",
-    footerText: "© 2024 Belkhair. All rights reserved.",
+    site_name: "Belkhair E-Commerce",
+    site_description: "Your trusted online shopping destination in Iraq",
+    site_keywords: "ecommerce, shopping, iraq, online store, lottery",
+    hero_title: "Welcome to Belkhair",
+    hero_subtitle: "Discover amazing products and win exciting prizes",
+    footer_text: "© 2024 Belkhair. All rights reserved.",
     
     // Lottery Customization
-    lotteryBannerTitle: "Win Amazing Prizes!",
-    lotteryBannerSubtitle: "Shop now and get lottery tickets",
-    lotteryBannerColor: "#fbbf24",
-    lotteryButtonText: "View My Tickets",
+    lottery_banner_title: "Win Amazing Prizes!",
+    lottery_banner_subtitle: "Shop now and get lottery tickets",
+    lottery_banner_color: "#fbbf24",
+    lottery_button_text: "View My Tickets",
     
     // Features
-    enableLottery: true,
-    enableReviews: true,
-    enableWishlist: true,
-    enableCompare: true,
-    enableNewsletter: true,
+    enable_lottery: true,
+    enable_reviews: true,
+    enable_wishlist: true,
+    enable_compare: true,
+    enable_newsletter: true,
   });
 
   // Email Settings
   const [emailSettings, setEmailSettings] = useState({
-    smtpHost: "smtp.gmail.com",
-    smtpPort: "587",
-    smtpUser: "",
-    smtpPassword: "",
-    fromEmail: "noreply@belkhair.com",
-    fromName: "Belkhair",
-    enableEmailNotifications: true,
+    smtp_host: "smtp.gmail.com",
+    smtp_port: "587",
+    smtp_user: "",
+    smtp_password: "",
+    from_email: "noreply@belkhair.com",
+    from_name: "Belkhair",
+    enable_email_notifications: true,
   });
 
   // Notification Settings
   const [notificationSettings, setNotificationSettings] = useState({
-    enableOrderNotifications: true,
-    enableLotteryNotifications: true,
-    enablePromotionNotifications: true,
-    enableStockAlerts: true,
+    enable_order_notifications: true,
+    enable_lottery_notifications: true,
+    enable_promotion_notifications: true,
+    enable_stock_alerts: true,
   });
 
-  const handleSaveUISettings = () => {
-    // Apply settings to CSS variables
-    document.documentElement.style.setProperty('--primary', uiSettings.primaryColor);
-    document.documentElement.style.setProperty('--secondary', uiSettings.secondaryColor);
-    document.documentElement.style.setProperty('--accent', uiSettings.accentColor);
-    document.documentElement.style.setProperty('--background', uiSettings.backgroundColor);
-    document.documentElement.style.setProperty('--foreground', uiSettings.textColor);
-    document.documentElement.style.setProperty('--border', uiSettings.borderColor);
-    document.documentElement.style.setProperty('--radius', uiSettings.borderRadius);
-    
-    // Save to localStorage
-    localStorage.setItem('uiSettings', JSON.stringify(uiSettings));
-    
-    toast.success("UI settings saved successfully!");
-  };
+  // Load settings from backend on mount
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
-  const handleSaveEmailSettings = () => {
-    localStorage.setItem('emailSettings', JSON.stringify(emailSettings));
-    toast.success("Email settings saved successfully!");
-  };
+  const loadSettings = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/site-settings/`);
+      const data = await response.json();
 
-  const handleSaveNotificationSettings = () => {
-    localStorage.setItem('notificationSettings', JSON.stringify(notificationSettings));
-    toast.success("Notification settings saved successfully!");
-  };
+      if (data.success) {
+        const settings = data.data;
+        
+        // Update UI settings
+        setUiSettings(prev => ({
+          ...prev,
+          primary_color: settings.primary_color || prev.primary_color,
+          secondary_color: settings.secondary_color || prev.secondary_color,
+          accent_color: settings.accent_color || prev.accent_color,
+          background_color: settings.background_color || prev.background_color,
+          text_color: settings.text_color || prev.text_color,
+          border_color: settings.border_color || prev.border_color,
+          font_family: settings.font_family || prev.font_family,
+          heading_font_family: settings.heading_font_family || prev.heading_font_family,
+          font_size: settings.font_size || prev.font_size,
+          heading_size: settings.heading_size || prev.heading_size,
+          border_radius: settings.border_radius || prev.border_radius,
+          spacing: settings.spacing || prev.spacing,
+          container_width: settings.container_width || prev.container_width,
+          logo_url: settings.logo_url || prev.logo_url,
+          favicon_url: settings.favicon_url || prev.favicon_url,
+          hero_image_url: settings.hero_image_url || prev.hero_image_url,
+          banner_image_url: settings.banner_image_url || prev.banner_image_url,
+          site_name: settings.site_name || prev.site_name,
+          site_description: settings.site_description || prev.site_description,
+          site_keywords: settings.site_keywords || prev.site_keywords,
+          hero_title: settings.hero_title || prev.hero_title,
+          hero_subtitle: settings.hero_subtitle || prev.hero_subtitle,
+          footer_text: settings.footer_text || prev.footer_text,
+          lottery_banner_title: settings.lottery_banner_title || prev.lottery_banner_title,
+          lottery_banner_subtitle: settings.lottery_banner_subtitle || prev.lottery_banner_subtitle,
+          lottery_banner_color: settings.lottery_banner_color || prev.lottery_banner_color,
+          lottery_button_text: settings.lottery_button_text || prev.lottery_button_text,
+          enable_lottery: settings.enable_lottery !== undefined ? settings.enable_lottery : prev.enable_lottery,
+          enable_reviews: settings.enable_reviews !== undefined ? settings.enable_reviews : prev.enable_reviews,
+          enable_wishlist: settings.enable_wishlist !== undefined ? settings.enable_wishlist : prev.enable_wishlist,
+          enable_compare: settings.enable_compare !== undefined ? settings.enable_compare : prev.enable_compare,
+          enable_newsletter: settings.enable_newsletter !== undefined ? settings.enable_newsletter : prev.enable_newsletter,
+        }));
 
-  const handleResetToDefaults = () => {
-    if (confirm("Are you sure you want to reset all settings to defaults?")) {
-      window.location.reload();
-      toast.success("Settings reset to defaults!");
+        // Update email settings
+        setEmailSettings(prev => ({
+          ...prev,
+          smtp_host: settings.smtp_host || prev.smtp_host,
+          smtp_port: settings.smtp_port || prev.smtp_port,
+          smtp_user: settings.smtp_user || prev.smtp_user,
+          smtp_password: settings.smtp_password || prev.smtp_password,
+          from_email: settings.from_email || prev.from_email,
+          from_name: settings.from_name || prev.from_name,
+          enable_email_notifications: settings.enable_email_notifications !== undefined ? settings.enable_email_notifications : prev.enable_email_notifications,
+        }));
+
+        // Update notification settings
+        setNotificationSettings(prev => ({
+          ...prev,
+          enable_order_notifications: settings.enable_order_notifications !== undefined ? settings.enable_order_notifications : prev.enable_order_notifications,
+          enable_lottery_notifications: settings.enable_lottery_notifications !== undefined ? settings.enable_lottery_notifications : prev.enable_lottery_notifications,
+          enable_promotion_notifications: settings.enable_promotion_notifications !== undefined ? settings.enable_promotion_notifications : prev.enable_promotion_notifications,
+          enable_stock_alerts: settings.enable_stock_alerts !== undefined ? settings.enable_stock_alerts : prev.enable_stock_alerts,
+        }));
+
+        toast.success("Settings loaded successfully");
+      }
+    } catch (error) {
+      console.error("Error loading settings:", error);
+      toast.error("Failed to load settings from server");
+    } finally {
+      setLoading(false);
     }
   };
+
+  const saveAllSettings = async () => {
+    setSaving(true);
+    try {
+      // Combine all settings
+      const allSettings = {
+        ...uiSettings,
+        ...emailSettings,
+        ...notificationSettings,
+      };
+
+      // Convert to API format
+      const settingsPayload: Record<string, { value: any; type: string }> = {};
+      
+      Object.entries(allSettings).forEach(([key, value]) => {
+        settingsPayload[key] = {
+          value: value,
+          type: typeof value === 'boolean' ? 'boolean' : 
+                typeof value === 'number' ? 'number' : 'string'
+        };
+      });
+
+      const response = await fetch(`${API_BASE_URL}/site-settings/update-multiple`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ settings: settingsPayload }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Apply CSS variables for immediate visual feedback
+        applyUISettings();
+        toast.success("All settings saved successfully!");
+      } else {
+        toast.error(data.message || "Failed to save settings");
+      }
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      toast.error("Failed to save settings to server");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const applyUISettings = () => {
+    // Apply settings to CSS variables for immediate visual feedback
+    document.documentElement.style.setProperty('--primary', uiSettings.primary_color);
+    document.documentElement.style.setProperty('--secondary', uiSettings.secondary_color);
+    document.documentElement.style.setProperty('--accent', uiSettings.accent_color);
+    document.documentElement.style.setProperty('--background', uiSettings.background_color);
+    document.documentElement.style.setProperty('--foreground', uiSettings.text_color);
+    document.documentElement.style.setProperty('--border', uiSettings.border_color);
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-muted-foreground">Loading settings...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
       <div className="space-y-6">
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold">System Settings</h2>
             <p className="text-muted-foreground">
-              Complete control over all system components and appearance
+              Complete control over all system components and UI customization
             </p>
           </div>
-          <Button variant="outline" onClick={handleResetToDefaults}>
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Reset to Defaults
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={loadSettings} disabled={loading || saving}>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Reload
+            </Button>
+            <Button onClick={saveAllSettings} disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Save All Settings
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
+        {/* Settings Tabs */}
         <Tabs defaultValue="colors" className="space-y-6">
           <TabsList className="grid grid-cols-6 w-full">
             <TabsTrigger value="colors">
@@ -154,13 +294,13 @@ export default function SystemSettings() {
               <Type className="w-4 h-4 mr-2" />
               Typography
             </TabsTrigger>
-            <TabsTrigger value="images">
-              <Image className="w-4 h-4 mr-2" />
-              Images
-            </TabsTrigger>
             <TabsTrigger value="layout">
               <Layout className="w-4 h-4 mr-2" />
               Layout
+            </TabsTrigger>
+            <TabsTrigger value="content">
+              <Image className="w-4 h-4 mr-2" />
+              Content
             </TabsTrigger>
             <TabsTrigger value="email">
               <Mail className="w-4 h-4 mr-2" />
@@ -173,594 +313,529 @@ export default function SystemSettings() {
           </TabsList>
 
           {/* Colors Tab */}
-          <TabsContent value="colors" className="space-y-6">
+          <TabsContent value="colors">
             <Card>
               <CardHeader>
-                <CardTitle>Color Scheme</CardTitle>
-                <CardDescription>Customize the color palette of your entire website</CardDescription>
+                <CardTitle>Color Customization</CardTitle>
+                <CardDescription>Customize your brand colors and theme</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <Label>Primary Color</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        type="color"
-                        value={uiSettings.primaryColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, primaryColor: e.target.value })}
-                        className="w-20 h-10"
-                      />
-                      <Input
-                        type="text"
-                        value={uiSettings.primaryColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, primaryColor: e.target.value })}
-                        placeholder="#3b82f6"
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">Main brand color for buttons and links</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Secondary Color</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        type="color"
-                        value={uiSettings.secondaryColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, secondaryColor: e.target.value })}
-                        className="w-20 h-10"
-                      />
-                      <Input
-                        type="text"
-                        value={uiSettings.secondaryColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, secondaryColor: e.target.value })}
-                        placeholder="#10b981"
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">Secondary accent color</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Accent Color</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        type="color"
-                        value={uiSettings.accentColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, accentColor: e.target.value })}
-                        className="w-20 h-10"
-                      />
-                      <Input
-                        type="text"
-                        value={uiSettings.accentColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, accentColor: e.target.value })}
-                        placeholder="#f59e0b"
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">Highlight and special elements</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Background Color</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        type="color"
-                        value={uiSettings.backgroundColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, backgroundColor: e.target.value })}
-                        className="w-20 h-10"
-                      />
-                      <Input
-                        type="text"
-                        value={uiSettings.backgroundColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, backgroundColor: e.target.value })}
-                        placeholder="#ffffff"
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">Main background color</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Text Color</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        type="color"
-                        value={uiSettings.textColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, textColor: e.target.value })}
-                        className="w-20 h-10"
-                      />
-                      <Input
-                        type="text"
-                        value={uiSettings.textColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, textColor: e.target.value })}
-                        placeholder="#1f2937"
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">Main text color</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Border Color</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        type="color"
-                        value={uiSettings.borderColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, borderColor: e.target.value })}
-                        className="w-20 h-10"
-                      />
-                      <Input
-                        type="text"
-                        value={uiSettings.borderColor}
-                        onChange={(e) => setUiSettings({ ...uiSettings, borderColor: e.target.value })}
-                        placeholder="#e5e7eb"
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">Borders and dividers</p>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="primary_color">Primary Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="primary_color"
+                      type="color"
+                      value={uiSettings.primary_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, primary_color: e.target.value })}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={uiSettings.primary_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, primary_color: e.target.value })}
+                      className="flex-1"
+                    />
                   </div>
                 </div>
 
-                <div className="border-t pt-6">
-                  <h4 className="font-semibold mb-4">Lottery Banner Colors</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label>Lottery Banner Color</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          type="color"
-                          value={uiSettings.lotteryBannerColor}
-                          onChange={(e) => setUiSettings({ ...uiSettings, lotteryBannerColor: e.target.value })}
-                          className="w-20 h-10"
-                        />
-                        <Input
-                          type="text"
-                          value={uiSettings.lotteryBannerColor}
-                          onChange={(e) => setUiSettings({ ...uiSettings, lotteryBannerColor: e.target.value })}
-                          placeholder="#fbbf24"
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground">Background color for lottery banner</p>
-                    </div>
+                <div className="space-y-2">
+                  <Label htmlFor="secondary_color">Secondary Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="secondary_color"
+                      type="color"
+                      value={uiSettings.secondary_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, secondary_color: e.target.value })}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={uiSettings.secondary_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, secondary_color: e.target.value })}
+                      className="flex-1"
+                    />
                   </div>
                 </div>
 
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveUISettings}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Color Settings
-                  </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="accent_color">Accent Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="accent_color"
+                      type="color"
+                      value={uiSettings.accent_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, accent_color: e.target.value })}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={uiSettings.accent_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, accent_color: e.target.value })}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="background_color">Background Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="background_color"
+                      type="color"
+                      value={uiSettings.background_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, background_color: e.target.value })}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={uiSettings.background_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, background_color: e.target.value })}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="text_color">Text Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="text_color"
+                      type="color"
+                      value={uiSettings.text_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, text_color: e.target.value })}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={uiSettings.text_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, text_color: e.target.value })}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="border_color">Border Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="border_color"
+                      type="color"
+                      value={uiSettings.border_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, border_color: e.target.value })}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={uiSettings.border_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, border_color: e.target.value })}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="lottery_banner_color">Lottery Banner Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="lottery_banner_color"
+                      type="color"
+                      value={uiSettings.lottery_banner_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, lottery_banner_color: e.target.value })}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      type="text"
+                      value={uiSettings.lottery_banner_color}
+                      onChange={(e) => setUiSettings({ ...uiSettings, lottery_banner_color: e.target.value })}
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Typography Tab */}
-          <TabsContent value="typography" className="space-y-6">
+          <TabsContent value="typography">
             <Card>
               <CardHeader>
                 <CardTitle>Typography Settings</CardTitle>
-                <CardDescription>Customize fonts and text sizes across the website</CardDescription>
+                <CardDescription>Customize fonts and text sizes</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label>Body Font Family</Label>
-                    <Input
-                      value={uiSettings.fontFamily}
-                      onChange={(e) => setUiSettings({ ...uiSettings, fontFamily: e.target.value })}
-                      placeholder="Inter, sans-serif"
-                    />
-                    <p className="text-xs text-muted-foreground">Font for body text</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Heading Font Family</Label>
-                    <Input
-                      value={uiSettings.headingFontFamily}
-                      onChange={(e) => setUiSettings({ ...uiSettings, headingFontFamily: e.target.value })}
-                      placeholder="Inter, sans-serif"
-                    />
-                    <p className="text-xs text-muted-foreground">Font for headings</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Base Font Size</Label>
-                    <Input
-                      value={uiSettings.fontSize}
-                      onChange={(e) => setUiSettings({ ...uiSettings, fontSize: e.target.value })}
-                      placeholder="16px"
-                    />
-                    <p className="text-xs text-muted-foreground">Base text size</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Heading Size</Label>
-                    <Input
-                      value={uiSettings.headingSize}
-                      onChange={(e) => setUiSettings({ ...uiSettings, headingSize: e.target.value })}
-                      placeholder="32px"
-                    />
-                    <p className="text-xs text-muted-foreground">Main heading size</p>
-                  </div>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="font_family">Body Font Family</Label>
+                  <Input
+                    id="font_family"
+                    value={uiSettings.font_family}
+                    onChange={(e) => setUiSettings({ ...uiSettings, font_family: e.target.value })}
+                    placeholder="Inter, sans-serif"
+                  />
                 </div>
 
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveUISettings}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Typography Settings
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Images Tab */}
-          <TabsContent value="images" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Image Assets</CardTitle>
-                <CardDescription>Manage logos, icons, and banner images</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label>Logo URL</Label>
-                    <Input
-                      value={uiSettings.logoUrl}
-                      onChange={(e) => setUiSettings({ ...uiSettings, logoUrl: e.target.value })}
-                      placeholder="/logo.png"
-                    />
-                    <p className="text-xs text-muted-foreground">Main site logo</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Favicon URL</Label>
-                    <Input
-                      value={uiSettings.faviconUrl}
-                      onChange={(e) => setUiSettings({ ...uiSettings, faviconUrl: e.target.value })}
-                      placeholder="/favicon.ico"
-                    />
-                    <p className="text-xs text-muted-foreground">Browser tab icon</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Hero Image URL</Label>
-                    <Input
-                      value={uiSettings.heroImageUrl}
-                      onChange={(e) => setUiSettings({ ...uiSettings, heroImageUrl: e.target.value })}
-                      placeholder="https://..."
-                    />
-                    <p className="text-xs text-muted-foreground">Homepage hero section background</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Banner Image URL</Label>
-                    <Input
-                      value={uiSettings.bannerImageUrl}
-                      onChange={(e) => setUiSettings({ ...uiSettings, bannerImageUrl: e.target.value })}
-                      placeholder="https://..."
-                    />
-                    <p className="text-xs text-muted-foreground">Promotional banner image</p>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="heading_font_family">Heading Font Family</Label>
+                  <Input
+                    id="heading_font_family"
+                    value={uiSettings.heading_font_family}
+                    onChange={(e) => setUiSettings({ ...uiSettings, heading_font_family: e.target.value })}
+                    placeholder="Inter, sans-serif"
+                  />
                 </div>
 
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveUISettings}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Image Settings
-                  </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="font_size">Base Font Size</Label>
+                  <Input
+                    id="font_size"
+                    value={uiSettings.font_size}
+                    onChange={(e) => setUiSettings({ ...uiSettings, font_size: e.target.value })}
+                    placeholder="16px"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="heading_size">Heading Size</Label>
+                  <Input
+                    id="heading_size"
+                    value={uiSettings.heading_size}
+                    onChange={(e) => setUiSettings({ ...uiSettings, heading_size: e.target.value })}
+                    placeholder="32px"
+                  />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Layout Tab */}
-          <TabsContent value="layout" className="space-y-6">
+          <TabsContent value="layout">
             <Card>
               <CardHeader>
-                <CardTitle>Layout & Spacing</CardTitle>
-                <CardDescription>Control layout dimensions and spacing</CardDescription>
+                <CardTitle>Layout Settings</CardTitle>
+                <CardDescription>Customize spacing, borders, and container sizes</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <Label>Border Radius</Label>
-                    <Input
-                      value={uiSettings.borderRadius}
-                      onChange={(e) => setUiSettings({ ...uiSettings, borderRadius: e.target.value })}
-                      placeholder="0.5rem"
-                    />
-                    <p className="text-xs text-muted-foreground">Roundness of corners</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Base Spacing</Label>
-                    <Input
-                      value={uiSettings.spacing}
-                      onChange={(e) => setUiSettings({ ...uiSettings, spacing: e.target.value })}
-                      placeholder="1rem"
-                    />
-                    <p className="text-xs text-muted-foreground">Base spacing unit</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Container Width</Label>
-                    <Input
-                      value={uiSettings.containerWidth}
-                      onChange={(e) => setUiSettings({ ...uiSettings, containerWidth: e.target.value })}
-                      placeholder="1280px"
-                    />
-                    <p className="text-xs text-muted-foreground">Maximum content width</p>
-                  </div>
+              <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="border_radius">Border Radius</Label>
+                  <Input
+                    id="border_radius"
+                    value={uiSettings.border_radius}
+                    onChange={(e) => setUiSettings({ ...uiSettings, border_radius: e.target.value })}
+                    placeholder="0.5rem"
+                  />
                 </div>
 
-                <div className="border-t pt-6">
-                  <h4 className="font-semibold mb-4">Site Content</h4>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Site Name</Label>
-                      <Input
-                        value={uiSettings.siteName}
-                        onChange={(e) => setUiSettings({ ...uiSettings, siteName: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Site Description</Label>
-                      <Textarea
-                        value={uiSettings.siteDescription}
-                        onChange={(e) => setUiSettings({ ...uiSettings, siteDescription: e.target.value })}
-                        rows={3}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Hero Title</Label>
-                      <Input
-                        value={uiSettings.heroTitle}
-                        onChange={(e) => setUiSettings({ ...uiSettings, heroTitle: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Hero Subtitle</Label>
-                      <Input
-                        value={uiSettings.heroSubtitle}
-                        onChange={(e) => setUiSettings({ ...uiSettings, heroSubtitle: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Lottery Banner Title</Label>
-                      <Input
-                        value={uiSettings.lotteryBannerTitle}
-                        onChange={(e) => setUiSettings({ ...uiSettings, lotteryBannerTitle: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Lottery Banner Subtitle</Label>
-                      <Input
-                        value={uiSettings.lotteryBannerSubtitle}
-                        onChange={(e) => setUiSettings({ ...uiSettings, lotteryBannerSubtitle: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Lottery Button Text</Label>
-                      <Input
-                        value={uiSettings.lotteryButtonText}
-                        onChange={(e) => setUiSettings({ ...uiSettings, lotteryButtonText: e.target.value })}
-                      />
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="spacing">Base Spacing</Label>
+                  <Input
+                    id="spacing"
+                    value={uiSettings.spacing}
+                    onChange={(e) => setUiSettings({ ...uiSettings, spacing: e.target.value })}
+                    placeholder="1rem"
+                  />
                 </div>
 
-                <div className="border-t pt-6">
-                  <h4 className="font-semibold mb-4">Feature Toggles</h4>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label>Enable Lottery System</Label>
-                        <p className="text-xs text-muted-foreground">Show lottery banners and tickets</p>
-                      </div>
-                      <Switch
-                        checked={uiSettings.enableLottery}
-                        onCheckedChange={(checked) => setUiSettings({ ...uiSettings, enableLottery: checked })}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label>Enable Product Reviews</Label>
-                        <p className="text-xs text-muted-foreground">Allow customers to leave reviews</p>
-                      </div>
-                      <Switch
-                        checked={uiSettings.enableReviews}
-                        onCheckedChange={(checked) => setUiSettings({ ...uiSettings, enableReviews: checked })}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label>Enable Wishlist</Label>
-                        <p className="text-xs text-muted-foreground">Allow customers to save favorites</p>
-                      </div>
-                      <Switch
-                        checked={uiSettings.enableWishlist}
-                        onCheckedChange={(checked) => setUiSettings({ ...uiSettings, enableWishlist: checked })}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label>Enable Newsletter</Label>
-                        <p className="text-xs text-muted-foreground">Show newsletter signup</p>
-                      </div>
-                      <Switch
-                        checked={uiSettings.enableNewsletter}
-                        onCheckedChange={(checked) => setUiSettings({ ...uiSettings, enableNewsletter: checked })}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveUISettings}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Layout Settings
-                  </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="container_width">Container Width</Label>
+                  <Input
+                    id="container_width"
+                    value={uiSettings.container_width}
+                    onChange={(e) => setUiSettings({ ...uiSettings, container_width: e.target.value })}
+                    placeholder="1280px"
+                  />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Content Tab */}
+          <TabsContent value="content">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Site Content</CardTitle>
+                  <CardDescription>Manage site-wide text content</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="site_name">Site Name</Label>
+                    <Input
+                      id="site_name"
+                      value={uiSettings.site_name}
+                      onChange={(e) => setUiSettings({ ...uiSettings, site_name: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="site_description">Site Description</Label>
+                    <Textarea
+                      id="site_description"
+                      value={uiSettings.site_description}
+                      onChange={(e) => setUiSettings({ ...uiSettings, site_description: e.target.value })}
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="hero_title">Hero Title</Label>
+                    <Input
+                      id="hero_title"
+                      value={uiSettings.hero_title}
+                      onChange={(e) => setUiSettings({ ...uiSettings, hero_title: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="hero_subtitle">Hero Subtitle</Label>
+                    <Input
+                      id="hero_subtitle"
+                      value={uiSettings.hero_subtitle}
+                      onChange={(e) => setUiSettings({ ...uiSettings, hero_subtitle: e.target.value })}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Lottery Content</CardTitle>
+                  <CardDescription>Customize lottery banner text</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="lottery_banner_title">Banner Title</Label>
+                    <Input
+                      id="lottery_banner_title"
+                      value={uiSettings.lottery_banner_title}
+                      onChange={(e) => setUiSettings({ ...uiSettings, lottery_banner_title: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="lottery_banner_subtitle">Banner Subtitle</Label>
+                    <Input
+                      id="lottery_banner_subtitle"
+                      value={uiSettings.lottery_banner_subtitle}
+                      onChange={(e) => setUiSettings({ ...uiSettings, lottery_banner_subtitle: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="lottery_button_text">Button Text</Label>
+                    <Input
+                      id="lottery_button_text"
+                      value={uiSettings.lottery_button_text}
+                      onChange={(e) => setUiSettings({ ...uiSettings, lottery_button_text: e.target.value })}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Feature Toggles</CardTitle>
+                  <CardDescription>Enable or disable site features</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="enable_lottery">Enable Lottery System</Label>
+                    <Switch
+                      id="enable_lottery"
+                      checked={uiSettings.enable_lottery}
+                      onCheckedChange={(checked) => setUiSettings({ ...uiSettings, enable_lottery: checked })}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="enable_reviews">Enable Product Reviews</Label>
+                    <Switch
+                      id="enable_reviews"
+                      checked={uiSettings.enable_reviews}
+                      onCheckedChange={(checked) => setUiSettings({ ...uiSettings, enable_reviews: checked })}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="enable_wishlist">Enable Wishlist</Label>
+                    <Switch
+                      id="enable_wishlist"
+                      checked={uiSettings.enable_wishlist}
+                      onCheckedChange={(checked) => setUiSettings({ ...uiSettings, enable_wishlist: checked })}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="enable_newsletter">Enable Newsletter</Label>
+                    <Switch
+                      id="enable_newsletter"
+                      checked={uiSettings.enable_newsletter}
+                      onCheckedChange={(checked) => setUiSettings({ ...uiSettings, enable_newsletter: checked })}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
           {/* Email Tab */}
-          <TabsContent value="email" className="space-y-6">
+          <TabsContent value="email">
             <Card>
               <CardHeader>
                 <CardTitle>Email Configuration</CardTitle>
                 <CardDescription>Configure SMTP settings for email notifications</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>SMTP Host</Label>
+                    <Label htmlFor="smtp_host">SMTP Host</Label>
                     <Input
-                      value={emailSettings.smtpHost}
-                      onChange={(e) => setEmailSettings({ ...emailSettings, smtpHost: e.target.value })}
+                      id="smtp_host"
+                      value={emailSettings.smtp_host}
+                      onChange={(e) => setEmailSettings({ ...emailSettings, smtp_host: e.target.value })}
                       placeholder="smtp.gmail.com"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>SMTP Port</Label>
+                    <Label htmlFor="smtp_port">SMTP Port</Label>
                     <Input
-                      value={emailSettings.smtpPort}
-                      onChange={(e) => setEmailSettings({ ...emailSettings, smtpPort: e.target.value })}
+                      id="smtp_port"
+                      value={emailSettings.smtp_port}
+                      onChange={(e) => setEmailSettings({ ...emailSettings, smtp_port: e.target.value })}
                       placeholder="587"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>SMTP Username</Label>
+                    <Label htmlFor="smtp_user">SMTP Username</Label>
                     <Input
-                      value={emailSettings.smtpUser}
-                      onChange={(e) => setEmailSettings({ ...emailSettings, smtpUser: e.target.value })}
+                      id="smtp_user"
+                      value={emailSettings.smtp_user}
+                      onChange={(e) => setEmailSettings({ ...emailSettings, smtp_user: e.target.value })}
                       placeholder="your-email@gmail.com"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>SMTP Password</Label>
+                    <Label htmlFor="smtp_password">SMTP Password</Label>
                     <Input
+                      id="smtp_password"
                       type="password"
-                      value={emailSettings.smtpPassword}
-                      onChange={(e) => setEmailSettings({ ...emailSettings, smtpPassword: e.target.value })}
+                      value={emailSettings.smtp_password}
+                      onChange={(e) => setEmailSettings({ ...emailSettings, smtp_password: e.target.value })}
                       placeholder="••••••••"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>From Email</Label>
+                    <Label htmlFor="from_email">From Email</Label>
                     <Input
-                      value={emailSettings.fromEmail}
-                      onChange={(e) => setEmailSettings({ ...emailSettings, fromEmail: e.target.value })}
+                      id="from_email"
+                      value={emailSettings.from_email}
+                      onChange={(e) => setEmailSettings({ ...emailSettings, from_email: e.target.value })}
                       placeholder="noreply@belkhair.com"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>From Name</Label>
+                    <Label htmlFor="from_name">From Name</Label>
                     <Input
-                      value={emailSettings.fromName}
-                      onChange={(e) => setEmailSettings({ ...emailSettings, fromName: e.target.value })}
+                      id="from_name"
+                      value={emailSettings.from_name}
+                      onChange={(e) => setEmailSettings({ ...emailSettings, from_name: e.target.value })}
                       placeholder="Belkhair"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t pt-6">
-                  <div>
-                    <Label>Enable Email Notifications</Label>
-                    <p className="text-xs text-muted-foreground">Send automated emails to customers</p>
-                  </div>
+                <div className="flex items-center justify-between pt-4">
+                  <Label htmlFor="enable_email_notifications">Enable Email Notifications</Label>
                   <Switch
-                    checked={emailSettings.enableEmailNotifications}
-                    onCheckedChange={(checked) => setEmailSettings({ ...emailSettings, enableEmailNotifications: checked })}
+                    id="enable_email_notifications"
+                    checked={emailSettings.enable_email_notifications}
+                    onCheckedChange={(checked) => setEmailSettings({ ...emailSettings, enable_email_notifications: checked })}
                   />
-                </div>
-
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveEmailSettings}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Email Settings
-                  </Button>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Notifications Tab */}
-          <TabsContent value="notifications" className="space-y-6">
+          <TabsContent value="notifications">
             <Card>
               <CardHeader>
-                <CardTitle>Notification Preferences</CardTitle>
-                <CardDescription>Control which notifications are sent to customers</CardDescription>
+                <CardTitle>Notification Settings</CardTitle>
+                <CardDescription>Configure which notifications to send</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Order Notifications</Label>
-                      <p className="text-xs text-muted-foreground">Notify customers about order status changes</p>
-                    </div>
-                    <Switch
-                      checked={notificationSettings.enableOrderNotifications}
-                      onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, enableOrderNotifications: checked })}
-                    />
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="enable_order_notifications">Order Notifications</Label>
+                    <p className="text-sm text-muted-foreground">Send emails when orders are placed</p>
                   </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Lottery Notifications</Label>
-                      <p className="text-xs text-muted-foreground">Notify winners and send lottery updates</p>
-                    </div>
-                    <Switch
-                      checked={notificationSettings.enableLotteryNotifications}
-                      onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, enableLotteryNotifications: checked })}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Promotion Notifications</Label>
-                      <p className="text-xs text-muted-foreground">Send promotional emails and offers</p>
-                    </div>
-                    <Switch
-                      checked={notificationSettings.enablePromotionNotifications}
-                      onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, enablePromotionNotifications: checked })}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Stock Alerts</Label>
-                      <p className="text-xs text-muted-foreground">Alert admins when products are low in stock</p>
-                    </div>
-                    <Switch
-                      checked={notificationSettings.enableStockAlerts}
-                      onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, enableStockAlerts: checked })}
-                    />
-                  </div>
+                  <Switch
+                    id="enable_order_notifications"
+                    checked={notificationSettings.enable_order_notifications}
+                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, enable_order_notifications: checked })}
+                  />
                 </div>
 
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveNotificationSettings}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Notification Settings
-                  </Button>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="enable_lottery_notifications">Lottery Notifications</Label>
+                    <p className="text-sm text-muted-foreground">Send emails to lottery winners</p>
+                  </div>
+                  <Switch
+                    id="enable_lottery_notifications"
+                    checked={notificationSettings.enable_lottery_notifications}
+                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, enable_lottery_notifications: checked })}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="enable_promotion_notifications">Promotion Notifications</Label>
+                    <p className="text-sm text-muted-foreground">Send promotional emails to customers</p>
+                  </div>
+                  <Switch
+                    id="enable_promotion_notifications"
+                    checked={notificationSettings.enable_promotion_notifications}
+                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, enable_promotion_notifications: checked })}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="enable_stock_alerts">Stock Alerts</Label>
+                    <p className="text-sm text-muted-foreground">Send alerts when products are low in stock</p>
+                  </div>
+                  <Switch
+                    id="enable_stock_alerts"
+                    checked={notificationSettings.enable_stock_alerts}
+                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, enable_stock_alerts: checked })}
+                  />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Save Button at Bottom */}
+        <div className="flex justify-end">
+          <Button size="lg" onClick={saveAllSettings} disabled={saving}>
+            {saving ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving All Settings...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Save All Settings
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </AdminLayout>
   );
