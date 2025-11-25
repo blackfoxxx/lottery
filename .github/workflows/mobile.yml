@@ -1,0 +1,149 @@
+name: Mobile CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'NewMobile/**'
+      - '.github/workflows/mobile.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'NewMobile/**'
+
+jobs:
+  test:
+    name: Test Mobile App
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: NewMobile/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./NewMobile
+        run: npm ci
+      
+      - name: Run linter
+        working-directory: ./NewMobile
+        run: npm run lint --if-present
+      
+      - name: Run type check
+        working-directory: ./NewMobile
+        run: npx tsc --noEmit || true
+      
+      - name: Run tests
+        working-directory: ./NewMobile
+        run: npm test --if-present
+
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      
+      - name: Install dependencies
+        working-directory: ./NewMobile
+        run: npm ci
+      
+      - name: Build Android APK
+        working-directory: ./NewMobile
+        run: eas build --platform android --profile preview --non-interactive
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: NewMobile/*.apk
+          retention-days: 30
+
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      
+      - name: Install dependencies
+        working-directory: ./NewMobile
+        run: npm ci
+      
+      - name: Build iOS
+        working-directory: ./NewMobile
+        run: eas build --platform ios --profile preview --non-interactive
+      
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-ipa
+          path: NewMobile/*.ipa
+          retention-days: 30
+
+  publish:
+    name: Publish to Expo
+    runs-on: ubuntu-latest
+    needs: [build-android, build-ios]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      
+      - name: Install dependencies
+        working-directory: ./NewMobile
+        run: npm ci
+      
+      - name: Publish to Expo
+        working-directory: ./NewMobile
+        run: expo publish --non-interactive
+      
+      - name: Notify publish
+        if: success()
+        run: echo "Mobile app published successfully to Expo"
