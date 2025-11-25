@@ -60,6 +60,7 @@ import AdminBundles from "./pages/admin/Bundles";
 import EnvironmentSettings from "./pages/admin/EnvironmentSettings";
 import System from "./pages/admin/System";
 import SystemSettings from "./pages/admin/SystemSettings";
+import CompleteLotteryManagement from "./pages/admin/CompleteLotteryManagement";
 
 function Router() {
   return (
@@ -113,6 +114,7 @@ function Router() {
       <Route path="/admin/environment" component={EnvironmentSettings} />
       <Route path="/admin/system" component={System} />
       <Route path="/admin/system-settings" component={SystemSettings} />
+      <Route path="/admin/complete-lottery" component={CompleteLotteryManagement} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
